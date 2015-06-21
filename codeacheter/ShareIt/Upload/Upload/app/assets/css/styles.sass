@@ -1,0 +1,1895 @@
+// -----------------------------
+// MIXINS
+// -----------------------------
+$images-path: "library/images/"
+@mixin image($name, $repeat: no-repeat top left, $color: transparent)
+  background: $color url("../images/#{$name}") $repeat
+
+@mixin rounded($size) 
+  -webkit-border-radius: $size
+  -moz-border-radius: $size
+  border-radius: $size
+
+@mixin text-shadow($shadow)
+  -webkit-text-shadow: $shadow
+  -moz-text-shadow: $shadow
+  -o-text-shadow: $shadow
+  text-shadow: $shadow
+  
+@mixin box-shadow ($x: 0, $y: 0, $blur: 1px, $color: rgba(0, 0, 0, 1))
+  $val: $x $y $blur $color
+  box-shadow:         $val
+  -webkit-box-shadow: $val
+  -moz-box-shadow:    $val
+
+@mixin multiple-box-shadow ($shadow1, $shadow2)
+  box-shadow:         $shadow1, $shadow2
+  -webkit-box-shadow: $shadow1, $shadow2
+  -moz-box-shadow:    $shadow1, $shadow2
+
+@mixin inset-box-shadow ($x: 0, $y: 0, $blur: 1px, $color: rgba(0, 0, 0, 1))
+  $val:inset $x $y $blur $color
+  box-shadow:         $val
+  -webkit-box-shadow: $val
+  -moz-box-shadow:    $val
+
+@mixin transition($value)
+  -moz-transition: $value
+  -o-transition: $value
+  -ms-transition: $value
+  -webkit-transition: $value
+  transition: $value
+
+@mixin animation($args)
+  -webkit-animation-name: $args
+  -moz-animation-name: $args
+  -o-animation-name: $args
+  animation-name: $args
+  
+
+//Clearfix
+@mixin clearfix
+  zoom: 1
+  &:first-child
+    zoom: 1
+  &:after
+    visibility: hidden
+    display: block
+    font-size: 0
+    content: " "
+    clear: both
+    height: 0
+
+$font-global: "HelveticaNeue-Medium", Helvetica, 'Lucida Grande', Lucida Grande, 'lucida grande', Arial, tahoma
+$font-alt: Helvetica
+$font-thin: "HelveticaNeue-Regular", "Helvetica Neue Regular", "Helvetica Neue", 'Open Sans', Helvetica, Arial, "Lucida Grande", sans-serif
+$font-light: "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", 'Open Sans', Helvetica, Arial, "Lucida Grande", sans-serif
+$font-normal: Helvetica, 'Open Sans', Arial, "Lucida Grande", sans-serif
+$font-ui: "lucida grande",tahoma,verdana,arial,sans-serif
+$font-bold: "HelveticaNeue-Bold"
+$font-inputs: Verdana
+
+// -----------------------------
+// ELEMENTS
+// -----------------------------
+body
+  background: white
+  font-family: $font-global
+  font-size: 12px
+  line-height: 18px
+  color: #4b494f
+  background: none
+  padding-bottom: 50px
+  -webkit-text-size-adjust: 100%
+  //@include image('bg_login.png', repeat)
+  &.noscroll
+    overflow: hidden
+  
+
+//file drag
+body
+  &.in,
+  &.hover,
+    overflow: hidden
+    &:before
+      @include image('bg_uploader.png', no-repeat center center, rgba(0, 0, 0, 0.8))
+      position:  fixed
+      top: 0px
+      left: 0px
+      width: 100%
+      height: 100%
+      overflow: hidden
+      content: " "
+      z-index: 101
+  
+h1
+  font-size: 18px
+  line-height: 25px
+
+a
+  text-decoration: none
+  color: inherit
+  cursor: pointer
+
+p
+  padding-bottom: 10px
+  &:last-child
+    padding-bottom: 0px
+  
+// -----------------------------
+// STRUCTURE
+// -----------------------------
+.container
+  width: 960px
+  //width: 860px
+  //width: 100%
+  margin: 0px auto
+  @include clearfix
+
+#content
+  margin-top: 30px
+  position: relative
+  &:before
+    background: #e3e3e3
+    position: absolute
+    width: 1px
+    content: " "
+    display: block
+    height: 100%
+    top: 0px
+    right: 210px
+  //aside
+  #aside
+    width: 570px
+    width: 78%
+    margin-right: 2%
+    float: left
+    position: relative
+    //padding-right: 25px
+    //border-right: 1px solid #e3e3e3
+    //border
+  #sidebar
+    width: 209px
+    width: 20%
+    float: right
+    padding-top: 5px
+    //padding-left: 25px
+
+// -----------------------------
+// TOP BAR
+// -----------------------------
+#topnav
+  background-color: #fefefe
+  background-image: -webkit-gradient(linear, left top, left bottom, from(rgb(254, 254, 254)), to(rgb(237, 237, 237)))
+  background-image: -webkit-linear-gradient(top, rgb(254, 254, 254), rgb(237, 237, 237))
+  background-image: -moz-linear-gradient(top, rgb(254, 254, 254), rgb(237, 237, 237))
+  background-image: -o-linear-gradient(top, rgb(254, 254, 254), rgb(237, 237, 237))
+  background-image: -ms-linear-gradient(top, rgb(254, 254, 254), rgb(237, 237, 237))
+  background-image: linear-gradient(top, rgb(254, 254, 254), rgb(237, 237, 237))
+  filter: progid:DXImageTransform.Microsoft.gradient(GradientType=0,StartColorStr='#fefefe', EndColorStr='#ededed')
+  border-bottom: 1px solid #d3d3d3
+  //position: fixed
+  //width: 100%
+  //top: 0px
+  //left: 0px
+  
+  //logo
+  #logo
+    float: left
+    margin-top: 11px
+    img
+      float: left
+      margin-top: 8px
+    h1
+      float: left
+      line-height: 30px
+      padding-left: 5px
+      color: #252424
+      font-size: 13px
+      @include text-shadow(0px 1px 0px #ffffff)
+      
+  
+  //userbar
+  #userbar
+    width: 100%
+    > *
+      float: right
+      margin-top: 10px
+      margin-bottom: 10px
+      margin-left: 10px
+    //user
+    .user
+      line-height: 28px
+      font-size: 11px
+      margin-left: 5px
+      height: 28px
+      padding: 0px
+      position: relative
+      .icon.drop
+        display: block
+        @include image('icon_dropdown.png', no-repeat right 13px)
+        padding-left: 10px
+        padding-right: 10px
+        margin-right: 10px
+      &.drop:hover
+        .dropdown
+          display: block
+      .dropdown
+        cursor: default
+        display: none
+        position: absolute
+        top: 100%
+        right: -2px
+        width: 200px
+        padding-top: 11px
+        z-index: 99
+        ul
+          list-style: none
+          background: white
+          border: 1px solid #c1c1c1
+          @include box-shadow(0px, 1px, 1px, rgba(0, 0, 0, 0.1))
+          padding: 0px
+          padding-top: 5px
+          padding-bottom: 5px
+          @include rounded(0px 0px 4px 4px)
+          li
+            padding: 5px 20px
+            line-height: 20px
+            a  
+              display: block
+              width: 100%
+            .icon
+              float: left
+              margin-top: 5px
+              margin-right: 5px
+              &.logout,
+              &.users
+                margin-top: 4px
+              &.updates
+                margin-top: 6px
+            &:hover
+              background: #1A8AE3
+              a
+                color: white
+                @include text-shadow(0px 1px 0px rgba(0, 0, 0, 0.3))
+      
+    //avatar
+    .avatar
+      width: 30px
+      &:before
+        @include inset-box-shadow(0px, 1px, 3px, rgba(0, 0, 0, 0.5))
+    //elements
+    .button
+      margin-left: 10px
+      
+    //upload button
+    #upload
+      position: relative
+      &:hover
+        .button
+          background-color: #3e9ce7
+          background-image: -webkit-gradient(linear, left top, left bottom, from(rgb(62, 156, 231)), to(rgb(63, 140, 204)))
+          background-image: -webkit-linear-gradient(top, rgb(62, 156, 231), rgb(63, 140, 204))
+          background-image: -moz-linear-gradient(top, rgb(62, 156, 231), rgb(63, 140, 204))
+          background-image: -o-linear-gradient(top, rgb(62, 156, 231), rgb(63, 140, 204))
+          background-image: -ms-linear-gradient(top, rgb(62, 156, 231), rgb(63, 140, 204))
+          background-image: linear-gradient(top, rgb(62, 156, 231), rgb(63, 140, 204))
+          filter: progid:DXImageTransform.Microsoft.gradient(GradientType=0,StartColorStr='#3e9ce7', EndColorStr='#3f8ccc')
+      .button
+        margin: 0px
+      object
+        position: absolute
+        left: 0px
+        top: 0px
+        opacity: 0.01
+        
+// -----------------------------
+// MESSAGES AREA
+// -----------------------------        
+#messages
+  padding-right: 13px
+  .message
+    @include rounded(3px)
+    line-height: 11px
+    padding: 7px 10px
+    margin-bottom: 10px
+    text-align: left
+    position: relative
+    color: #3A87AD
+    background-color: #D9EDF7
+    border: 1px solid #BCE8F1
+    .close
+      position: absolute
+      top: 5px
+      right: 10px
+      color: black
+      opacity: 0.2
+      font-size: 13px
+      line-height: 13px
+      @include text-shadow(0px 1px 0px rgba(255, 255, 255, 0.2))
+    &:last-child
+      margin-bottom: 17px
+    &.error
+      color: #B94A48
+      background-color: #F2DEDE
+      border-color: #EED3D7
+        
+// -----------------------------
+// UPLOADS AREA
+// -----------------------------
+#uploads.list
+  padding-right: 10px
+  .upload
+    width: 100%
+    float: none
+    border-bottom: 1px solid #f2f2f2
+    @include rounded(0px)
+    padding-bottom: 8px
+    height: 37px
+    .selected
+      background: #0677e1
+    .border
+      background: none
+      margin: 0px
+      border: none
+      height: 100%
+      @include box-shadow(0px, 0px, 0px, transparent)
+      @include rounded(0px)
+    .thumb
+      width: 35px
+      height: 35px
+      margin-bottom: 0px
+      @include rounded(4px)
+      @include box-shadow(0px, 1px, 1px, rgba(0, 0, 0, 0.2))
+    div.title
+      background: none
+      position: inherit
+      height: auto
+      margin-left: 50px
+      margin-top: -30px
+      a
+        text-indent: 0px
+        line-height: 27px
+      .check
+        position: absolute
+        left: 0px
+        top: 5px
+        display: none
+    //hover
+    &:hover
+      background-color: #ffffff
+      background-image: -webkit-gradient(linear, left top, left bottom, from(rgb(255, 255, 255)), to(rgb(243, 243, 243)))
+      background-image: -webkit-linear-gradient(top, rgb(255, 255, 255), rgb(243, 243, 243))
+      background-image: -moz-linear-gradient(top, rgb(255, 255, 255), rgb(243, 243, 243))
+      background-image: -o-linear-gradient(top, rgb(255, 255, 255), rgb(243, 243, 243))
+      background-image: -ms-linear-gradient(top, rgb(255, 255, 255), rgb(243, 243, 243))
+      background-image: linear-gradient(top, rgb(255, 255, 255), rgb(243, 243, 243))
+      filter: progid:DXImageTransform.Microsoft.gradient(GradientType=0,StartColorStr='#ffffff', EndColorStr='#f3f3f3')
+      border: 1px solid #c1c1c1
+      @include box-shadow(0px, 1px, 1px, rgba(0, 0, 0, 0.07))
+      
+
+// -----------------------------
+// UPLOADS PAGINATOR
+// -----------------------------
+#uploads .paginator
+  clear: both
+  padding-bottom: 20px
+  a.prev
+    margin-right: 10px
+  a.disabled
+    color: #A7A7A7
+    cursor: default
+      
+
+// -----------------------------
+// FILE UPLOADS
+// -----------------------------
+#uploads .upload,
+.upload.nopreview
+  display: block
+  width: 174px
+  margin-bottom: 20px
+  float: left
+  margin-right: 13px
+  @include rounded(4px)
+  position: relative
+  .border
+    background: white
+    margin: 1px
+    border: 1px solid #dadada
+    overflow: hidden
+    @include rounded(3px)
+    @include box-shadow(0px, 1px, 2px, rgba(0, 0, 0, 0.05))
+  &.selected
+    background: #0677e1
+    .border
+      border: 1px solid #0677e1
+      
+    
+  div.title
+    line-height: 12px
+    position: relative
+    height: 30px
+    padding-right: 6px
+    //title edit
+    input.edit
+      position: absolute
+      top: 0px
+      left: 0px
+      z-index: 100
+      width: 150px
+      height: 30px
+      margin: 0px
+      border: none
+      @include rounded(0px 0px 3px 3px)
+      display: none
+      @include inset-box-shadow(0px, 1px, 1px, rgba(0, 0, 0, 0.07))
+      &:focus
+        //@include inset-box-shadow(1px, 1px, 2px, rgba(0, 0, 0, 0.5))
+    input.check
+      position: absolute
+      top: 10px
+      left: 5px
+      height: 12px
+      width: 12px
+    a
+      width: 100%
+      display: block
+      overflow: hidden
+      text-indent: 22px
+      white-space: nowrap
+      line-height: 32px
+      font-size: 11px
+      text-overflow: ellipsis
+      cursor: default
+  .thumb
+    @include image('bg_transparent.png', repeat top left)
+    width: 170px
+    height: 160px
+    max-height: 160px
+    display: table-cell
+    vertical-align: middle
+    overflow: hidden
+    cursor: pointer
+    img
+      max-height: 100%
+      display: block
+      margin: 0px auto
+    &.other
+      @include image('file_other.png', no-repeat center center, #f9fafb)
+    &.document
+      @include image('file_doc.png', no-repeat center center, #f9fafb)
+      &.pdf
+        @include image('file_pdf.png', no-repeat center center, #f9fafb)
+    &.audio
+      @include image('file_audio.png', no-repeat center center, #f9fafb)
+    &.image.none,
+    &.image.cropped,
+      @include image('file_image.png', no-repeat center center, #f9fafb)
+      &.png,
+      &.gif
+        @include image('bg_transparent.png', repeat top left)
+    &.image
+      &.psd
+        @include image('file_psd.png', no-repeat center center, #f9fafb)
+    &.video
+      @include image('file_video.png', no-repeat center center, #f9fafb)
+        
+      
+  //editform
+  .editform
+    height: 134px
+    display: none
+    border-bottom: 1px solid #dadada
+    padding: 10px 10px 15px 10px
+    input[type=text]
+      width: 128px
+      margin-top: 5px
+    .uploader
+      position: relative
+      margin: 0px auto
+      display: table
+      padding-bottom: 10px
+      .button
+        margin: 0px
+      object
+        position: absolute
+        left: 0px
+        top: 0px
+        opacity: 0.01
+    .expiration_edit
+      //margin-top: 5px
+  &.onedit
+    .editform
+      display: block
+    .thumb
+      display: none
+  
+  //delete
+  a.delete,
+  a.edit
+    position: absolute
+    top: 2px
+    right: 2px
+    @include image("icon_cross.png", no-repeat center center, white)
+    letter-spacing: -99999px
+    width: 15px
+    height: 15px
+    @include box-shadow(0px, 1px, 1px, rgba(0, 0, 0, 0.4))
+    @include rounded(0px 2px 0px 0px)
+    @include rounded(0px 0px 0px 3px)
+    cursor: pointer
+    display: none
+    opacity: 0
+  a.edit
+    @include image("icon_gear.png", no-repeat center center, white)
+    width: 20px
+    right: 17px
+    border-right: 1px solid #b1b1b1
+    @include rounded(0px 0px 0px 3px)
+      
+  //staged
+  > .border > .progress
+    margin: 83px auto 0px auto
+    width: 80%
+    height: 104px
+    padding: 0px
+    min-height: 104px
+    max-height: 104px
+
+  // inline-upload
+  &.uploading
+    .uploader
+      margin-left: -999999px // swf object can't be hidden
+  .inlineupload
+    margin-bottom: -42px
+    padding-bottom: 5px
+    .cancel
+      @include image("icon_cross_small.png", no-repeat center center, rgba(0, 0, 0, 0.1))
+      width: 14px
+      height: 14px
+      @include rounded(14px)
+      display: inline-block
+      margin-bottom: -3px
+      cursor: pointer
+      
+  
+  //hover state
+  &:hover
+    a.delete,
+    a.edit
+      display: block
+      opacity: 1
+
+// -----------------------------
+// SINGLE UPLOAD
+// -----------------------------      
+html#single
+  
+  // expanded view
+  body.expanded
+    padding: 0px
+    #content
+      margin: 0px
+    #topnav
+      display: none
+    .container
+      width: 100%
+    .upload
+      .thumb
+        display: table-cell
+        vertical-align: middle
+        padding: 0px
+        img
+          cursor: -webkit-zoom-out
+          cursor: -moz-zoom-out
+          
+  
+  // structure
+  #topnav
+    .container
+      position: relative
+      padding-top: 10px
+      padding-bottom: 10px
+      
+    .title
+      margin: 0px auto
+      display: block
+      max-width: 50%
+      text-align: center
+      overflow: hidden
+      white-space: nowrap
+      text-overflow: ellipsis
+      line-height: 32px
+      @include text-shadow(0px 1px 0px white)
+      
+    .actions
+      position: absolute
+      width: 100%
+      right: 0px
+      .button
+        float: right
+        margin-left: 10px
+  #content
+    position: inherit
+    &:before
+      display: none
+      
+  // upload
+  .upload
+    text-align: center
+    .thumb
+      img
+        margin: 0px auto
+        display: block
+        max-width: 100%
+        border: 1px solid #EBEBEB
+        cursor: -webkit-zoom-in
+        cursor: -moz-zoom-in
+        @include box-shadow(0px, 1px, 1px, rgba(0, 0, 0, 0.15))
+  
+  // nopreview upload
+  //logo
+  #logo
+    display: table
+    margin: 0px auto 20px auto
+    img,
+    span
+      float: left
+    span
+      font-size: 17px
+      line-height: 23px
+      @include text-shadow(0px 1px 0px #ffffff)
+    img
+      margin-right: 8px
+  
+  // no preview upload
+  .container.none
+    width: 100%
+  .uploadcontainer
+    width: 100%
+    height: 280px
+    top: 50%
+    margin-top: -140px
+    position: absolute
+  .upload.nopreview
+    float: none
+    margin: 0px auto
+    .actions
+      padding-top: 10px
+    .download
+      width: 80px
+    .sharebar
+      width: 40px
+      .buttons
+        display: none
+        position: absolute
+        bottom: -40px
+        left: 50%
+        width: 260px
+        margin-left: -125px
+        .button
+          float: left
+          margin-right: 5px
+          &:last-child
+            margin-right: 0px
+  
+  // protected
+  .protected
+    //margin: 0px auto
+    width: 220px
+    height: 70px
+    position: absolute
+    top: 50%
+    left: 50%
+    margin-top: -110px
+    margin-left: -110px
+    input
+      width: 100%
+    input[type=password]
+      margin-bottom: 10px
+      width: 198px
+  
+  .share.twitter
+    background: #45b0e3
+    border-color: #45b0e3
+    padding: 0px 5px
+  .share.googleplus
+    background: #e43f12
+    border-color: #e43f12
+    padding: 0px 8px
+  .share.facebook
+    background: #5981c8
+    border-color: #5981c8
+  
+  // email share
+  .emailshare
+    position: relative
+    form
+      display: none
+      cursor: default
+      background: white
+      position: absolute
+      left: 50%
+      margin-left: -145px
+      top: 100%
+      margin-top: 13px
+      border: 1px solid #c1c1c1
+      width: 250px
+      padding: 20px
+      @include box-shadow(0px, 1px, 1px, rgba(0, 0, 0, 0.1))
+      @include rounded(0px 0px 4px 4px)
+      label
+        padding-left: 0px
+      input,
+      textarea
+        width: 228px
+      .field:last-child
+        padding-bottom: 0px
+      .button
+        width: auto
+
+// -----------------------------
+// UPLOADER
+// -----------------------------      
+#fileupload
+  //display: none
+
+// -----------------------------
+// SIDEBAR
+// -----------------------------
+#sidebar
+  //section
+  .section
+    padding-bottom: 30px
+    //title
+    .title
+      border-bottom: 1px solid #dadada
+      color: #2c2c2c
+      font-size: 14px
+      line-height: 13px
+      padding-bottom: 11px
+      padding-left: 3px
+      margin-bottom: 15px
+      //desc
+      .desc
+        color: #bdbdbd
+        font-size: 13px
+    //content
+    .content
+
+// -----------------------------
+// Sidebar Multiple
+// -----------------------------
+#sidebar > #multipleselected
+  .select
+    margin-top: 15px
+// -----------------------------
+// NAVIGATION SIDEBAR
+// -----------------------------
+#sidebar > #navigation
+  ul
+    list-style: none
+    li
+      color: #494949
+      font-size: 11px
+      font-weight: bold
+      padding: 0px
+      height: 28px
+      line-height: 28px
+      margin-bottom: 5px
+      cursor: pointer
+      border: 1px solid white
+      @include rounded(4px)
+      &.active,
+      &:hover
+        background-color: #1993f3
+        background-image: -webkit-gradient(linear, left top, left bottom, from(rgb(25, 147, 243)), to(rgb(0, 118, 216)))
+        background-image: -webkit-linear-gradient(top, rgb(25, 147, 243), rgb(0, 118, 216))
+        background-image: -moz-linear-gradient(top, rgb(25, 147, 243), rgb(0, 118, 216))
+        background-image: -o-linear-gradient(top, rgb(25, 147, 243), rgb(0, 118, 216))
+        background-image: -ms-linear-gradient(top, rgb(25, 147, 243), rgb(0, 118, 216))
+        background-image: linear-gradient(top, rgb(25, 147, 243), rgb(0, 118, 216))
+        filter: progid:DXImageTransform.Microsoft.gradient(GradientType=0,StartColorStr='#1993f3', EndColorStr='#0076d8')
+        color: white
+        font-weight: bold
+        border: 1px solid #2b5cbf
+        @include inset-box-shadow(0px, 1px, 0px, #2cadfb)
+        @include text-shadow(0px 1px 0px rgba(0, 0, 0, 0.3))
+      //dropdowns
+      &.drop
+        background-color: #ffffff
+        background-image: -webkit-gradient(linear, left top, left bottom, from(rgb(255, 255, 255)), to(rgb(243, 243, 243)))
+        background-image: -webkit-linear-gradient(top, rgb(255, 255, 255), rgb(243, 243, 243))
+        background-image: -moz-linear-gradient(top, rgb(255, 255, 255), rgb(243, 243, 243))
+        background-image: -o-linear-gradient(top, rgb(255, 255, 255), rgb(243, 243, 243))
+        background-image: -ms-linear-gradient(top, rgb(255, 255, 255), rgb(243, 243, 243))
+        background-image: linear-gradient(top, rgb(255, 255, 255), rgb(243, 243, 243))
+        filter: progid:DXImageTransform.Microsoft.gradient(GradientType=0,StartColorStr='#ffffff', EndColorStr='#f3f3f3')
+        border: 1px solid #c1c1c1
+        @include box-shadow(0px, 1px, 1px, rgba(0, 0, 0, 0.07))
+        &:hover,
+        &.active
+          color: inherit
+          @include text-shadow(0px 0px 0px rgba(0, 0, 0, 0))
+          .icon
+            background-position: initial
+      
+      //elements
+      a
+        height: 100%
+        display: block
+        padding: 0px 10px
+      .counter
+        line-height: 28px
+        float: right
+        display: none
+      
+      //hover icons
+      &:hover,
+      &.active
+        .icon
+          &.all,
+          &.image,
+          &.document,
+          &.other
+            background-position: center -9px
+          &.audio,
+          &.video
+            background-position: center -10px
+      &.drop
+        &:hover,
+        &.active
+          .icon
+            background-position: initial
+      //icons
+      .icon
+        float: left
+        &.all
+          @include image('icon_all.png', no-repeat center top)
+          width: 10px
+          height: 9px
+          margin-top: 9px
+          margin-right: 7px
+          margin-left: 1px
+        &.document,
+        &.other
+          @include image('icon_document.png', no-repeat center top)
+          width: 7px
+          height: 9px
+          margin-top: 9px
+          margin-right: 7px
+          margin-left: 3px
+        &.other
+          @include image('icon_other.png', no-repeat center top)
+        
+        &.video
+          @include image('icon_video.png', no-repeat center top)
+          width: 9px
+          height: 10px
+          margin-top: 9px
+          margin-right: 7px
+          margin-left: 2px
+        &.audio
+          @include image('icon_audio.png', no-repeat center top)
+          width: 10px
+          height: 10px
+          margin-top: 9px
+          margin-right: 7px
+          margin-left: 1px
+        &.image
+          @include image('icon_image.png', no-repeat center top)
+          width: 12px
+          height: 10px
+          margin-top: 9px
+          margin-right: 6px
+
+// -----------------------------
+// FOLDER SIDEBAR
+// -----------------------------
+#sidebar > #folders
+  .button
+    padding: 0px 6px
+    height: 20px
+    line-height: 18px
+    float: right
+    margin-top: -4px
+    &.delete
+      margin-left: 5px
+  input
+    margin-bottom: 11px
+    width: 100%
+    box-sizing: border-box
+
+// -----------------------------
+// MODAL DIALOGS
+// -----------------------------
+.modal
+  //dialog
+  .dialog
+    background: white
+    width: 540px
+    margin: 0px auto
+    @include rounded(4px)
+    margin-top: 100px
+    margin-bottom: 100px
+    @include box-shadow(1px, 1px, 3px, rgba(0, 0, 0, 0.3))
+    .content
+      padding: 20px
+    //bar
+    .bar
+      border-top: 1px solid #c6c6c6
+      padding: 9px 20px
+      background-color: #f7f7f7
+      background-image: -webkit-gradient(linear, left top, left bottom, from(rgb(247, 247, 247)), to(rgb(234, 234, 234)))
+      background-image: -webkit-linear-gradient(top, rgb(247, 247, 247), rgb(234, 234, 234))
+      background-image: -moz-linear-gradient(top, rgb(247, 247, 247), rgb(234, 234, 234))
+      background-image: -o-linear-gradient(top, rgb(247, 247, 247), rgb(234, 234, 234))
+      background-image: -ms-linear-gradient(top, rgb(247, 247, 247), rgb(234, 234, 234))
+      background-image: linear-gradient(top, rgb(247, 247, 247), rgb(234, 234, 234))
+      filter: progid:DXImageTransform.Microsoft.gradient(GradientType=0,StartColorStr='#f7f7f7', EndColorStr='#eaeaea')
+      @include rounded(0px 0px 3px 3px)
+  //overlay
+  .overlay
+    background: rgba(0, 0, 0, 0.7)
+    position:  fixed
+    top: 0px
+    left: 0px
+    width: 100%
+    height: 100%
+    overflow: scroll
+    z-index: 999
+  //dialog content
+  .dialog
+    .title
+      padding-bottom: 10px
+      font-weight: bold
+    .button
+      margin-right: 10px
+      &.right
+        margin-right: 0px
+        margin-left: 10px
+  
+
+// -----------------------------
+// USERS DIALOG
+// -----------------------------
+#users
+  .files
+    @include image('bg_uploader.png', no-repeat center center)
+    padding: 20px
+    border: 1px dashed #b2b2b2
+    @include rounded(4px)
+    min-height: 135px
+  //users container
+  .users
+    max-height: 300px
+    overflow-y: scroll
+    margin-bottom: 20px
+  .search
+    width: 464px
+  //user
+  .user    
+    padding: 5px 0px 5px 0px
+    position: relative
+    border-bottom: 1px solid #f2f2f2
+    .editform
+      display: none
+      margin-left: 35px
+      padding: 5px 0px
+      > *
+        float: left
+      .select
+        width: 60px
+      input
+        height: 24px
+    .avatar
+      width: 25px
+      height: 25px
+    .email
+      line-height: 25px
+      margin-left: 10px
+      .role
+        font-size: 11px
+        color: #BDBDBD
+    .delete
+      @include image("icon_cross_small.png", no-repeat center center, rgba(0, 0, 0, 0.1))
+      width: 14px
+      height: 14px
+      @include rounded(14px)
+      display: inline-block
+      margin-bottom: -3px
+      cursor: pointer
+      position: absolute
+      top: 50%
+      margin-top: -7px
+      right: 25px
+    &:hover
+      background: #F5F5F5
+    &.edit
+      background: #F5F5F5
+      border-bottom-color: #E0E0E0
+      .editform
+        display: block
+    
+// -----------------------------
+// SETTINGS DIALOG
+// -----------------------------
+#settings
+  input
+    width: 478px
+    &[type=checkbox]
+      width: 12px
+      height: 13px
+      display: inline-block
+      margin-right: 3px
+
+  .field
+    &:last-child
+      padding-bottom: 0px
+
+// -----------------------------
+// ACCOUNT DIALOG
+// -----------------------------
+#account
+  .message
+    margin-left: 80px
+  .field
+    margin-left: 80px
+  input
+    width: 398px
+  .avatar_field
+    display: none
+  .editavatar
+    float: left
+    margin-left: 0px
+    padding-bottom: 0px
+    position: relative
+    .button
+      height: 25px
+      line-height: 25px
+      margin: 5px 0px 0px 0px
+    .avatar
+      float: none
+      width: 60px
+    
+// -----------------------------
+// FOOTER
+// -----------------------------  
+#footer
+  .container
+    border-top: 1px solid #e3e3e3
+    padding-top: 20px
+
+// -----------------------------
+// LOGIN SCREEN
+// -----------------------------
+html#login
+  //body
+  body
+    height: 100%
+    @include image('bg_login.png', repeat)
+    //white overlay
+    &:before
+      background-image: -webkit-gradient(linear, left top, left bottom, from(rgba(255, 255, 255, 1.00)), to(rgba(255, 255, 255, 0.00)))
+      background-image: -webkit-linear-gradient(top, rgba(255, 255, 255, 1.00), rgba(255, 255, 255, 0.00))
+      background-image: -moz-linear-gradient(top, rgba(255, 255, 255, 1.00), rgba(255, 255, 255, 0.00))
+      background-image: -o-linear-gradient(top, rgba(255, 255, 255, 1.00), rgba(255, 255, 255, 0.00))
+      background-image: -ms-linear-gradient(top, rgba(255, 255, 255, 1.00), rgba(255, 255, 255, 0.00))
+      background-image: linear-gradient(top, rgba(255, 255, 255, 1.00), rgba(255, 255, 255, 0.00))
+      filter: progid:DXImageTransform.Microsoft.gradient(GradientType=0,StartColorStr='#ffffff', EndColorStr='#ffffff')
+      position: fixed
+      height: 100%
+      content: " "
+      top: 0px
+      left: 0px
+      width: 100%
+      opacity: 0.5
+  //structure
+  #content
+    position: absolute
+    width: 280px
+    height: 177px
+    top: 50%
+    left: 50%
+    margin-top: -88px
+    margin-left: -140px
+    padding: 0px
+    &:before
+      display: none
+    //logo
+    #logo
+      display: table
+      margin: 0px auto 20px auto
+      img,
+      span
+        float: left
+      span
+        font-size: 17px
+        line-height: 23px
+        @include text-shadow(0px 1px 0px #ffffff)
+      img
+        margin-right: 8px
+    //login box
+    .login
+      //inputs
+      input,
+        width: 258px
+        font-size: 12px
+        height: 30px
+        font-size: 13px
+      //inputs
+      input[type=text],
+      input[type=password]
+        line-height: 30px
+        border-color: #d0d0d0
+      > form > .button
+        width: 100%
+        font-weight: bold
+        height: 34px
+        line-height: 33px
+      //individual inputs
+      input#email
+        padding-right: 67px
+        width: 201px
+      input#password
+        padding-right: 50px
+        width: 218px      
+
+// -----------------------------
+// 404
+// -----------------------------      
+html#notfound
+  #content
+    &:before
+      display: none
+  
+  //logo
+  #logo
+    display: table
+    margin: 0px auto 20px auto
+    img,
+    span
+      float: left
+    span
+      font-size: 17px
+      line-height: 23px
+      @include text-shadow(0px 1px 0px #ffffff)
+    img
+      margin-right: 8px
+      
+  .container
+    width: 100%
+    height: 160px
+    position: absolute
+    top: 50%
+    margin-top: -100px
+  h1
+    text-align: center
+    font-size: 40px
+    line-height: 50px
+    font-family: $font-light
+  .button
+    display: table
+    margin: 25px auto 0px auto
+
+// -----------------------------
+// INSTALLER
+// -----------------------------
+html#installer
+  #content
+    &:before
+      display: none
+  //structure
+  #content
+    width: 350px
+    padding: 25px
+    list-style: none
+    background: white
+    border: 1px solid #c1c1c1
+    margin-top: 50px
+    @include box-shadow(0px, 1px, 1px, rgba(0, 0, 0, 0.1))
+    @include rounded(4px)
+    &:before
+      display: none
+    //logo
+    #logo
+      display: table
+      margin: 0px auto 20px auto
+      img,
+      span
+        float: left
+      span
+        font-size: 17px
+        line-height: 23px
+        @include text-shadow(0px 1px 0px #ffffff)
+      img
+        margin-right: 8px
+    //login box
+    .fields
+      //inputs
+      input,
+        width: 328px
+        font-size: 12px
+        height: 30px
+        font-size: 13px
+      //inputs
+      input[type=text],
+      input[type=password]
+        line-height: 30px
+        border-color: #d0d0d0
+      .button
+        width: 100%
+        font-weight: bold
+        height: 34px
+        line-height: 33px
+      .inlinecheck
+        input
+          display: inline
+          width: auto
+          height: 13px
+          margin-right: 6px
+      .upgrade
+        padding-top: 5px
+        padding-bottom: 0px
+        margin-bottom: 20px
+              
+
+// -----------------------------
+// UI ELEMENTS
+// -----------------------------
+
+//Inputs
+input[type=checkbox]
+  margin: 0px 
+input,
+textarea,
+  background: white
+  border: 1px solid #c1c1c1
+  @include box-shadow(0px, 1px, 0px, #ffffff)
+  @include rounded(3px)
+  font-family: inherit
+  font-size: 11px
+  line-height: 26px
+  color: #555555
+  font-size: 11px
+  padding: 0px 10px
+  height: 28px
+  position: relative
+  display: block
+  outline: none
+  @include transition((border linear 0.2s, box-shadow linear 0.2s))
+  &.hidden
+    display: none
+  //search
+  &.search
+    @include image("search.png", no-repeat center right, #ffffff)
+    padding-right: 25px
+  //states
+  &:focus
+    border-color: rgba(34, 121, 204, 0.8) !important
+    outline: 0
+    outline: thin dotted \9
+    @include multiple-box-shadow(inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 4px rgba(34, 121, 204, 0.5))
+input[type=checkbox]
+  border: none
+  padding: 0px
+
+//textarea
+textarea
+  height: 100px
+  padding: 10px
+  line-height: 18px
+  font-size: 12px
+  resize: vertical
+  @include inset-box-shadow(0px, 1px, 2px, rgba(0, 0, 0, 0.1))
+
+//labels
+label
+  display: block
+  font-weight: bold
+  color: #626262
+  @include text-shadow(0px 1px 0px #ffffff)
+  padding-left: 5px
+  padding-bottom: 10px
+  //legend
+  small
+    color: #8c8c8c
+    font-size: inherit
+    font-weight: normal
+    
+.select
+  padding-left: 10px
+  height: 24px
+  line-height: 24px
+  position: relative
+  background-color: #ffffff
+  background-image: -webkit-gradient(linear, left top, left bottom, from(rgb(255, 255, 255)), to(rgb(243, 243, 243)))
+  background-image: -webkit-linear-gradient(top, rgb(255, 255, 255), rgb(243, 243, 243))
+  background-image: -moz-linear-gradient(top, rgb(255, 255, 255), rgb(243, 243, 243))
+  background-image: -o-linear-gradient(top, rgb(255, 255, 255), rgb(243, 243, 243))
+  background-image: -ms-linear-gradient(top, rgb(255, 255, 255), rgb(243, 243, 243))
+  background-image: linear-gradient(top, rgb(255, 255, 255), rgb(243, 243, 243))
+  filter: progid:DXImageTransform.Microsoft.gradient(GradientType=0,StartColorStr='#ffffff', EndColorStr='#f3f3f3')
+  border: 1px solid #c1c1c1
+  @include box-shadow(0px, 1px, 1px, rgba(0, 0, 0, 0.07))
+  @include rounded(3px)
+  span.icon.drop
+    display: block
+    @include image('icon_dropdown.png', no-repeat center center)
+    position: absolute
+    top: 10px
+    right: 10px
+    height: 6px
+    width: 5px
+  select
+    position: absolute
+    width: 100%
+    height: 100%
+    left: 0px
+    top: 0px
+    opacity: 0.01    
+
+//form fields
+.message
+  font-size: 11px
+.field
+  padding-bottom: 15px
+  position: relative
+  //inline actions
+  .action.button
+    position: absolute
+    top: 6px
+    right: 5px
+    line-height: 18px
+    height: 18px
+    padding: 0px 5px
+
+//error
+.error,
+.success
+  text-align: center
+  padding: 10px 0px
+  font-weight: bold
+  color: #D64444
+.success
+  color: #28884E
+
+//Buttons
+.button
+  border: 1px solid #c1c1c1
+  @include rounded(3px)
+  //@include box-shadow(1px, 1px, 2px, rgba(0, 0, 0, 0.05))
+  @include box-shadow(0px, 1px, 0px, white)
+  @include text-shadow(0px 1px 0px #ffffff)
+  font-family: inherit
+  line-height: 27px
+  font-size: 11px
+  color: #555555 !important
+  height: 28px
+  padding: 0px 10px
+  background-color: #ffffff
+  background-image: -webkit-gradient(linear, left top, left bottom, from(rgb(255, 255, 255)), to(rgb(242, 242, 242)))
+  background-image: -webkit-linear-gradient(top, rgb(255, 255, 255), rgb(242, 242, 242))
+  background-image: -moz-linear-gradient(top, rgb(255, 255, 255), rgb(242, 242, 242))
+  background-image: -o-linear-gradient(top, rgb(255, 255, 255), rgb(242, 242, 242))
+  background-image: -ms-linear-gradient(top, rgb(255, 255, 255), rgb(242, 242, 242))
+  background-image: linear-gradient(top, rgb(255, 255, 255), rgb(242, 242, 242))
+  filter: progid:DXImageTransform.Microsoft.gradient(GradientType=0,StartColorStr='#ffffff', EndColorStr='#f2f2f2')
+  cursor: pointer
+  display: inline-block
+  outline: none
+  -webkit-appearance: none
+  -moz-appearance: none
+  appearance: none
+  &.hidden
+    display: none
+  &.small
+    padding: 0px 6px
+    height: 25px
+    line-height: 25px
+  //hover
+  &:hover,
+  &:active,
+  &:focus
+    background-color: #f5f5f5
+    background-image: -webkit-gradient(linear, left top, left bottom, from(rgb(245, 245, 245)), to(rgb(233, 233, 233)))
+    background-image: -webkit-linear-gradient(top, rgb(245, 245, 245), rgb(233, 233, 233))
+    background-image: -moz-linear-gradient(top, rgb(245, 245, 245), rgb(233, 233, 233))
+    background-image: -o-linear-gradient(top, rgb(245, 245, 245), rgb(233, 233, 233))
+    background-image: -ms-linear-gradient(top, rgb(245, 245, 245), rgb(233, 233, 233))
+    background-image: linear-gradient(top, rgb(245, 245, 245), rgb(233, 233, 233))
+    filter: progid:DXImageTransform.Microsoft.gradient(GradientType=0,StartColorStr='#f5f5f5', EndColorStr='#e9e9e9')
+  //blue button
+  &.blue
+    background-color: #1a8ae3
+    background-image: -webkit-gradient(linear, left top, left bottom, from(rgb(26, 138, 227)), to(rgb(28, 120, 195)))
+    background-image: -webkit-linear-gradient(top, rgb(26, 138, 227), rgb(28, 120, 195))
+    background-image: -moz-linear-gradient(top, rgb(26, 138, 227), rgb(28, 120, 195))
+    background-image: -o-linear-gradient(top, rgb(26, 138, 227), rgb(28, 120, 195))
+    background-image: -ms-linear-gradient(top, rgb(26, 138, 227), rgb(28, 120, 195))
+    background-image: linear-gradient(top, rgb(26, 138, 227), rgb(28, 120, 195))
+    filter: progid:DXImageTransform.Microsoft.gradient(GradientType=0,StartColorStr='#1a8ae3', EndColorStr='#1c78c3')
+    border: 1px solid #256bae
+    color: white !important
+    @include text-shadow(0px 1px 0px #185794)
+    //blue hover
+    &:hover,
+    &:focus
+      background-color: #3e9ce7
+      background-image: -webkit-gradient(linear, left top, left bottom, from(rgb(62, 156, 231)), to(rgb(63, 140, 204)))
+      background-image: -webkit-linear-gradient(top, rgb(62, 156, 231), rgb(63, 140, 204))
+      background-image: -moz-linear-gradient(top, rgb(62, 156, 231), rgb(63, 140, 204))
+      background-image: -o-linear-gradient(top, rgb(62, 156, 231), rgb(63, 140, 204))
+      background-image: -ms-linear-gradient(top, rgb(62, 156, 231), rgb(63, 140, 204))
+      background-image: linear-gradient(top, rgb(62, 156, 231), rgb(63, 140, 204))
+      filter: progid:DXImageTransform.Microsoft.gradient(GradientType=0,StartColorStr='#3e9ce7', EndColorStr='#3f8ccc')
+
+//standalone icons
+.icon
+  display: inline-block
+  &.folder
+    @include image('icon_folder.png', no-repeat center 0px)
+    float: left
+    width: 11px
+    height: 9px
+    margin-top: 7px
+    margin-right: 7px
+    margin-left: 1px
+
+  &.gear
+    @include image('icon_gear.png', no-repeat center center)
+    width: 11px
+    height: 11px
+  &.users
+    @include image('icon_users.png', no-repeat center center)
+    width: 11px
+    height: 11px
+  &.logout
+    @include image('icon_logout.png', no-repeat center center)
+    width: 11px
+    height: 11px
+  &.updates
+    @include image('icon_clouddown.png', no-repeat center center)
+    width: 12px
+    height: 10px
+  &.add
+    @include image('icon_add.png', no-repeat center center)
+    width: 9px
+    height: 9px
+    margin-right: -1px
+  &.clip
+    @include image('icon_clip.png', no-repeat center center)
+    float: left
+    margin-top: 6px
+    margin-right: 6px
+    width: 9px
+    height: 10px
+  &.delete
+    @include image("icon_remove.png", no-repeat center center)
+    display: block
+    width: 11px
+    height: 11px
+    margin-top: 4px
+    margin-left: 5px
+  &.twitter
+    @include image("icon_twitter.png", no-repeat center center)
+    width: 23px
+    height: 17px
+    display: block
+    margin-top: 6px
+  &.googleplus
+    @include image("icon_googleplus.png", no-repeat center center)
+    width: 17px
+    height: 16px
+    display: block
+    margin-top: 8px
+  &.facebook
+    @include image("icon_facebook.png", no-repeat center center)
+    width: 8px
+    height: 16px
+    display: block
+    margin-top: 6px
+  &.back
+    @include image("icon_back.png", no-repeat center center)
+    width: 7px
+    height: 6px
+    margin-top: 12px
+    margin-right: 8px
+    display: block
+    float: left
+  &.cloud
+    @include image("icon_cloud.png", no-repeat center center)
+    display: block
+    width: 22px
+    height: 15px
+    margin-top: 7px
+    float: left
+    margin-right: 5px
+
+//progressbar
+.progress
+  .bar
+    width: 100%
+    display: inline-block
+    display: block
+    height: 9px
+    border: 1px solid #aaaaaa
+    @include rounded(6px)
+    padding: 1px
+    border: none
+    @include multiple-box-shadow(inset 0px 1px 0px #cacaca, inset 0px -1px 0px #cacaca)
+    background: #ececec
+    padding: 0px
+    min-width: 40%
+    overflow: hidden
+    background-color: #d9d9d9
+    background-image: -webkit-gradient(linear, left top, left bottom, from(rgb(217, 217, 217)), to(rgb(225, 225, 225)))
+    background-image: -webkit-linear-gradient(top, rgb(217, 217, 217), rgb(225, 225, 225))
+    background-image: -moz-linear-gradient(top, rgb(217, 217, 217), rgb(225, 225, 225))
+    background-image: -o-linear-gradient(top, rgb(217, 217, 217), rgb(225, 225, 225))
+    background-image: -ms-linear-gradient(top, rgb(217, 217, 217), rgb(225, 225, 225))
+    background-image: linear-gradient(top, rgb(217, 217, 217), rgb(225, 225, 225))
+    filter: progid:DXImageTransform.Microsoft.gradient(GradientType=0,StartColorStr='#d9d9d9', EndColorStr='#e1e1e1')
+  
+    .value
+      left: 0
+      background: #aaaaaa
+      height: 100%
+      max-width: 100%
+      display: block
+      width: 0%
+      background-color: #1a8ae3
+      background-image: -webkit-gradient(linear, left top, left bottom, from(rgb(26, 138, 227)), to(rgb(28, 120, 195)))
+      background-image: -webkit-linear-gradient(top, rgb(26, 138, 227), rgb(28, 120, 195))
+      background-image: -moz-linear-gradient(top, rgb(26, 138, 227), rgb(28, 120, 195))
+      background-image: -o-linear-gradient(top, rgb(26, 138, 227), rgb(28, 120, 195))
+      background-image: -ms-linear-gradient(top, rgb(26, 138, 227), rgb(28, 120, 195))
+      background-image: linear-gradient(top, rgb(26, 138, 227), rgb(28, 120, 195))
+      filter: progid:DXImageTransform.Microsoft.gradient(GradientType=0,StartColorStr='#1a8ae3', EndColorStr='#1c78c3')
+      @include rounded(6px 0px 0px 6px)
+      @include transition(width 0.7s)
+      
+  //label
+  .label,
+  .desc
+    display: block
+    width: 100%
+    text-align: center
+    font-size: 12px
+    color: #5c5c5c
+    line-height: 12px
+    padding: 8px 0px
+              
+    
+//avatars
+.avatar
+  overflow: hidden
+  max-width: 60px
+  max-height: 60px
+  width: 45px
+  height: auto
+  position: relative
+  float: left
+  @include rounded(3px)
+  @include box-shadow(0px, 1px, 0px, white)
+  &:before
+    position: absolute
+    top: 0px
+    left: 0px
+    width: 100%
+    height: 100%
+    content: " "
+    z-index: 100
+    @include rounded(3px)
+    @include inset-box-shadow(0px, 0px, 3px, rgba(0, 0, 0, 0.45))
+  //inset shadow fix
+  .shadow
+    display: block
+    width: 100%
+    height: 100%
+    @include rounded(3px)
+    overflow: hidden
+    img
+      max-height: 100%
+      max-width: 100%
+      display: block
+  //notice
+  .notice
+    position: absolute
+    bottom: -18px
+    opacity: 0
+    display: block
+    background: rgba(0, 0, 0, 0.4)
+    color: white
+    font-weight: bold
+    width: 100%
+    font-size: 10px
+    line-height: 15px
+    text-align: center
+    @include text-shadow(0px 1px 0px rgba(0, 0, 0, 0.4))
+    @include rounded(0px 0px 3px 3px)
+    @include transition(all 0.1s ease-in)
+    //notice
+    &.staff,
+    &.admin
+      bottom: 0px
+      opacity: 1
+      background-color: #2279cc
+      background-color: rgba(34, 121, 204, 0.75)
+      font-size: 10px
+      line-height: 15px
+      display: none
+  // inside button
+  .button
+    position: absolute
+    bottom: 0px
+    left: 0px
+    height: 25px
+    line-height: 25px
+    margin: 0px
+  
+  //roles
+  &.staff,
+  &.admin
+    .notice
+      display: block
+      @include transition(all 0.15s)
+  &:hover
+    &.staff,
+    &.admin
+      .notice
+        bottom: -15px
+
+//tooltips
+.tooltip
+  position: relative
+  .tip
+    background: rgba(0, 0, 0, 0.7)
+    background: inherit
+    color: white
+    font-size: 11px
+    line-height: 15px
+    height: 17px
+    padding: 0px 5px
+    position: absolute
+    top: -7px
+    opacity: 0
+    white-space: nowrap
+    border-top-color: inherit
+    @include rounded(3px)
+    @include text-shadow(0px 1px 0px rgba(0, 0, 0, 0.3))
+    &:before
+      content: ""
+      position: absolute
+      z-index: 99
+      top: 17px
+      left: 50%
+      margin-left: -6px
+      border-top: 5px solid rgba(0, 0, 0, 0.7)
+      border-top-color: inherit
+      border-left: 6px solid transparent
+      border-right: 6px solid transparent
+      border-bottom: 0
+    //default
+    &.default
+      background: black
+      &:before
+        border-top-color: black
+        
+// -----------------------------
+// ANIMATIONS
+// -----------------------------
+@-webkit-keyframes popIn
+  0%
+    -webkit-transform: scale(0.1)
+    opacity: 0
+  82%
+    -webkit-transform: scale(1.10)
+    -webkit-animation-timing-function: ease-out
+    opacity: 1
+  100%
+    -webkit-transform: scale(1)
+
+@-webkit-keyframes slideIn
+  0%
+    -webkit-transform: translate(0,-49px)
+    opacity: 0
+  50%
+    -webkit-transform: translate(0,-49px)
+    opacity: 0
+  82%
+    -webkit-transform: translate(0,5px)
+    -webkit-animation-timing-function: ease-out
+    opacity: 1
+  100%
+    -webkit-transform: translate(0,0px)
+
+@keyframes slideIn
+  0%
+    -webkit-transform: translate(0,-49px)
+    opacity: 0
+  50%
+    -webkit-transform: translate(0,-49px)
+    opacity: 0
+  82%
+    -webkit-transform: translate(0,5px)
+    -webkit-animation-timing-function: ease-out
+    opacity: 1
+  100%
+    -webkit-transform: translate(0,0px)    
+
+@-webkit-keyframes shake
+  0%
+    -webkit-transform: translateX(0)
+  25%
+    -webkit-transform: translateX(-10px)
+  50%
+    -webkit-transform: translateX(10px)
+  75%
+    -webkit-transform: translateX(-10px)
+  100%
+    -webkit-transform: translateX(0)
+
+.animated
+  -webkit-animation-fill-mode: both
+  -moz-animation-fill-mode: both
+  -ms-animation-fill-mode: both
+  -o-animation-fill-mode: both
+  animation-fill-mode: both
+  -webkit-animation-duration: 0.3s
+  -moz-animation-duration: 0.3s
+  -ms-animation-duration: 0.3s
+  -o-animation-duration: 0.3s
+  animation-duration: 0.3s
+.shake
+  @include animation(shake)
+.slideIn
+  @include animation(slideIn)
+.popIn
+  @include animation(popIn)
+
+// -----------------------------
+// NEW STYLES
+// -----------------------------
+// top navigation bar
+#topnav
+  background: #ededed
+  
+//navigation sidebar
+#sidebar > #navigation ul li,
+#sidebar > #folders ul li
+  border: none
+  &.active,
+  &:hover
+    background: #0076D8
+    border: none
+    @include box-shadow(0, 0, 0, rgba(0, 0, 0, 0))
+  
+// progress bar
+.progress .bar .value
+  background: #1A8AE3
+  
+// buttons
+.button
+  background: #F2F2F2
+  &:hover
+    background: white
+  &.blue
+    background: #1A8AE3
+    &:hover,
+    &:focus
+      background: #3E9CE7
+      
+//upload button
+#topnav #userbar #upload
+  &:hover
+    .button.blue
+      background: #3E9CE7
+
+// login
+html#login
+  body
+    background: white
+    &:before
+      display: none
+
+// -----------------------------
+// RESPONSIVE
+// -----------------------------
+//@media only screen and (max-device-width: 960px)
+@media only screen and (min-device-width : 320px) and (max-device-width : 480px)
+
+  // structure
+  body
+    padding-bottom: 20px
+  .container
+    width: auto
+  #content
+    &:before
+      display: none
+    #aside
+      float: none
+      margin: 0px
+      width: 100%
+      overflow: hidden
+
+  // topnav
+  #topnav
+    .container
+      padding: 0px 20px
+    #upload
+      display: none
+    #search
+      display: none
+  
+  // sidebar
+  #content
+    padding: 20px
+    #sidebar
+      width: 100%
+      padding: 0px
+      float: none
+  
+  // Uploads
+  #uploads
+    .upload
+      .thumb
+        overflow: visible
+  #uploads .upload
+    float: none
+    margin: 0px auto 20px auto
+    .thumb
+      overflow: visible
+  #uploads .paginator
+    text-align: center
+    padding-top: 20px
+    padding-bottom: 10px
+  
+  // Footer
+  #footer
+    text-align: center
+    
+  // Single upload
+  html#single
+    .uploadcontainer
+      position: initial
+      margin: 0px
+    #content
+      padding: 0px
+    .container
+      width: 100%
+
+// todo improve layout
+@media only screen and (max-device-width: 480px)
+  #uploads .upload
+    float: left
+    width: 48%
+    margin-right: 4%
+    &:nth-child(2n)
+      margin-right: 0px
+
+@media only screen and (max-width: 700px)
+  // Single upload
+  html#single
+
+    .container
+      width: auto
+      margin: 0
+
+    #topnav
+      width: 100%
+      .actions
+        position: initial
+        display: table
+        margin: 0px auto
+        width: auto
+        padding-bottom: 8px
+
+    
+// debug
+#SWFUpload_Console
+  margin: 40px 0px 0px 0px !important
+  width: 100% !important
+  display: block !important

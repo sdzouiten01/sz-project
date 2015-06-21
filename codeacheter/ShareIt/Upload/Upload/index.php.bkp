@@ -1,0 +1,9 @@
+<?php
+
+define('APPPATH', realpath(__DIR__).'/app');
+define('APPDIR', realpath(__DIR__).'/');
+
+/*ROUTES EVERYTHING TO THE BOOT APPLICATION FILE*/
+require APPPATH.'/config/boot.php';
+
+?>

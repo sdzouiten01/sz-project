@@ -1,0 +1,13 @@
+Synopsis et détails
+
+   Pour fêter l'anniversaire d'une école, une cérémonie est organisée au
+   cours de laquelle une capsule temporelle contenant des messages écrits
+   par des enfants 50 ans auparavant est déterrée et ouverte. Chaque
+   enfant emporte chez lui un message, mais celui du petit Caleb est
+   illisible, car il s'agit d'une suite incohérente de chiffres.
+   D'abord amusé, son père, statisticien, essaye de trouver une
+   signification. Horrifié, il découvre peu à peu que chaque séquence de
+   chiffres correspond à la date exacte d'une catastrophe récente.
+   Lorsqu'il comprend que les 3 dernières séquences prophétisent des
+   cataclysmes à venir, une course contre la montre commence.
+
