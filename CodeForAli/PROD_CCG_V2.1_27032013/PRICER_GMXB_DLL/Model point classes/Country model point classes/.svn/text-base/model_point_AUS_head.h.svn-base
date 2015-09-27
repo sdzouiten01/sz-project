@@ -1,0 +1,14 @@
+#pragma once
+
+#define FEE_RP 63
+#define AU_VES_DEF 76
+#define AU_VES_TER 77
+#define AU_ADV_PER 78
+#define AU_ADV_AMT 79
+#define AU_TAX_LIA 80
+#define AU_MIN_WDWL 81
+#define AU_PREM_PAID_THIS_YEAR 82
+#define GMDB_IND 84
+#define SEX_2 108
+#define AGE_VALN_2 109
+#define GMXB_BIRTHDAY_DATE2 124 // ml model change May 2011 birthday date 2

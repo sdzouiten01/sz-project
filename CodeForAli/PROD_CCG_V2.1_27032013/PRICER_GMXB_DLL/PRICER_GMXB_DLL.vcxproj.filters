@@ -1,0 +1,369 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hpp;hxx;hm;inl;inc;xsd</Extensions>
+    </Filter>
+    <Filter Include="Header Files\Model point classes">
+      <UniqueIdentifier>{bf76ef17-9365-4409-9e3a-84a1379f93bb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Model point classes\Country model point classes">
+      <UniqueIdentifier>{b6549c85-3fd5-47e2-9d49-d4df46c0269f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Model point classes\Country model point classes\SWISS">
+      <UniqueIdentifier>{19a01e79-c0d0-4350-babf-d60292c24377}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Model point classes\Country model point classes\LUXEMBOURG">
+      <UniqueIdentifier>{7fb54c74-103b-4db3-96c2-96d2bbd31c8b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Model point classes\Country model point classes\LIE">
+      <UniqueIdentifier>{7e50d773-3aec-4c07-9a95-0a79a6dbca2c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Projection classes">
+      <UniqueIdentifier>{661b3653-58b8-406e-8ddd-a6a12e053545}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Projection classes\Country projection classes">
+      <UniqueIdentifier>{0ae549fa-da04-45d3-9b97-22dd47c42099}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Projection classes\Country projection classes\LUXEMBOURG">
+      <UniqueIdentifier>{a67590f1-5ff0-475d-b550-41ffc8456f0b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Projection classes\Country projection classes\SWISS">
+      <UniqueIdentifier>{99493181-4581-4691-a477-60cf0c3c5a72}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Projection classes\Country projection classes\LIE">
+      <UniqueIdentifier>{3c2f14d6-9ba7-4b2b-9384-86d30db1959d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Projection classes\Guarantee projection classes">
+      <UniqueIdentifier>{92df4a48-ee8a-456d-a5fa-4b0dd7164d04}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Utility classes">
+      <UniqueIdentifier>{5b4a91c1-9f12-45b9-8b33-0825c956262a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Utility classes\Fund Management Classes">
+      <UniqueIdentifier>{79051fcf-58f0-42e0-b159-7372945d06a1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Utility classes\Run Configuration Classes">
+      <UniqueIdentifier>{f5c9e7fc-6652-40a1-b855-b0cb4b51971e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Utility classes\Inforce Management classes">
+      <UniqueIdentifier>{4f4cfd65-c31f-4c55-87d9-92f7654aebd8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Utility classes\Inforce Management classes\Country Stat Inforce">
+      <UniqueIdentifier>{255d83e9-39b2-4dbb-a4c7-c9595e82ecf8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Utility classes\Scenario manager classes">
+      <UniqueIdentifier>{9531a0ad-a145-426c-b7ac-f73da3f0fd11}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Utility classes\Exception and File classes">
+      <UniqueIdentifier>{cae5ad69-11d4-4f94-8e68-1e036a88acd2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Utility classes\Math classes">
+      <UniqueIdentifier>{ca8df228-1165-4327-94da-90453243ecce}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Utility classes\Launch Mode">
+      <UniqueIdentifier>{dcb32a4f-aa9f-4b31-bb66-cf7c59c7e36c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Utility classes\Dispatch Management class">
+      <UniqueIdentifier>{5af1be3c-f45a-47eb-8bf7-982785d921b6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Axagen">
+      <UniqueIdentifier>{f28fd832-ae01-4a53-a4ba-2cbaca473aec}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Summary classes">
+      <UniqueIdentifier>{3a9fb9cc-75c2-45b1-adbf-27659c9d882d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Summary classes\Country summary classes">
+      <UniqueIdentifier>{92b45370-3d72-408f-9027-497cd0fea358}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Aging policies">
+      <UniqueIdentifier>{a2f3df2c-4fed-4e42-8302-5d41d02088dc}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\LSM">
+      <UniqueIdentifier>{75739100-55bf-470b-abe8-5dc488334516}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resource Files">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav</Extensions>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="Interface_dll.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="stdafx.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Utility classes\Fund_Manager.cpp">
+      <Filter>Header Files\Utility classes\Fund Management Classes</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Utility classes\HE_Summary_File_Writer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Interface_dll.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Percentile.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="stdafx.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="targetver.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Utility classes\usefule_function.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Model point classes\Model_Point.h">
+      <Filter>Header Files\Model point classes</Filter>
+    </ClInclude>
+    <ClInclude Include="Model point classes\model_point_head.h">
+      <Filter>Header Files\Model point classes</Filter>
+    </ClInclude>
+    <ClInclude Include="Model point classes\Country model point classes\model_point_BL_RST_SWISS_01.h">
+      <Filter>Header Files\Model point classes\Country model point classes\SWISS</Filter>
+    </ClInclude>
+    <ClInclude Include="Model point classes\Country model point classes\model_point_head_BL_RST_SWISS_01.h">
+      <Filter>Header Files\Model point classes\Country model point classes\SWISS</Filter>
+    </ClInclude>
+    <ClInclude Include="Model point classes\Country model point classes\model_point_BL_LUX_01.h">
+      <Filter>Header Files\Model point classes\Country model point classes\LUXEMBOURG</Filter>
+    </ClInclude>
+    <ClInclude Include="Model point classes\Country model point classes\model_point_head_BL_LUX_01.h">
+      <Filter>Header Files\Model point classes\Country model point classes\LUXEMBOURG</Filter>
+    </ClInclude>
+    <ClInclude Include="Model point classes\Country model point classes\model_point_BL_RST_CH_LIE_01.h">
+      <Filter>Header Files\Model point classes\Country model point classes\LIE</Filter>
+    </ClInclude>
+    <ClInclude Include="Model point classes\Country model point classes\model_point_head_BL_RST_CH_LIE_01.h">
+      <Filter>Header Files\Model point classes\Country model point classes\LIE</Filter>
+    </ClInclude>
+    <ClInclude Include="Projection classes\Country projection classes\head_BL.h">
+      <Filter>Header Files\Projection classes\Country projection classes</Filter>
+    </ClInclude>
+    <ClInclude Include="Projection classes\Country projection classes\head_BL_LUX.h">
+      <Filter>Header Files\Projection classes\Country projection classes\LUXEMBOURG</Filter>
+    </ClInclude>
+    <ClInclude Include="Projection classes\Country projection classes\Projection_BL_LUX_WBD_01.h">
+      <Filter>Header Files\Projection classes\Country projection classes\LUXEMBOURG</Filter>
+    </ClInclude>
+    <ClInclude Include="Projection classes\Country projection classes\Projection_BL_LUX_WBLD_01.h">
+      <Filter>Header Files\Projection classes\Country projection classes\LUXEMBOURG</Filter>
+    </ClInclude>
+    <ClInclude Include="Projection classes\Country projection classes\head_BL_CH.h">
+      <Filter>Header Files\Projection classes\Country projection classes\SWISS</Filter>
+    </ClInclude>
+    <ClInclude Include="Projection classes\Country projection classes\Projection_BL_CH_WB_01.h">
+      <Filter>Header Files\Projection classes\Country projection classes\SWISS</Filter>
+    </ClInclude>
+    <ClInclude Include="Projection classes\Country projection classes\head_BL_LIE.h">
+      <Filter>Header Files\Projection classes\Country projection classes\LIE</Filter>
+    </ClInclude>
+    <ClInclude Include="Projection classes\Country projection classes\Projection_BL_LIE_CH_WB_01.h">
+      <Filter>Header Files\Projection classes\Country projection classes\LIE</Filter>
+    </ClInclude>
+    <ClInclude Include="Projection classes\Guarantee projection classes\Projection.h">
+      <Filter>Header Files\Projection classes\Guarantee projection classes</Filter>
+    </ClInclude>
+    <ClInclude Include="Projection classes\Guarantee projection classes\Projection_AB.h">
+      <Filter>Header Files\Projection classes\Guarantee projection classes</Filter>
+    </ClInclude>
+    <ClInclude Include="Projection classes\Guarantee projection classes\Projection_AB_DB.h">
+      <Filter>Header Files\Projection classes\Guarantee projection classes</Filter>
+    </ClInclude>
+    <ClInclude Include="Projection classes\Guarantee projection classes\Projection_AB_DB_SB.h">
+      <Filter>Header Files\Projection classes\Guarantee projection classes</Filter>
+    </ClInclude>
+    <ClInclude Include="Projection classes\Guarantee projection classes\Projection_DB.h">
+      <Filter>Header Files\Projection classes\Guarantee projection classes</Filter>
+    </ClInclude>
+    <ClInclude Include="Projection classes\Guarantee projection classes\Projection_IB.h">
+      <Filter>Header Files\Projection classes\Guarantee projection classes</Filter>
+    </ClInclude>
+    <ClInclude Include="Projection classes\Guarantee projection classes\Projection_SB.h">
+      <Filter>Header Files\Projection classes\Guarantee projection classes</Filter>
+    </ClInclude>
+    <ClInclude Include="Projection classes\Guarantee projection classes\Projection_WB.h">
+      <Filter>Header Files\Projection classes\Guarantee projection classes</Filter>
+    </ClInclude>
+    <ClInclude Include="Projection classes\Guarantee projection classes\Projection_WB_DB.h">
+      <Filter>Header Files\Projection classes\Guarantee projection classes</Filter>
+    </ClInclude>
+    <ClInclude Include="Projection classes\Guarantee projection classes\Projection_WB_IB.h">
+      <Filter>Header Files\Projection classes\Guarantee projection classes</Filter>
+    </ClInclude>
+    <ClInclude Include="Utility classes\back_ground_final.h">
+      <Filter>Header Files\Utility classes</Filter>
+    </ClInclude>
+    <ClInclude Include="Utility classes\Builder.h">
+      <Filter>Header Files\Utility classes</Filter>
+    </ClInclude>
+    <ClInclude Include="Utility classes\HE_Writter.h">
+      <Filter>Header Files\Utility classes</Filter>
+    </ClInclude>
+    <ClInclude Include="Utility classes\head.h">
+      <Filter>Header Files\Utility classes</Filter>
+    </ClInclude>
+    <ClInclude Include="Utility classes\head_summary_MSO.h">
+      <Filter>Header Files\Utility classes</Filter>
+    </ClInclude>
+    <ClInclude Include="Utility classes\Fund.h">
+      <Filter>Header Files\Utility classes\Fund Management Classes</Filter>
+    </ClInclude>
+    <ClInclude Include="Utility classes\Fund_Manager.h">
+      <Filter>Header Files\Utility classes\Fund Management Classes</Filter>
+    </ClInclude>
+    <ClInclude Include="Utility classes\Product_configuration.h">
+      <Filter>Header Files\Utility classes\Run Configuration Classes</Filter>
+    </ClInclude>
+    <ClInclude Include="Utility classes\Scenario_configuration.h">
+      <Filter>Header Files\Utility classes\Run Configuration Classes</Filter>
+    </ClInclude>
+    <ClInclude Include="Utility classes\Stat_Inforce_Configuration.h">
+      <Filter>Header Files\Utility classes\Run Configuration Classes</Filter>
+    </ClInclude>
+    <ClInclude Include="Utility classes\Summary_configuration.h">
+      <Filter>Header Files\Utility classes\Run Configuration Classes</Filter>
+    </ClInclude>
+    <ClInclude Include="Utility classes\Wildcards_manager.h">
+      <Filter>Header Files\Utility classes\Run Configuration Classes</Filter>
+    </ClInclude>
+    <ClInclude Include="Utility classes\Inforce_Manager.h">
+      <Filter>Header Files\Utility classes\Inforce Management classes</Filter>
+    </ClInclude>
+    <ClInclude Include="Utility classes\Stat_Inforce_Builder.h">
+      <Filter>Header Files\Utility classes\Inforce Management classes</Filter>
+    </ClInclude>
+    <ClInclude Include="Utility classes\Stat_Inforce_Manager.h">
+      <Filter>Header Files\Utility classes\Inforce Management classes</Filter>
+    </ClInclude>
+    <ClInclude Include="Utility classes\Fra_Stat_Inforce_Manager.h">
+      <Filter>Header Files\Utility classes\Inforce Management classes\Country Stat Inforce</Filter>
+    </ClInclude>
+    <ClInclude Include="Utility classes\German_IADB05_Stat_Inforce_Manager.h">
+      <Filter>Header Files\Utility classes\Inforce Management classes\Country Stat Inforce</Filter>
+    </ClInclude>
+    <ClInclude Include="Utility classes\German_Stat_Inforce_Manager.h">
+      <Filter>Header Files\Utility classes\Inforce Management classes\Country Stat Inforce</Filter>
+    </ClInclude>
+    <ClInclude Include="Utility classes\Stat_Inforce_Manager_AUS.h">
+      <Filter>Header Files\Utility classes\Inforce Management classes\Country Stat Inforce</Filter>
+    </ClInclude>
+    <ClInclude Include="Utility classes\Scenario_manager.h">
+      <Filter>Header Files\Utility classes\Scenario manager classes</Filter>
+    </ClInclude>
+    <ClInclude Include="Utility classes\File_Manager.h">
+      <Filter>Header Files\Utility classes\Exception and File classes</Filter>
+    </ClInclude>
+    <ClInclude Include="Utility classes\GMXBException.h">
+      <Filter>Header Files\Utility classes\Exception and File classes</Filter>
+    </ClInclude>
+    <ClInclude Include="Utility classes\GMXBLogger.h">
+      <Filter>Header Files\Utility classes\Exception and File classes</Filter>
+    </ClInclude>
+    <ClInclude Include="Utility classes\Interpolation.h">
+      <Filter>Header Files\Utility classes\Math classes</Filter>
+    </ClInclude>
+    <ClInclude Include="Utility classes\Normal.h">
+      <Filter>Header Files\Utility classes\Math classes</Filter>
+    </ClInclude>
+    <ClInclude Include="Utility classes\Launcher.h">
+      <Filter>Header Files\Utility classes\Launch Mode</Filter>
+    </ClInclude>
+    <ClInclude Include="Utility classes\bucket_list.h">
+      <Filter>Header Files\Utility classes\Dispatch Management class</Filter>
+    </ClInclude>
+    <ClInclude Include="Utility classes\Dispatch_Manager.h">
+      <Filter>Header Files\Utility classes\Dispatch Management class</Filter>
+    </ClInclude>
+    <ClInclude Include="Utility classes\Scenario_list.h">
+      <Filter>Header Files\Utility classes\Dispatch Management class</Filter>
+    </ClInclude>
+    <ClInclude Include="Axagen\InterfaceAxaGen.h">
+      <Filter>Header Files\Axagen</Filter>
+    </ClInclude>
+    <ClInclude Include="Utility classes\Summary_Builder.h">
+      <Filter>Header Files\Summary classes</Filter>
+    </ClInclude>
+    <ClInclude Include="Summary classes\Summary_File_Writer.h">
+      <Filter>Header Files\Summary classes</Filter>
+    </ClInclude>
+    <ClInclude Include="Utility classes\Aging_Policies_configuration.h">
+      <Filter>Header Files\Aging policies</Filter>
+    </ClInclude>
+    <ClInclude Include="Utility classes\fund_for_aging_policies.h">
+      <Filter>Header Files\Aging policies</Filter>
+    </ClInclude>
+    <ClInclude Include="Utility classes\inforces_AP.h">
+      <Filter>Header Files\Aging policies</Filter>
+    </ClInclude>
+    <ClInclude Include="Utility classes\MP_AP_BOM.h">
+      <Filter>Header Files\Aging policies</Filter>
+    </ClInclude>
+    <ClInclude Include="Utility classes\MP_AP_BOM_no_LD.h">
+      <Filter>Header Files\Aging policies</Filter>
+    </ClInclude>
+    <ClInclude Include="Utility classes\MP_AP_EOM.h">
+      <Filter>Header Files\Aging policies</Filter>
+    </ClInclude>
+    <ClInclude Include="Utility classes\MP_AP_EOM_no_NB.h">
+      <Filter>Header Files\Aging policies</Filter>
+    </ClInclude>
+    <ClInclude Include="LSM\ITM_for_LS_Boundary.h">
+      <Filter>Header Files\LSM</Filter>
+    </ClInclude>
+    <ClInclude Include="LSM\Longstaff_Boundary.h">
+      <Filter>Header Files\LSM</Filter>
+    </ClInclude>
+    <ClInclude Include="LSM\Regression.h">
+      <Filter>Header Files\LSM</Filter>
+    </ClInclude>
+    <ClInclude Include="Model point classes\Country model point classes\model_point_BL_RS_CH_LIE_01.h">
+      <Filter>Header Files\Model point classes\Country model point classes\LIE</Filter>
+    </ClInclude>
+    <ClInclude Include="Model point classes\Country model point classes\model_point_head_BL_RS_CH_LIE_01.h">
+      <Filter>Header Files\Model point classes\Country model point classes\LIE</Filter>
+    </ClInclude>
+    <ClInclude Include="Projection classes\Country projection classes\Projection_BL_LIE_CH_WBL_01.h">
+      <Filter>Header Files\Projection classes\Country projection classes\LIE</Filter>
+    </ClInclude>
+    <ClInclude Include="Projection classes\Country projection classes\head_BL_LIE_RS_CHF.h">
+      <Filter>Header Files\Projection classes\Country projection classes\LIE</Filter>
+    </ClInclude>
+    <ClInclude Include="Projection classes\Country projection classes\head_BL_LIE_RST_DEIT.h">
+      <Filter>Header Files\Projection classes\Country projection classes\LIE</Filter>
+    </ClInclude>
+    <ClInclude Include="Projection classes\Country projection classes\Projection_BL_LIE_DEIT_WBD_01.h">
+      <Filter>Header Files\Projection classes\Country projection classes\LIE</Filter>
+    </ClInclude>
+    <ClInclude Include="Model point classes\Country model point classes\model_point_BL_RST_DEIT_LIE_01.h">
+      <Filter>Header Files\Model point classes\Country model point classes\LIE</Filter>
+    </ClInclude>
+    <ClInclude Include="Model point classes\Country model point classes\model_point_head_BL_RST_DEIT_LIE_01.h">
+      <Filter>Header Files\Model point classes\Country model point classes\LIE</Filter>
+    </ClInclude>
+    <ClInclude Include="Model point classes\Country model point classes\model_point_BL_RS_DE_LIE_01.h">
+      <Filter>Header Files\Model point classes\Country model point classes\LIE</Filter>
+    </ClInclude>
+    <ClInclude Include="Model point classes\Country model point classes\model_point_head_BL_RS_DE_LIE_01.h">
+      <Filter>Header Files\Model point classes\Country model point classes\LIE</Filter>
+    </ClInclude>
+    <ClInclude Include="Projection classes\Country projection classes\head_BL_LIE_RS_DE.h">
+      <Filter>Header Files\Projection classes\Country projection classes\LIE</Filter>
+    </ClInclude>
+    <ClInclude Include="Projection classes\Country projection classes\Projection_BL_LIE_DE_WBDL_01.h">
+      <Filter>Header Files\Projection classes\Country projection classes\LIE</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="VTune\PRICER_GMXB_DLL.vpj" />
+  </ItemGroup>
+</Project>

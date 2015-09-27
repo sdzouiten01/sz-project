@@ -1,0 +1,790 @@
+<?xml version="1.0" encoding="Windows-1252"?>
+<VisualStudioProject
+	ProjectType="Visual C++"
+	Version="9.00"
+	Name="PRICER_GMXB_DLL"
+	ProjectGUID="{4BAA6115-A2DF-4EC3-9177-CAC2C1916CC6}"
+	RootNamespace="PRICER_GMXB_DLL"
+	Keyword="Win32Proj"
+	TargetFrameworkVersion="131072"
+	>
+	<Platforms>
+		<Platform
+			Name="Win32"
+		/>
+	</Platforms>
+	<ToolFiles>
+	</ToolFiles>
+	<Configurations>
+		<Configuration
+			Name="Debug|Win32"
+			OutputDirectory="$(SolutionDir)$(ConfigurationName)"
+			IntermediateDirectory="$(ConfigurationName)"
+			ConfigurationType="2"
+			UseOfMFC="1"
+			CharacterSet="0"
+			ManagedExtensions="0"
+			>
+			<Tool
+				Name="VCPreBuildEventTool"
+			/>
+			<Tool
+				Name="VCCustomBuildTool"
+			/>
+			<Tool
+				Name="VCXMLDataGeneratorTool"
+			/>
+			<Tool
+				Name="VCWebServiceProxyGeneratorTool"
+			/>
+			<Tool
+				Name="VCMIDLTool"
+			/>
+			<Tool
+				Name="VCCLCompilerTool"
+				Optimization="0"
+				EnableIntrinsicFunctions="true"
+				WholeProgramOptimization="true"
+				AdditionalIncludeDirectories="&quot;$(SolutionDir)AHS_PARSER&quot;;&quot;$(SolutionDir)ScenarioGenerator(v2)&quot;;&quot;$(SolutionDir)Calibration&quot;"
+				PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS;_USRDLL;PRICER_GMXB_DLL_EXPORTS"
+				MinimalRebuild="false"
+				BasicRuntimeChecks="0"
+				RuntimeLibrary="1"
+				EnableFunctionLevelLinking="true"
+				UsePrecompiledHeader="0"
+				WarningLevel="4"
+				DebugInformationFormat="3"
+			/>
+			<Tool
+				Name="VCManagedResourceCompilerTool"
+			/>
+			<Tool
+				Name="VCResourceCompilerTool"
+			/>
+			<Tool
+				Name="VCPreLinkEventTool"
+			/>
+			<Tool
+				Name="VCLinkerTool"
+				LinkIncremental="2"
+				GenerateDebugInformation="true"
+				AssemblyDebug="1"
+				SubSystem="2"
+				TargetMachine="1"
+			/>
+			<Tool
+				Name="VCALinkTool"
+			/>
+			<Tool
+				Name="VCManifestTool"
+			/>
+			<Tool
+				Name="VCXDCMakeTool"
+			/>
+			<Tool
+				Name="VCBscMakeTool"
+			/>
+			<Tool
+				Name="VCFxCopTool"
+			/>
+			<Tool
+				Name="VCAppVerifierTool"
+			/>
+			<Tool
+				Name="VCPostBuildEventTool"
+			/>
+		</Configuration>
+		<Configuration
+			Name="Release|Win32"
+			OutputDirectory="$(SolutionDir)$(ConfigurationName)"
+			IntermediateDirectory="$(ConfigurationName)"
+			ConfigurationType="2"
+			UseOfMFC="1"
+			CharacterSet="0"
+			ManagedExtensions="0"
+			WholeProgramOptimization="1"
+			>
+			<Tool
+				Name="VCPreBuildEventTool"
+			/>
+			<Tool
+				Name="VCCustomBuildTool"
+			/>
+			<Tool
+				Name="VCXMLDataGeneratorTool"
+			/>
+			<Tool
+				Name="VCWebServiceProxyGeneratorTool"
+			/>
+			<Tool
+				Name="VCMIDLTool"
+			/>
+			<Tool
+				Name="VCCLCompilerTool"
+				Optimization="3"
+				EnableIntrinsicFunctions="true"
+				AdditionalIncludeDirectories="&quot;$(SolutionDir)AHS_PARSER&quot;;&quot;$(SolutionDir)ScenarioGenerator(v2)&quot;;&quot;$(SolutionDir)Calibration&quot;"
+				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS;_USRDLL;PRICER_GMXB_DLL_EXPORTS"
+				ExceptionHandling="1"
+				RuntimeLibrary="0"
+				EnableFunctionLevelLinking="true"
+				UsePrecompiledHeader="0"
+				WarningLevel="4"
+				DebugInformationFormat="3"
+				DisableSpecificWarnings="4996;4250;4503"
+			/>
+			<Tool
+				Name="VCManagedResourceCompilerTool"
+			/>
+			<Tool
+				Name="VCResourceCompilerTool"
+			/>
+			<Tool
+				Name="VCPreLinkEventTool"
+			/>
+			<Tool
+				Name="VCLinkerTool"
+				LinkIncremental="1"
+				IgnoreDefaultLibraryNames=""
+				GenerateDebugInformation="true"
+				SubSystem="2"
+				OptimizeReferences="2"
+				EnableCOMDATFolding="2"
+				TargetMachine="1"
+			/>
+			<Tool
+				Name="VCALinkTool"
+			/>
+			<Tool
+				Name="VCManifestTool"
+			/>
+			<Tool
+				Name="VCXDCMakeTool"
+			/>
+			<Tool
+				Name="VCBscMakeTool"
+			/>
+			<Tool
+				Name="VCFxCopTool"
+			/>
+			<Tool
+				Name="VCAppVerifierTool"
+			/>
+			<Tool
+				Name="VCPostBuildEventTool"
+			/>
+		</Configuration>
+	</Configurations>
+	<References>
+	</References>
+	<Files>
+		<Filter
+			Name="Source Files"
+			Filter="cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx"
+			UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}"
+			>
+			<File
+				RelativePath=".\Interface_dll.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\stdafx.cpp"
+				>
+			</File>
+		</Filter>
+		<Filter
+			Name="Header Files"
+			Filter="h;hpp;hxx;hm;inl;inc;xsd"
+			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}"
+			>
+			<File
+				RelativePath=".\Utility classes\HE_Summary_File_Writer.h"
+				>
+			</File>
+			<File
+				RelativePath=".\Interface_dll.h"
+				>
+			</File>
+			<File
+				RelativePath=".\Percentile.h"
+				>
+			</File>
+			<File
+				RelativePath=".\stdafx.h"
+				>
+			</File>
+			<File
+				RelativePath=".\targetver.h"
+				>
+			</File>
+			<File
+				RelativePath=".\Utility classes\usefule_function.h"
+				>
+			</File>
+			<Filter
+				Name="Model point classes"
+				>
+				<File
+					RelativePath=".\Model point classes\Model_Point.h"
+					>
+				</File>
+				<File
+					RelativePath=".\Model point classes\model_point_head.h"
+					>
+				</File>
+				<Filter
+					Name="Country model point classes"
+					>
+					<File
+						RelativePath=".\Model point classes\Country model point classes\Model_Point_AGD_UK_AB.h"
+						>
+					</File>
+					<File
+						RelativePath=".\Model point classes\Country model point classes\Model_Point_AGD_UK_WB.h"
+						>
+					</File>
+					<File
+						RelativePath=".\Model point classes\Country model point classes\Model_Point_AGD_WB.h"
+						>
+					</File>
+					<File
+						RelativePath=".\Model point classes\Country model point classes\Model_Point_AUS.h"
+						>
+					</File>
+					<File
+						RelativePath=".\Model point classes\Country model point classes\model_point_AUS_head.h"
+						>
+					</File>
+					<File
+						RelativePath=".\Model point classes\Country model point classes\Model_Point_BEL_WB.h"
+						>
+					</File>
+					<File
+						RelativePath=".\Model point classes\Country model point classes\model_point_DEU.h"
+						>
+					</File>
+					<File
+						RelativePath=".\Model point classes\Country model point classes\model_point_DEU_IADB05.h"
+						>
+					</File>
+					<File
+						RelativePath=".\Model point classes\Country model point classes\Model_Point_FRA.h"
+						>
+					</File>
+					<File
+						RelativePath=".\Model point classes\Country model point classes\Model_Point_FRC.h"
+						>
+					</File>
+					<File
+						RelativePath=".\Model point classes\Country model point classes\model_point_head_AGD_UK_AB.h"
+						>
+					</File>
+					<File
+						RelativePath=".\Model point classes\Country model point classes\model_point_head_AGD_UK_WB.h"
+						>
+					</File>
+					<File
+						RelativePath=".\Model point classes\Country model point classes\model_point_head_AGD_WB.h"
+						>
+					</File>
+					<File
+						RelativePath=".\Model point classes\Country model point classes\model_point_head_BEL_WB.h"
+						>
+					</File>
+					<File
+						RelativePath=".\Model point classes\Country model point classes\model_point_head_DEU.h"
+						>
+					</File>
+					<File
+						RelativePath=".\Model point classes\Country model point classes\model_point_head_FRC.h"
+						>
+					</File>
+				</Filter>
+			</Filter>
+			<Filter
+				Name="Projection classes"
+				>
+				<Filter
+					Name="Country projection classes"
+					>
+					<File
+						RelativePath=".\Projection classes\Country projection classes\head_AGD_UK.h"
+						>
+					</File>
+					<File
+						RelativePath=".\Projection classes\Country projection classes\head_AUS.h"
+						>
+					</File>
+					<File
+						RelativePath=".\Projection classes\Country projection classes\head_CHE_WB.h"
+						>
+					</File>
+					<File
+						RelativePath=".\Projection classes\Country projection classes\head_DEU.h"
+						>
+					</File>
+					<File
+						RelativePath=".\Projection classes\Country projection classes\head_DEU_05.h"
+						>
+					</File>
+					<File
+						RelativePath=".\Projection classes\Country projection classes\Projection_AGD_AB_DB.h"
+						>
+					</File>
+					<File
+						RelativePath=".\Projection classes\Country projection classes\Projection_AGD_ESP_AB_DB.h"
+						>
+					</File>
+					<File
+						RelativePath=".\Projection classes\Country projection classes\Projection_AGD_ESP_WB_DB.h"
+						>
+					</File>
+					<File
+						RelativePath=".\Projection classes\Country projection classes\Projection_AGD_UK_AB_DB.h"
+						>
+					</File>
+					<File
+						RelativePath=".\Projection classes\Country projection classes\Projection_AGD_UK_WB_DB.h"
+						>
+					</File>
+					<File
+						RelativePath=".\Projection classes\Country projection classes\Projection_AGD_WB_DB.h"
+						>
+					</File>
+					<File
+						RelativePath=".\Projection classes\Country projection classes\Projection_AUS.h"
+						>
+					</File>
+					<File
+						RelativePath=".\Projection classes\Country projection classes\Projection_AUS_AB.h"
+						>
+					</File>
+					<File
+						RelativePath=".\Projection classes\Country projection classes\Projection_AUS_AB_2.h"
+						>
+					</File>
+					<File
+						RelativePath=".\Projection classes\Country projection classes\Projection_AUS_AB_R.h"
+						>
+					</File>
+					<File
+						RelativePath=".\Projection classes\Country projection classes\Projection_AUS_WB.h"
+						>
+					</File>
+					<File
+						RelativePath=".\Projection classes\Country projection classes\Projection_AUS_WB_DB_SB.h"
+						>
+					</File>
+					<File
+						RelativePath=".\Projection classes\Country projection classes\Projection_AUS_WB_DB_SB_2.h"
+						>
+					</File>
+					<File
+						RelativePath=".\Projection classes\Country projection classes\Projection_BEL_WB_DB.h"
+						>
+					</File>
+					<File
+						RelativePath=".\Projection classes\Country projection classes\Projection_CHE_AB_DB_SB.h"
+						>
+					</File>
+					<File
+						RelativePath=".\Projection classes\Country projection classes\Projection_CHE_WB.h"
+						>
+					</File>
+					<File
+						RelativePath=".\Projection classes\Country projection classes\Projection_CHN_AB.h"
+						>
+					</File>
+					<File
+						RelativePath=".\Projection classes\Country projection classes\Projection_DEU_AB_IB.h"
+						>
+					</File>
+					<File
+						RelativePath=".\Projection classes\Country projection classes\Projection_DEU_AB_IB_2.h"
+						>
+					</File>
+					<File
+						RelativePath=".\Projection classes\Country projection classes\Projection_DEU_AB_IB_2_Monthly.h"
+						>
+					</File>
+					<File
+						RelativePath=".\Projection classes\Country projection classes\Projection_DEU_AB_IB_DB_05.h"
+						>
+					</File>
+					<File
+						RelativePath=".\Projection classes\Country projection classes\Projection_DEU_AB_IB_DB_05_Monthly.h"
+						>
+					</File>
+					<File
+						RelativePath=".\Projection classes\Country projection classes\Projection_DEU_AB_IB_Monthly.h"
+						>
+					</File>
+					<File
+						RelativePath=".\Projection classes\Country projection classes\Projection_DEU_DB_IB.h"
+						>
+					</File>
+					<File
+						RelativePath=".\Projection classes\Country projection classes\Projection_DEU_DB_IB_2.h"
+						>
+					</File>
+					<File
+						RelativePath=".\Projection classes\Country projection classes\Projection_DEU_DB_IB_2_Monthly.h"
+						>
+					</File>
+					<File
+						RelativePath=".\Projection classes\Country projection classes\Projection_DEU_DB_IB_Monthly.h"
+						>
+					</File>
+					<File
+						RelativePath=".\Projection classes\Country projection classes\Projection_FRA_WB.h"
+						>
+					</File>
+					<File
+						RelativePath=".\Projection classes\Country projection classes\Projection_FRC_WB_IB.h"
+						>
+					</File>
+					<File
+						RelativePath=".\Projection classes\Country projection classes\Projection_HKG_AB_DB.h"
+						>
+					</File>
+					<File
+						RelativePath=".\Projection classes\Country projection classes\Projection_JPA_WB_DB.h"
+						>
+					</File>
+					<File
+						RelativePath=".\Projection classes\Country projection classes\Projection_JPN.h"
+						>
+					</File>
+					<File
+						RelativePath=".\Projection classes\Country projection classes\Projection_JPN_AB_DB.h"
+						>
+					</File>
+					<File
+						RelativePath=".\Projection classes\Country projection classes\Projection_JPN_WB_DB.h"
+						>
+					</File>
+					<File
+						RelativePath=".\Projection classes\Country projection classes\Projection_JPN_WB_DB_01.h"
+						>
+					</File>
+					<File
+						RelativePath=".\Projection classes\Country projection classes\Projection_JPN_WB_DB_02.h"
+						>
+					</File>
+					<File
+						RelativePath=".\Projection classes\Country projection classes\Projection_MED_REGION_AB_DB.h"
+						>
+					</File>
+					<File
+						RelativePath=".\Projection classes\Country projection classes\Projection_MED_REGION_WB_DB.h"
+						>
+					</File>
+				</Filter>
+				<Filter
+					Name="Guarantee projection classes"
+					>
+					<File
+						RelativePath=".\Projection classes\Guarantee projection classes\Projection.h"
+						>
+					</File>
+					<File
+						RelativePath=".\Projection classes\Guarantee projection classes\Projection_AB.h"
+						>
+					</File>
+					<File
+						RelativePath=".\Projection classes\Guarantee projection classes\Projection_AB_DB.h"
+						>
+					</File>
+					<File
+						RelativePath=".\Projection classes\Guarantee projection classes\Projection_AB_DB_SB.h"
+						>
+					</File>
+					<File
+						RelativePath=".\Projection classes\Guarantee projection classes\Projection_DB.h"
+						>
+					</File>
+					<File
+						RelativePath=".\Projection classes\Guarantee projection classes\Projection_IB.h"
+						>
+					</File>
+					<File
+						RelativePath=".\Projection classes\Guarantee projection classes\Projection_SB.h"
+						>
+					</File>
+					<File
+						RelativePath=".\Projection classes\Guarantee projection classes\Projection_WB.h"
+						>
+					</File>
+					<File
+						RelativePath=".\Projection classes\Guarantee projection classes\Projection_WB_DB.h"
+						>
+					</File>
+					<File
+						RelativePath=".\Projection classes\Guarantee projection classes\Projection_WB_IB.h"
+						>
+					</File>
+				</Filter>
+			</Filter>
+			<Filter
+				Name="Utility classes"
+				>
+				<File
+					RelativePath=".\Utility classes\back_ground_final.h"
+					>
+				</File>
+				<File
+					RelativePath=".\Utility classes\Builder.h"
+					>
+				</File>
+				<File
+					RelativePath=".\Utility classes\HE_Writter.h"
+					>
+				</File>
+				<File
+					RelativePath=".\Utility classes\head.h"
+					>
+				</File>
+				<File
+					RelativePath=".\Utility classes\head_summary_MSO.h"
+					>
+				</File>
+				<Filter
+					Name="Fund Management Classes"
+					>
+					<File
+						RelativePath=".\Utility classes\Fund.h"
+						>
+					</File>
+					<File
+						RelativePath=".\Utility classes\Fund_Manager.cpp"
+						>
+					</File>
+					<File
+						RelativePath=".\Utility classes\Fund_Manager.h"
+						>
+					</File>
+				</Filter>
+				<Filter
+					Name="Run Configuration Classes"
+					>
+					<File
+						RelativePath=".\Utility classes\Product_configuration.h"
+						>
+					</File>
+					<File
+						RelativePath=".\Utility classes\Scenario_configuration.h"
+						>
+					</File>
+					<File
+						RelativePath=".\Utility classes\Stat_Inforce_Configuration.h"
+						>
+					</File>
+					<File
+						RelativePath=".\Utility classes\Summary_configuration.h"
+						>
+					</File>
+					<File
+						RelativePath=".\Utility classes\Wildcards_manager.h"
+						>
+					</File>
+				</Filter>
+				<Filter
+					Name="Inforce Management classes"
+					>
+					<File
+						RelativePath=".\Utility classes\Inforce_Manager.h"
+						>
+					</File>
+					<File
+						RelativePath=".\Utility classes\Stat_Inforce_Builder.h"
+						>
+					</File>
+					<File
+						RelativePath=".\Utility classes\Stat_Inforce_Manager.h"
+						>
+					</File>
+					<Filter
+						Name="Country Stat Inforce"
+						>
+						<File
+							RelativePath=".\Utility classes\Fra_Stat_Inforce_Manager.h"
+							>
+						</File>
+						<File
+							RelativePath=".\Utility classes\German_IADB05_Stat_Inforce_Manager.h"
+							>
+						</File>
+						<File
+							RelativePath=".\Utility classes\German_Stat_Inforce_Manager.h"
+							>
+						</File>
+						<File
+							RelativePath=".\Utility classes\Stat_Inforce_Manager_AUS.h"
+							>
+						</File>
+					</Filter>
+				</Filter>
+				<Filter
+					Name="Scenario manager classes"
+					>
+					<File
+						RelativePath=".\Utility classes\Scenario_manager.h"
+						>
+					</File>
+				</Filter>
+				<Filter
+					Name="Exception and File classes"
+					>
+					<File
+						RelativePath=".\Utility classes\File_Manager.h"
+						>
+					</File>
+					<File
+						RelativePath=".\Utility classes\GMXBException.h"
+						>
+					</File>
+					<File
+						RelativePath=".\Utility classes\GMXBLogger.h"
+						>
+					</File>
+				</Filter>
+				<Filter
+					Name="Math classes"
+					>
+					<File
+						RelativePath=".\Utility classes\Interpolation.h"
+						>
+					</File>
+					<File
+						RelativePath=".\Utility classes\Normal.h"
+						>
+					</File>
+				</Filter>
+				<Filter
+					Name="Launch Mode"
+					>
+					<File
+						RelativePath=".\Utility classes\Launcher.h"
+						>
+					</File>
+				</Filter>
+				<Filter
+					Name="Dispatch Management class"
+					>
+					<File
+						RelativePath=".\Utility classes\bucket_list.h"
+						>
+					</File>
+					<File
+						RelativePath=".\Utility classes\Dispatch_Manager.h"
+						>
+					</File>
+					<File
+						RelativePath=".\Utility classes\Scenario_list.h"
+						>
+					</File>
+				</Filter>
+			</Filter>
+			<Filter
+				Name="Axagen"
+				>
+				<File
+					RelativePath=".\Axagen\InterfaceAxaGen.h"
+					>
+				</File>
+			</Filter>
+			<Filter
+				Name="Summary classes"
+				>
+				<File
+					RelativePath=".\Utility classes\Germany_HE_Summary_File_Writer.h"
+					>
+				</File>
+				<File
+					RelativePath=".\Utility classes\Summary_Builder.h"
+					>
+				</File>
+				<File
+					RelativePath=".\Summary classes\Summary_File_Writer.h"
+					>
+				</File>
+				<Filter
+					Name="Country summary classes"
+					>
+					<File
+						RelativePath=".\Summary classes\Country summary classes\Agd_uk_ab_Summary_File_Writer.h"
+						>
+					</File>
+					<File
+						RelativePath=".\Summary classes\Country summary classes\Agd_uk_wb_Summary_File_Writer.h"
+						>
+					</File>
+					<File
+						RelativePath=".\Summary classes\Country summary classes\Germany_Summary_File_Writer.h"
+						>
+					</File>
+				</Filter>
+			</Filter>
+			<Filter
+				Name="Aging policies"
+				>
+				<File
+					RelativePath=".\Utility classes\Aging_Policies_configuration.h"
+					>
+				</File>
+				<File
+					RelativePath=".\Utility classes\fund_for_aging_policies.h"
+					>
+				</File>
+				<File
+					RelativePath=".\Utility classes\inforces_AP.h"
+					>
+				</File>
+				<File
+					RelativePath=".\Utility classes\MP_AP_BOM.h"
+					>
+				</File>
+				<File
+					RelativePath=".\Utility classes\MP_AP_BOM_no_LD.h"
+					>
+				</File>
+				<File
+					RelativePath=".\Utility classes\MP_AP_EOM.h"
+					>
+				</File>
+				<File
+					RelativePath=".\Utility classes\MP_AP_EOM_no_NB.h"
+					>
+				</File>
+			</Filter>
+			<Filter
+				Name="LSM"
+				>
+				<File
+					RelativePath=".\LSM\ITM_for_LS_Boundary.h"
+					>
+				</File>
+				<File
+					RelativePath=".\LSM\Longstaff_Boundary.h"
+					>
+				</File>
+				<File
+					RelativePath=".\LSM\Regression.h"
+					>
+				</File>
+			</Filter>
+		</Filter>
+		<Filter
+			Name="Resource Files"
+			Filter="rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav"
+			UniqueIdentifier="{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}"
+			>
+		</Filter>
+		<File
+			RelativePath=".\VTune\PRICER_GMXB_DLL.vpj"
+			>
+		</File>
+	</Files>
+	<Globals>
+	</Globals>
+</VisualStudioProject>

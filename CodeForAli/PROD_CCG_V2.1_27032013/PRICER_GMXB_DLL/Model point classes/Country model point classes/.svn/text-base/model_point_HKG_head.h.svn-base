@@ -1,0 +1,4 @@
+#pragma once
+#define HKG_POL_M_FEE 83
+#define HKG_GMDB_INDIC 84
+#define HKG_POLICY_TYPE 85

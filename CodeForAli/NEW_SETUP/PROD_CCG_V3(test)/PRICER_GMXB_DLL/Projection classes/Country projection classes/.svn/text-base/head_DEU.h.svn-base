@@ -1,0 +1,513 @@
+#pragma once
+
+///////////////////////////////////////////////// Begining timing items constants
+#define	AGE_LAST_DEU	0
+#define	POL_YEAR_DEU	1
+#define	GMIB_AX_GUAR_DEU	2
+#define DEATH_R	3
+#define	PAID_UP_BASE_BEF 4
+#define	LAPSE_BASE_BEF 5
+#define	LAPSE_BASE 6
+#define	PAID_UP_BASE 7
+#define	INSTANT_LAPSE_PAID_UP 8
+#define	GROSS_PREMIUM_BEF 9
+#define	ADMIN_CHG_PREMIUM_BEF 10
+#define	ACQUI_CHARGE_PREMIUM_BEF 11
+#define	FIXED_FEE_PREMIUM_BEF 12
+#define	HEDGE_FEE_PREMIUM_BEF 13
+#define	HEDGE_FEE_SUM_PREMIUM_BEF 14
+#define	NET_PREMIUM_BEF 15
+#define	PV_NOT_AMORT_COMMISSIONS_BEF 16
+#define	PV_AMORT_COMMISSIONS_BEF 17
+#define	ROLL_UP 18
+#define	BASE_GUAR_IB_BEF 19
+#define	BASE_GUAR_ADD_IB_BEF 20
+#define	BASE_GUAR_DB_BEF 21
+
+#define	SURVIVAL_AFTER_PAID_UP 22
+#define	LAPSE_AFTER_PAID_UP 23
+#define	TREND_PORT_PAID_UP_POLICIES 24
+#define	TREND_INVERSE 25
+#define	IFD_ROLL_UP_RATE_BEF_PAID_UP 26
+#define	IFD_ROLL_UP_RATE_AFTER_PAID_UP 27
+#define	NET_PREM_BB_EXCLU_FIXED_FEES 28
+#define	NET_PREM_INCLUD_FIXED_FEES 29
+#define	IB_PAID_UP 30
+
+#define GROSS_STATE_BONUS 31 //Riester
+#define GROSS_BONUS_BEF	32 //Riester
+#define ADMIN_CHG_BONUS_BEF	33 //Riester
+#define ACQUI_CHARGE_BONUS_BEF	34 //Riester
+#define FIXED_FEES_BONUS_BEF	35 //Riester
+#define HEDGE_FEES_BONUS_BEF	36 //Riester
+#define HEDGE_FEES_SUM_PREM_BONUS_BEF	37 //Riester
+#define NET_BONUS_BEF	38 //Riester
+#define BASE_GUAR_AB_BEF	39 //Riester
+#define GROSS_PREM_BB 40//Riester
+#define GROSS_BONUS_BB 41//Riester
+#define NET_BONUS_BB_EXCLU_FIXED_FEES 42 //Riester
+#define NET_BONUS_INCLUD_FIXED_FEES 43//Riester
+#define AB_PAID_UP 44//Riester
+
+
+#define	GMIB_AX_GUAR_ANN_FACT	45 //Riester 08
+#define GMIB_AX_GUAR_REDUCED    46 //Private2010
+
+#define BASE_GUAR_ADD_DB_BEF    47 //Private2010
+#define PAID_PREMIUM_T 48  //Private2010
+#define BASE_GUAR_ADD_AB_BEF 49  //Private2010
+
+#define BASE_SUM_PREM_BEF 50
+#define BASE_SUM_PREM_ADD_BEF 51
+
+#define TOTAL_TIMING_ITEMS_DEU 52 //Number of timing items  columns
+
+/////////////////////////////////////////////// End timing items constants 
+
+
+///////////////////////////////////////////////// Begining main proj array 
+#define TEN_YEAR_INTEREST_RATE	0
+#define FUND_RETURN	1
+#define DISCOUNT_FACTOR_MA	2
+#define GMIB_AX_CURR_DEU	3
+#define GMIB_AX_CURR_MARGIN	4
+
+#define GROSS_PREMIUM 5
+#define ADMIN_CHG_PREMIUM 6
+#define ACQUI_CHARGE_PREMIUM	7
+#define FIXED_FEE_PREMIUM 8
+#define HEDGE_FEE_PREMIUM 9
+#define HEDGE_FEE_SUM_PREMIUM 10
+#define NET_PREMIUM	11
+
+#define BASE_GUAR_DB	12
+#define GUAR_DB_DECREM	13
+#define GUAR_DB_ELECTION_R	14
+#define GUAR_DB_TOT	15
+#define BASE_GUAR_IB	16
+#define GUAR_IB_DECREM	17
+#define GUAR_IB_ELECTION_R	18
+#define GUAR_IB_TOT	19
+#define BASE_GUAR_ADD_IB	20
+#define GUAR_ADD_IB_DECREM	21
+#define GUAR_ADD_IB_ELECTION_R	22
+#define GUAR_ADD_IB_TOT	23
+
+#define ACCOUNT_VALUE_INIT	24
+#define ACCOUNT_VALUE_FIXED_FEES	25
+#define ACCOUNT_VALUE_HC_FEES	26
+#define ACCOUNT_VALUE_DECREM	27
+#define ACCOUNT_VALUE_ELECTION_RATE	28
+#define ACCOUNT_VALUE_TOTAL	29
+#define AV_BASE	30
+
+#define ACCOUNT_VALUE_ADD_INIT	31
+#define ACCOUNT_VALUE_ADD_FIXED_FEES	32
+#define ACCOUNT_VALUE_ADD_HC_FEES	33
+#define ACCOUNT_VALUE_ADD_DECREM	34
+#define ACCOUNT_VALUE_ADD_ELECTION_RATE	35
+#define ACCOUNT_VALUE_ADD_TOTAL	36
+#define AV_ADD_BASE	37
+
+#define DYNAMIC_LAPSE_FACTOR	38
+#define DYNAMIC_LAPSE_RATE	39
+#define DYNAMIC_PAID_UP_FACTOR	40
+#define DYNAMIC_PAID_UP_RATE	41
+#define ELECTION_OTM_FACTOR	42
+#define FRACTION_WORK_1	43
+#define FRACTION_WORK_2	44
+#define ELECTION_RATE_FROM_FUNCTION	45
+#define ELECTION_RATE	46
+#define SURV_INDEX_DEU	47
+#define SURV_INDEX_CUMUL	48
+#define CLAIMS_IB	49
+#define CLAIMS_DB	50
+
+#define NO_POLS_END	51
+#define WEIGHTS_PAID_UP_IN_T 52
+#define WEIGHTS_FINAL	53
+#define TOTAL_INTEREST_FOR_X_PREMIUM_BEF 54
+#define TOTAL_INTEREST_FOR_X_PREMIUM	55
+#define ELECTION_RATE_WEIGHTS_PAID_UP	56
+
+#define AV_PAID_UP	57
+#define AV_FROM_ADD_PAY_IN_T	58
+#define AV_CHARGES_ON_ADD_PAY	59
+#define WEIGHTS_CHARGES	60
+#define WEIGHTS_AV_BASE	61
+#define WEIGHTS_IB_CLAIMS	62
+#define WEIGHTS_DB_CLAIMS	63
+
+
+
+#define WEIGHTS_AB_CLAIMS	64  //Riester
+#define WEIGHTS_IB_FONDS_CLAIMS	65  //Riester
+#define MAX_IB_IB_FONDS_CLAIMS	66  //Riester
+#define ACQUI_CHARGE_BONUS	67  //Riester
+#define GROSS_BONUS	68  //Riester
+#define COMMISSION_CHARGE_BONUS	69  //Riester
+#define HEDGE_FEES_BONUS	70  //Riester
+#define HEDGE_FEES_SUM_PREM_BONUS	71  //Riester
+#define FIXED_FEES_BONUS	72  //Riester
+#define NET_BONUS	73  //Riester
+
+#define BASE_GUAR_AB	74  //Riester
+#define GUAR_AB_DECREM	75  //Riester
+#define GUAR_AB_ELECTION_R	76  //Riester
+#define GUAR_AB_TOT	77  //Riester
+
+#define NET_STATE_BONUS	78  //Riester
+#define NET_STATE_BONUS_IB	79  //Riester
+#define IB_FONDS_PAID_UP	80  //Riester
+#define CLAIMS_AB 81  //Riester
+//#define AB_PAID_UP	82  //Riester
+#define HC_PAID_PREMIUM 83  //Riester
+#define ACCOUNT_VALUE_HC_PP_FEES 84  //Riester
+#define ACCOUNT_VALUE_ADD_HC_PP_FEES 85  //Riester
+#define BASE_GUAR_DB_ADD 86  //Riester
+
+#define GUAR_ADD_DB_DECREM 88  //Riester
+#define GUAR_ADD_DB_ELECTION_R 89  //Riester
+#define GUAR_ADD_DB_TOT 90  //Riester
+#define CLAIMS_IB_FONDS 91  //Riester
+#define WEIGHTS_CHARGES_PP 92  //Riester
+#define AV_CHARGES_PP_ON_ADD_PAY 93  //Riester
+#define BASE_GUAR_ADD_AB 94  //Riester
+#define GUAR_ADD_AB_TOT 95  //Riester
+#define GUAR_ADD_AB_DECREM 96  //Riester
+#define GUAR_ADD_AB_ELECTION_R 97  //Riester
+#define MAX_CLAIMS_IB 98  //Riester
+#define WEIGHTS_MAX_IB_IB_FONDS_CLAIMS 99  //Riester
+#define MAX_CLAIMS_IB_IB_FONDS 100  //Riester
+#define  ADMIN_CHG_BONUS 101  //Riester
+
+#define	DEU_MAIN_PROJ_NUM_COLS 	102  //Number of main projection columns
+
+///////////////////////////////////////////////// end main proj array 
+
+///////////////////////////////////////////////// Begining present value
+#define BEGINING_ACCOUNT_VALUE 0
+#define PV_DEP_FEE_PREMIUM 1
+#define PV_DEP_FEE_BONUS 2
+#define PV_DEP_FEE_TOT 3
+#define PV_DEP_FEE_SUM_PREMIUM 4
+#define PV_DEP_FEE_SUM_BONUS 5
+#define PV_DEP_FEE_SUM_TOT 6		
+#define PV_HC_AV 7
+#define PV_HC_PP_AV 8
+#define PV_HC_AV_ADD 9
+#define PV_HC_PP_AV_ADD 10
+#define PV_HC_AV_PAID_UP 11
+#define PV_HC_AV_ADD_PAID_UP 12
+#define PV_HC_PP_AV_PAID_UP 13
+#define PV_HC_PP_ADD_AV_PAID_UP 14
+#define PV_HC_AV_TOT 15
+#define PV_HC_AV_BASE 16
+#define PV_HC_AV_ADD_BASE 17
+#define PV_HC_AV_PAID_UP_BASE 18
+#define PV_HC_AV_BASE_TOT 19
+#define PV_GMDB_DEU 20
+#define PV_GMDB_WEIGHTS 21
+#define PV_GMDB_TOT 22
+#define PV_GMIB_DEU 23
+#define PV_GMIB_WEIGHTS 24
+#define PV_GMIB_TOT 25
+#define PV_GMAB_DEU 26
+#define PV_GMIB_FONDS_DEU 27
+#define PV_GMAB_WEIGHTS 28
+#define PV_GMAB_TOT 29
+#define PV_HC_EHC_BASE_TOT 30
+#define PV_REAL_CHARGES_DEU 31
+#define PV_EHC_CHARGES_DEU 32
+#define PV_CLAIMS_DEU 33
+#define PV_RRC 34
+#define PV_CHI_DEU 35
+#define PV_LOV_DEU 36
+#define PV_ITM_DEU 37
+#define PV_HC_PP_AV_TOT 38
+#define PV_DEP_FEE_TOT_CHI 39
+#define PV_DEP_FEE_SUM_TOT_CHI 40
+#define PV_HC_PP_AV_TOT_CHI 41
+
+#define TOTAL_OUTPUT_COLUMNS_DEU 42
+//#define BEGINING_ACCOUNT_VALUE 0
+//
+//#define PV_DEP_FEE_PREMIUM 1
+//#define PV_DEP_FEE_BONUS 2
+//#define PV_DEP_FEE_TOT 3
+//
+//#define PV_DEP_FEE_SUM_PREMIUM 4
+//#define PV_DEP_FEE_SUM_BONUS 5
+//#define PV_DEP_FEE_SUM_TOT 6
+//			
+//#define PV_HC_AV 7
+//#define PV_HC_AV_ADD 8
+//#define PV_HC_AV_PAID_UP 9
+//#define PV_HC_AV_TOT 10
+//		
+//#define PV_HC_AV_BASE 11
+//#define PV_HC_AV_ADD_BASE 12
+//#define PV_HC_AV_PAID_UP_BASE 13
+//#define PV_HC_AV_BASE_TOT 14
+//
+//#define PV_GMDB_DEU 15
+//#define PV_GMDB_WEIGHTS 16
+//#define PV_GMDB_TOT 17
+//
+//#define PV_GMIB_DEU 18
+//#define PV_GMIB_WEIGHTS 19
+//#define PV_GMIB_TOT 20
+//
+//#define PV_GMAB_DEU 21
+//#define PV_GMAB_WEIGHTS 22
+//#define PV_GMAB_TOT 23
+//
+//#define PV_HC_EHC_BASE_TOT 24
+//
+//#define PV_GMIB_FONDS_DEU 25
+//
+//#define PV_HC_PP_AV 26
+//#define PV_HC_PP_AV_ADD 27
+//#define PV_HC_PP_AV_PAID_UP 28
+//
+//#define PV_REAL_CHARGES_DEU 29
+//#define PV_EHC_CHARGES_DEU 30
+//#define PV_CLAIMS_DEU 31
+//#define PV_CHI_DEU 32
+//#define PV_LOV_DEU 33
+//#define PV_RRC 34
+//#define PV_ITM_DEU 35
+//
+//#define TOTAL_OUTPUT_COLUMNS_DEU 38
+///////////////////////////////////////////////// end present value 
+
+// End PVs constants
+
+#define t_high 60  // must match with SUBACCT_MAX_PERIOD	
+ #define SUBACCT_MAX_PERIOD_DEU_M 720	//Must match t_high
+//#define SUBACCT_NUM_FUNDS	12		//Total number of funds (Fixed and separate accounts)
+//#define	SUBACCT_NUM_COLS 	25		//Number of columns 
+//#define	DEU_MAIN_PROJ_NUM_COLS 	111  //Number of main projection columns
+//#define	DECALAGE_MAX 	12		//Number of months between eval date and the following policy anniversary		
+//#define CALC_TOT_INDEX 	0			//Array index used to hold the not calculated indicator (if not calculated yet) or colunm total (if values have been calculated)
+//#define SMALL_DOUBLE 0.0000000003
+
+// Begining PVs constants
+
+
+// Scenario constants
+#define PERIOD 721 
+#define DECALAGE_MAX 12
+// #define ITERATION_COL_NB 0
+#define PERIOD_COL_NB 1
+// End of scenario constants
+
+#define MAX_DELTA_SHOCKS_PER_INDEX 20
+
+
+#define MAX_LENGTH_MESSAGE_EXCEPTION 1000
+#define MAX_LENGTH_FILE_NAME 1000
+
+/////Monthly Projection
+ #define SUBACCT_MAX_PERIOD_DEU_M 720	//Must match t_high
+
+
+
+// Begining timing items constants
+#define	POL_YEAR_DEU_M	0
+#define	POL_MONTH_DEU_M	1
+#define	POL_DUR_YEAR_DEU_M	2
+#define	POL_DUR_MONTH_DEU_M	3
+#define	AGE_LAST_DEU_M	4
+#define	GMIB_AX_GUAR_DEU_M	5
+#define	IND_PAY_DATE_M	6
+#define	IND_ALREADY_PAYED_M	7
+#define	GROSS_PREMIUM_BEF_M	8
+#define	ADMIN_CHG_PREMIUM_BEF_M	9
+#define	ACQUI_CHARGE_PREMIUM_BEF_M	10
+#define	FIXED_FEE_PREMIUM_BEF_M	11
+#define	HEDGE_FEE_PREMIUM_BEF_M	12
+#define	HEDGE_FEE_SUM_PREMIUM_BEF_M	13
+#define	NET_PREMIUM_BEF_M 14
+#define	DEATH_R_M 15
+#define	BASE_GUAR_IB_BEF_M 16
+#define	BASE_GUAR_DB_BEF_M 17
+#define	BASE_GUAR_ADD_IB_BEF_M 18
+#define	BASE_GUAR_AB_BEF_M 19
+#define	LAPSE_BASE_BEF_M 20  //Abdelhadi
+#define	LAPSE_BASE_M 21  
+#define	INSTANT_LAPSE_PAID_UP_M 22  
+#define	PAID_UP_BASE_BEF_M 23  
+#define	PAID_UP_BASE_M 24 
+#define	BONUS_INDICATOR_M 25
+#define	GROSS_STATE_BONUS_M 26
+#define	GROSS_BONUS_BEF_M 27
+#define	ACQUI_CHARGE_BONUS_BEF_M 28
+#define	COMMISSION_CHARGE_BONUS_BEF_M 29
+#define	FIXED_FEES_BONUS_BEF_M 30
+#define	HEDGE_FEES_BONUS_BEF_M 31
+#define	HEDGE_FEES_SUM_PREM_BONUS_BEF_M 32
+#define	NET_BONUS_BEF_M 33
+#define	PV_NOT_AMORT_COMMISSIONS_BEF_M 34
+#define	PV_AMORT_COMMISSIONS_BEF_M 35
+#define	GMIB_AX_GUAR_ANN_FACT_M 36
+
+#define TOTAL_TIMING_ITEMS_DEU_M 37
+//beginning main array projection
+#define	FUND_RETURN_M 0
+#define	DISCOUNT_FACTOR_MA_M 1
+#define	TEN_YEAR_INTEREST_RATE_M 2
+#define	GMIB_AX_CURR_MARGIN_M 3
+#define	GMIB_AX_CURR_DEU_M 4
+#define	SURV_INDEX_DEU_M 5  
+#define	ACCOUNT_VALUE_TOTAL_M 6
+#define	ACCOUNT_VALUE_ADD_TOTAL_M 7
+#define	SURV_INDEX_CUMUL_M 8
+#define	GUAR_IB_TOT_M 9
+#define	GUAR_ADD_IB_TOT_M 10
+#define	GUAR_AB_TOT_M 11
+#define	ADMIN_CHG_PREMIUM_M 12
+#define	GROSS_PREMIUM_M 13
+#define	HEDGE_FEE_SUM_PREMIUM_M 14
+#define	FIXED_FEE_PREMIUM_M 15
+#define	HEDGE_FEE_PREMIUM_M 16
+#define	NET_PREMIUM_M 17
+#define ACQUI_CHARGE_PREMIUM_M 18
+#define	GROSS_BONUS_M 19
+#define	ACQUI_CHARGE_BONUS_M 20
+#define	COMMISSION_CHARGE_BONUS_M 21
+#define	FIXED_FEES_BONUS_M 22
+#define	HEDGE_FEES_BONUS_M 23
+#define	HEDGE_FEES_SUM_PREM_BONUS_M 24
+#define	NET_BONUS_M 25
+#define	PV_NOT_AMORT_COMMISSIONS_M 26
+//#define	PV_NOT_AMORT_COMMISSIONS_BEF_M 27
+#define	BASE_GUAR_AB_M 28
+#define	BASE_GUAR_DB_M 29
+#define	BASE_GUAR_IB_M 30
+#define	BASE_GUAR_ADD_IB_M 31
+#define	ACCOUNT_VALUE_INIT_M 32
+#define	ACCOUNT_VALUE_ADD_INIT_M 33
+#define	ACCOUNT_VALUE_FIXED_FEES_M 34
+#define	ACCOUNT_VALUE_ADD_FIXED_FEES_M 35
+#define	ACCOUNT_VALUE_HC_FEES_M 36
+#define	ACCOUNT_VALUE_ADD_HC_FEES_M 37
+#define	AV_BASE_M 38
+#define	AV_ADD_BASE_M 39
+#define	DYNAMIC_LAPSE_FACTOR_M 40
+#define	DYNAMIC_LAPSE_RATE_M 41
+#define	DYNAMIC_PAID_UP_FACTOR_M 42
+#define	DYNAMIC_PAID_UP_RATE_M 43
+#define	ACCOUNT_VALUE_DECREM_M 44
+#define	ACCOUNT_VALUE_ADD_DECREM_M 45
+#define	GUAR_IB_DECREM_M 46
+#define	GUAR_ADD_IB_DECREM_M 47
+#define	GUAR_AB_DECREM_M 48
+#define	GUAR_DB_DECREM_M 49
+#define	ELECTION_OTM_FACTOR_M 50
+#define	FRACTION_WORK_1_M 51
+#define	FRACTION_WORK_2_M 52
+#define	ELECTION_RATE_FROM_FUNCTION_M 53
+#define	ELECTION_RATE_M 54
+#define	ADJUSTED_ELECTION_RATE_M 55
+#define	ACCOUNT_VALUE_ELECTION_RATE_M 56
+#define	ACCOUNT_VALUE_ADD_ELECTION_RATE_M 57
+#define	GUAR_AB_ELECTION_R_M 58
+#define	GUAR_IB_ELECTION_R_M 59
+#define	GUAR_ADD_IB_ELECTION_R_M 60
+#define	GUAR_DB_ELECTION_R_M 61
+#define	GUAR_DB_TOT_M 62
+#define	CLAIMS_DB_M 63
+#define	CLAIMS_IB_M 64
+#define	CLAIMS_AB_M 65
+#define	CLAIMS_IB_FUND_M 66
+#define	MAX_CLAIMS_IB_M 67
+
+
+
+
+
+//beginning weighted paid up
+#define NO_POLS_END_M	68
+#define SURVIVAL_AFTER_PAID_UP_M	69
+#define WEIGHTS_PAID_UP_IN_T_M	70
+#define WEIGHTS_FINAL_M	71
+#define TREND_PORT_PAID_UP_POLICIES_M	72
+#define TREND_INVERSE_M	73
+#define NET_PREM_INCLUD_FIXED_FEES_M	74
+#define NET_BONUS_INCLUD_FIXED_FEES_M	75
+#define NET_PREM_BB_EXCLU_FIXED_FEES_M	76
+#define TOTAL_INTEREST_FOR_X_PREMIUM_M	77
+#define TOTAL_INTEREST_FOR_X_PREMIUM_BEF_M	78
+#define IFD_ROLL_UP_RATE_BEF_PAID_UP_M	79
+#define IFD_ROLL_UP_RATE_AFTER_PAID_UP_M	80
+#define NET_STATE_BONUS_M	81
+#define NET_STATE_BONUS_IB_M	82
+//#define GROSS_STATE_BONUS_M	83
+#define AV_PAID_UP_M	84
+#define IB_PAID_UP_M	85
+#define IB_FOND_PAID_UP_M	86
+#define AB_PAID_UP_M	87
+#define AV_FROM_ADD_PAY_IN_T_M	88
+#define AV_CHARGES_ON_ADD_PAY_M	89
+#define ELECTION_RATE_WEIGHTS_PAID_UP_M	90
+#define ADJUSTED_ELECTION_RATE_WEIGHTS_PAID_UP_M	91
+#define WEIGHTS_IB_CLAIMS_M	92
+#define WEIGHTS_IB_FUND_CLAIMS_M	93
+#define MAX_WEIGHTS_IB_IB_FUND_CLAIMS_M	94
+#define WEIGHTS_CHARGES_M	95
+#define WEIGHTS_AV_BASE_M	96
+#define WEIGHTS_DB_CLAIMS_M	97
+#define WEIGHTS_AB_CLAIMS_M 98
+
+#define  DEU_MAIN_PROJ_NUM_COLS_M  99
+
+
+// Begining PVs constants
+#define BEGINING_ACCOUNT_VALUE_M 0
+
+#define PV_GMDB_DEU_M 1
+#define PV_GMDB_WEIGHTS_M 2
+#define PV_GMDB_TOT_M 3
+
+#define PV_GMIB_DEU_M 4
+#define PV_GMIB_WEIGHTS_M 5
+#define PV_GMIB_TOT_M 6
+
+#define PV_GMAB_DEU_M 7
+#define PV_GMAB_WEIGHTS_M 8
+#define PV_GMAB_TOT_M 9
+
+#define PV_DEP_FEE_PREMIUM_M 10
+#define PV_DEP_FEE_BONUS_M 11
+#define PV_DEP_FEE_TOT_M 12
+
+#define PV_DEP_FEE_SUM_PREMIUM_M 13
+#define PV_DEP_FEE_SUM_BONUS_M 14
+#define PV_DEP_FEE_SUM_TOT_M 15
+			
+#define PV_HC_AV_M 16
+#define PV_HC_AV_ADD_M 17
+#define PV_HC_AV_PAID_UP_M 18
+#define PV_HC_AV_TOT_M 19
+		
+#define PV_HC_AV_BASE_M 20
+#define PV_HC_AV_ADD_BASE_M 21
+#define PV_HC_AV_PAID_UP_BASE_M 22
+#define PV_HC_AV_BASE_TOT_M 23
+
+#define PV_HC_EHC_BASE_TOT_M 24
+
+#define PV_GMIB_FONDS_DEU_M 25
+#define PV_HC_PP_AV_M 26
+#define PV_HC_PP_AV_ADD_M 27
+#define PV_HC_PP_AV_PAID_UP_M 28
+
+#define PV_REAL_CHARGES_DEU_M 29
+#define PV_EHC_CHARGES_DEU_M 30
+#define PV_CLAIMS_DEU_M 31
+#define PV_CHI_DEU_M 32
+#define PV_LOV_DEU_M 33
+#define PV_RRC_M 34
+
+#define TOTAL_OUTPUT_COLUMNS_DEU_M 35

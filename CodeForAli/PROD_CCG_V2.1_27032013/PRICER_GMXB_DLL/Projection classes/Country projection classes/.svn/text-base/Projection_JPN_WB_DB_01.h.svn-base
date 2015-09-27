@@ -1,0 +1,39 @@
+#pragma once
+#include "Projection classes/Country projection classes/Projection_JPN_WB_DB.h"
+
+class Projection_JPN_WB_DB_01 : public Projection_JPN_WB_DB
+{	
+	public:
+		Projection_JPN_WB_DB_01(const vector<vector <int>>& i_s_a,const vector<vector <int>>& f_s_a,
+								const char* tables, bool generate_dbg_files, const string& dbg_file_path, 
+								const int t_high_shorter, bool l_longevity_tables, int time_step):
+		Projection(i_s_a, f_s_a, tables, generate_dbg_files, dbg_file_path, t_high_shorter, l_longevity_tables, time_step),
+		Projection_JPN_WB_DB(i_s_a, f_s_a, tables, generate_dbg_files, dbg_file_path, t_high_shorter, l_longevity_tables, time_step)
+		{	
+		}
+
+	int set_for_life_indicator(Model_Point *mp)
+	{
+		if(mp->gmxb_type2 == "B")
+			return 1;
+		else
+			return 0;
+	}
+	int set_col_withdrawal_table(Model_Point *mp)
+		{
+			if (mp->gmxb_type2 == "B")
+				return 1;
+			else if (mp->gmxb_type2 == "C")
+				return 2;
+			else if (mp->gmxb_type2 == "D")
+				return 3;
+			else 
+			{
+				char message[MAX_LENGTH_MESSAGE_EXCEPTION];
+				sprintf_s(message, "gmxb_type2 unknown");
+				throw new GMXBException(message);		
+			}
+		}
+};
+
+

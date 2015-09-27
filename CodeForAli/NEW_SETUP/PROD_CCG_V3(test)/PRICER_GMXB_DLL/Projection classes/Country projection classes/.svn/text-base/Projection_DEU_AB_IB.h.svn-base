@@ -1,0 +1,2681 @@
+#pragma once
+#include "head_DEU.h"
+#include <string>
+#include <math.h>
+#include <fstream>
+#include <iomanip>
+#include "Model point classes/Country model point classes/Model_Point_DEU.h"
+using namespace std;
+
+extern ofstream trace;
+
+class Assumption_DEU_IAB 
+{
+	public:
+		// Assumptions tables------------------------------------------------
+		GMXBParameters  *assump;
+		GMXB_Assumption_Table *paid_up_tables;
+		GMXB_Assumption_Table *lapse_tables;	
+		GMXB_Assumption_Table *current_Annuity_m;
+		GMXB_Assumption_Table *current_Annuity_f;
+		GMXB_Assumption_Table *aggregated_table2_m;
+		GMXB_Assumption_Table *aggregated_table2_f; 
+		GMXB_Assumption_Table *trends_f_1_2_m;
+		GMXB_Assumption_Table *trends_f_1_2_f;
+		GMXB_Assumption_Table *itm_factors;
+		GMXB_Assumption_Table *election_rate_paid_up;
+		GMXB_Assumption_Table *election_rate_tax_layer1;
+		GMXB_Assumption_Table *election_rate_tax_layer3;
+		GMXB_Assumption_Table *lapse_grouping;
+		GMXB_Assumption_Table *surrender_charges_op;
+		GMXB_Assumption_Table *riester_guar_ann_factor_type1;
+		GMXB_Assumption_Table *riester_guar_ann_factor_type2;
+		GMXB_Assumption_Table *bonus_table;//mehdi
+		GMXB_Assumption_Table *aggregated_table_ac_m;//AJOUT
+		GMXB_Assumption_Table *aggregated_table_ac_f;//AJOUT
+		GMXB_Assumption_Table *trends_ac_1_2_m;//AJOUT
+		GMXB_Assumption_Table *trends_ac_1_2_f;//AJOUT
+		GMXB_Assumption_Table *selection_factor_m;//AJOUT
+		GMXB_Assumption_Table *selection_factor_f;//AJOUT
+		GMXB_Assumption_Table *riester_guaranted_anuity_factor;
+
+		// Assumptions variables------------------------------------------------
+		double reduced_rollup_rate;
+		double instant_lapse_future;
+		double first_year_lapse;
+		double age_upper_bound_1;
+		double age_upper_bound_2;
+		double lapse_floor_value_1;
+		double lapse_floor_value_2;
+		double lapse_min_pa_perc;
+		double lapse_max_pa_perc;
+		int write_subacct_array;
+		int write_main_proj_array;
+		int omega_age;
+		double mort_mult_f;
+		double mort_mult_m;
+		double maximum_election_age;
+		double administrative_loading;
+		double administrative_loading_2; //AJOUT
+		double lapses_delay;
+		double dynamic_paid_up_delay;
+		double alpha_ch_factor;
+		int gr_symbol;
+		string decrem_reqd;
+		string lapse_is_dynamic;
+		string how_is_scenario_file;
+		string av_split_adj;
+		string use_av_start_split;
+		string use_paid_up;
+		string paid_up_is_dynamic;
+		string ac_calculation;//AJOUT
+		int global_result;
+		int mp_by_mp_result;
+		int global_by_scenario_result;
+		int global_by_timing_result;
+		int write_main_array;
+		double ger_alpha;
+		double ger_beta;
+		double riester_prem_admin_loading;
+		double riester_guarantee_perc;
+		double riester_election_fonds_perc;
+
+		double ger_comm_dis;
+		int paid_up_delay;
+		double first_election_bound;
+		double second_election_bound;
+		double third_election_bound;
+		double fourth_election_bound;
+		double first_election_rate;
+		double second_election_rate;
+		double third_election_rate;
+		double fourth_election_rate;
+		
+		//double acqu_cost_riester07; //for RIESTER10
+		int premium_paid_up_year;
+		int use_assumption_date;
+		int month_valn;
+		int year_valn;
+		double interest_rate_decrease_for_a_c;
+		int Const_Omega;
+		int longevity_calculation;
+
+		
+public:
+	virtual ~Assumption_DEU_IAB()
+	{
+		delete this->assump;
+		delete this->paid_up_tables;
+		delete this->lapse_tables;
+		delete this->riester_guar_ann_factor_type1;
+		delete this->riester_guar_ann_factor_type2;
+		delete this->current_Annuity_m;
+		delete this->current_Annuity_f;
+		delete this->aggregated_table2_m;
+		delete this->aggregated_table2_f;
+		delete this->trends_f_1_2_m;
+		delete this->trends_f_1_2_f;
+		delete this->itm_factors;
+		delete this->election_rate_paid_up;
+		delete this->election_rate_tax_layer1;
+		delete this->election_rate_tax_layer3;
+		delete this->lapse_grouping;
+		delete this->surrender_charges_op;
+		delete this->bonus_table;
+		delete this->aggregated_table_ac_m;
+		delete this->aggregated_table_ac_f;
+		delete this->trends_ac_1_2_m;
+		delete this->trends_ac_1_2_f;
+		delete this->selection_factor_m;
+		delete this->selection_factor_f;
+		//delete this->riester_guaranted_anuity_factor;
+	}
+	Assumption_DEU_IAB(){}
+	Assumption_DEU_IAB(const char * tables)
+	{
+		/*
+		assump = new GMXBParameters(tables , "assump");
+		paid_up_tables = new GMXB_Assumption_Table(tables , "paid_up_tables");
+		lapse_tables = new GMXB_Assumption_Table(tables , "lapse_tables");
+		riester_guar_ann_factor_type1 = new GMXB_Assumption_Table(tables , "riester_guar_ann_factor_type1");
+		riester_guar_ann_factor_type2 = new GMXB_Assumption_Table(tables , "riester_guar_ann_factor_type2");
+		current_Annuity_m = new GMXB_Assumption_Table(tables , "current_Annuity_m");
+		current_Annuity_f = new GMXB_Assumption_Table(tables , "current_Annuity_f");
+		aggregated_table2_m = new GMXB_Assumption_Table(tables , "aggregated_table2_m");
+		aggregated_table2_f = new GMXB_Assumption_Table(tables , "aggregated_table2_f");
+		trends_f_1_2_m = new GMXB_Assumption_Table(tables , "trends_f_1_2_m");
+		trends_f_1_2_f = new GMXB_Assumption_Table(tables , "trends_f_1_2_f");
+		itm_factors = new GMXB_Assumption_Table(tables , "itm_factors");
+		election_rate_paid_up = new GMXB_Assumption_Table(tables , "election_rate_paid_up");
+		election_rate_tax_layer1 = new GMXB_Assumption_Table(tables , "election_rate_tax_layer1");
+		election_rate_tax_layer3 = new GMXB_Assumption_Table(tables , "election_rate_tax_layer3");
+		lapse_grouping = new GMXB_Assumption_Table(tables , "lapse_grouping");
+		bonus_table = new GMXB_Assumption_Table(tables , "bonus_table");//mehdi
+		surrender_charges_op = new GMXB_Assumption_Table(tables , "surrender_charges_op");
+		aggregated_table_ac_m = new GMXB_Assumption_Table(tables , "aggregated_table_ac_m");
+		aggregated_table_ac_f = new GMXB_Assumption_Table(tables , "aggregated_table_ac_f");
+		trends_ac_1_2_m = new GMXB_Assumption_Table(tables , "trends_ac_1_2_m");
+		trends_ac_1_2_f = new GMXB_Assumption_Table(tables , "trends_ac_1_2_f");
+		selection_factor_m = new GMXB_Assumption_Table(tables , "selection_factor_m");
+		selection_factor_f = new GMXB_Assumption_Table(tables , "selection_factor_f");
+		*/
+
+		map<string, GMXB_Assumption_Table*> sheet_tables;
+		sheet_tables["paid_up_tables"] = 0;
+		sheet_tables["lapse_tables"] = 0;
+		sheet_tables["riester_guar_ann_factor_type1"] = 0;
+		sheet_tables["riester_guar_ann_factor_type2"] = 0;
+		sheet_tables["current_Annuity_m"] = 0;
+		sheet_tables["current_Annuity_f"] = 0;
+		sheet_tables["aggregated_table2_m"] = 0;
+		sheet_tables["aggregated_table2_f"] = 0;
+		sheet_tables["trends_f_1_2_m"] = 0;
+		sheet_tables["trends_f_1_2_f"] = 0;
+		sheet_tables["itm_factors"] = 0;
+		sheet_tables["election_rate_paid_up"] = 0;
+		sheet_tables["election_rate_tax_layer1"] = 0;
+		sheet_tables["election_rate_tax_layer3"] = 0;
+		sheet_tables["lapse_grouping"] = 0;
+		sheet_tables["bonus_table"] = 0;
+		sheet_tables["surrender_charges_op"] = 0;
+		sheet_tables["aggregated_table_ac_m"] = 0;
+		sheet_tables["aggregated_table_ac_f"] = 0;
+		sheet_tables["trends_ac_1_2_m"] = 0;
+		sheet_tables["trends_ac_1_2_f"] = 0;
+		sheet_tables["selection_factor_m"] = 0;
+		sheet_tables["selection_factor_f"] = 0;
+
+		assump = parse_sheets(string(tables), sheet_tables, string("assump") );
+
+		paid_up_tables = sheet_tables["paid_up_tables"];
+		lapse_tables = sheet_tables["lapse_tables"];
+		riester_guar_ann_factor_type1 = sheet_tables["riester_guar_ann_factor_type1"];
+		riester_guar_ann_factor_type2 = sheet_tables["riester_guar_ann_factor_type2"];
+		current_Annuity_m = sheet_tables["current_Annuity_m"];
+		current_Annuity_f = sheet_tables["current_Annuity_f"];
+		aggregated_table2_m = sheet_tables["aggregated_table2_m"];
+		aggregated_table2_f = sheet_tables["aggregated_table2_f"];
+		trends_f_1_2_m = sheet_tables["trends_f_1_2_m"];
+		trends_f_1_2_f = sheet_tables["trends_f_1_2_f"];
+		itm_factors = sheet_tables["itm_factors"];
+		election_rate_paid_up = sheet_tables["election_rate_paid_up"];
+		election_rate_tax_layer1 = sheet_tables["election_rate_tax_layer1"];
+		election_rate_tax_layer3 = sheet_tables["election_rate_tax_layer3"];
+		lapse_grouping = sheet_tables["lapse_grouping"];
+		bonus_table = sheet_tables["bonus_table"];//mehdi
+		surrender_charges_op = sheet_tables["surrender_charges_op"];
+		aggregated_table_ac_m = sheet_tables["aggregated_table_ac_m"];
+		aggregated_table_ac_f = sheet_tables["aggregated_table_ac_f"];
+		trends_ac_1_2_m = sheet_tables["trends_ac_1_2_m"];
+		trends_ac_1_2_f = sheet_tables["trends_ac_1_2_f"];
+		selection_factor_m = sheet_tables["selection_factor_m"];
+		selection_factor_f = sheet_tables["selection_factor_f"];
+
+		reduced_rollup_rate = atof(this->assump->search("reduced_rollup_rate").c_str());
+		instant_lapse_future = atof(this->assump->search("instant_lapse_future").c_str());
+		first_year_lapse = atof(this->assump->search("first_year_lapse").c_str());
+		age_upper_bound_1 = atof(this->assump->search("age_upper_bound_1").c_str());
+		age_upper_bound_2 = atof(this->assump->search("age_upper_bound_2").c_str());
+		lapse_floor_value_1 = atof(this->assump->search("lapse_floor_value_1").c_str());
+		lapse_floor_value_2 = atof(this->assump->search("lapse_floor_value_2").c_str());
+		lapse_min_pa_perc = atof(this->assump->search("lapse_min_pa_perc").c_str());
+		lapse_max_pa_perc = atof(this->assump->search("lapse_max_pa_perc").c_str());
+		administrative_loading = atof(this->assump->search("administrative_loading").c_str());
+		administrative_loading_2 = atof(this->assump->search("administrative_loading_2").c_str());//NEW
+		lapses_delay = atof(this->assump->search("lapses_delay").c_str());
+		dynamic_paid_up_delay = atof(this->assump->search("dynamic_paid_up_delay").c_str());
+		mort_mult_f = atof(this->assump->search("mort_mult_f").c_str());
+		mort_mult_m = atof(this->assump->search("mort_mult_m").c_str());
+		maximum_election_age = atof(this->assump->search("maximum_election_age").c_str());
+		
+		write_subacct_array = atoi(this->assump->search("write_subacct_array").c_str());
+		write_main_proj_array = atoi(this->assump->search("write_main_proj_array").c_str());
+		omega_age = atoi(this->assump->search("omega_age").c_str());
+
+		use_av_start_split = this->assump->search("use_av_start_split");
+		decrem_reqd = this->assump->search("decrem_reqd");
+		lapse_is_dynamic = this->assump->search("lapse_is_dynamic");
+		how_is_scenario_file = this->assump->search("how_is_scenario_file");
+		av_split_adj = this->assump->search("av_split_adj");
+		use_paid_up = this->assump->search("use_paid_up");
+		paid_up_is_dynamic = this->assump->search("paid_up_is_dynamic");
+		ac_calculation= this->assump->search("ac_calculation");//AJOUT
+		ger_comm_dis=atof(this->assump->search("ger_comm_dis").c_str());
+		alpha_ch_factor=atof(this->assump->search("alpha_ch_factor").c_str());
+		gr_symbol=atoi(this->assump->search("gr_symbol").c_str());
+
+ 		global_result=atoi(this->assump->search("global_result").c_str());
+		mp_by_mp_result=atoi(this->assump->search("mp_by_mp_result").c_str());
+		global_by_scenario_result=atoi(this->assump->search("global_by_scenario_result").c_str());
+		global_by_timing_result=atoi(this->assump->search("global_by_timing_result").c_str());
+		write_main_array=atoi(this->assump->search("write_main_array").c_str());
+		ger_alpha=atof(this->assump->search("ger_alpha").c_str());
+		ger_beta=atof(this->assump->search("ger_beta").c_str());
+		riester_prem_admin_loading=atof(this->assump->search("riester_prem_admin_loading").c_str());
+		riester_guarantee_perc = atof(this->assump->search("riester_guarantee_perc").c_str());
+		riester_election_fonds_perc =atof(this->assump->search("riester_election_fonds_perc").c_str());
+		premium_paid_up_year=atoi(this->assump->search("premium_paid_up_year").c_str());
+		use_assumption_date=atoi(this->assump->search("use_assumption_date").c_str());
+		month_valn=atoi(this->assump->search("month_valn").c_str());
+		year_valn=atoi(this->assump->search("year_valn").c_str());
+		interest_rate_decrease_for_a_c = atof(this->assump->search("interest_rate_decrease_for_a_c").c_str());
+		Const_Omega=atoi(this->assump->search("Const_Omega").c_str());
+		longevity_calculation=0;
+
+	}
+
+	virtual void Get_mortality_rate_vector(const string& sex,
+												const int& max_projection, const double* age_last,
+												double* mortality_table,const double& prorata,
+												const int& valn_year,int t,double mort_multiplicator)
+	{
+			double actual_calendar_year = valn_year +t-1;
+			if(this->longevity_calculation==1){
+				actual_calendar_year = valn_year;
+			}
+
+			if ((int)age_last[t]>this->omega_age-1)
+			{
+				mortality_table[t]=1.;
+			}
+			else if(sex == "F")
+			{
+				mortality_table[t]=mort_mult_f/100.* this->aggregated_table2_f->search((int)age_last[t],0)* //->_to2D_array[(int)age_last[t]][0]*
+					exp( -(actual_calendar_year -1999.)* this->trends_f_1_2_f->search((int)age_last[t],0));//->_to2D_array[(int)age_last[t]][0]);
+			}
+			else if(sex == "M")
+			{
+				mortality_table[t]=mort_mult_m/100.* this->aggregated_table2_m->search((int)age_last[t],0)*
+						exp( -(actual_calendar_year -1999.)* this->trends_f_1_2_m->search((int)age_last[t],0));
+			}
+			else
+			{
+				mortality_table[t]=0.;
+			}
+		
+			if(t==1){
+				mortality_table[1] *=prorata;
+			}
+			
+			mortality_table[t] =min(mortality_table[t]*mort_multiplicator,1);
+	}
+	
+	virtual void Get_guaranteed_annuity_vector(int riester_type,const int& max_projection, 
+					const double deferment_age,double* guaranteed_vector)
+	{
+		int t;
+		for (t=1; t<=max_projection;t++)
+		{
+			
+			if(riester_type ==1 )
+		
+				guaranteed_vector[t]= this->riester_guar_ann_factor_type1->search((int)deferment_age,1);//->_to2D_array[(int)deferment_age][0];
+			else
+				guaranteed_vector[t]= this->riester_guar_ann_factor_type2->search((int)deferment_age,1);
+		
+	
+		
+		
+		}
+	}
+	
+	virtual void Get_base_lapse_vector(const int& ger_distribution_channel,const int& payt_freq,
+												const int& ger_lapse_dist_group,
+												const int& max_projection, const double* pol_yr,
+												double* base_lapse_vector)
+	{
+		int t;
+		for (t=1; t<=max_projection;t++)
+		{
+			if(this->paid_up_is_dynamic == "N")
+				base_lapse_vector[t]=0.;
+			if (payt_freq ==0  && t==1) { base_lapse_vector[t] = this->first_year_lapse; }
+			else if ( payt_freq == 0 ) base_lapse_vector[t]=1./100.;
+			else
+				base_lapse_vector[t] =this->lapse_tables->search((int)(ger_lapse_dist_group+(ger_distribution_channel-1)*10),(int)pol_yr[t]+1)/100.;
+		}
+
+	}
+	virtual void Get_base_paid_up_vector(const int& ger_distribution_channel,
+												const int& ger_lapse_dist_group,
+												const int& max_projection, const double* pol_yr,
+												double* base_paid_up_vector)
+	{
+		int t;
+		for (t=1; t<=max_projection;t++)
+		{
+			if(  this->paid_up_is_dynamic == "N")
+				base_paid_up_vector[t]=0.;
+			else
+				base_paid_up_vector[t] =this->paid_up_tables->search((int) (ger_lapse_dist_group+(ger_distribution_channel-1)*10),(int)pol_yr[t]+1)/100.;
+		}
+	}
+
+	//double Get_ger_prem_admin_loading(){}
+
+	virtual void Get_current_annuity(const string& sex,const int& deferment_age  ,
+										const double&r_target,double& ac_down_margin,
+										double& ac_up_margin,double mort_multiplicator)
+	{
+		int n_down = (int) (r_target/0.0075);
+		int n_up = n_down+1;
+		if(n_up>=20) n_up=20;
+		
+		if (sex == "M") 
+   		{
+			ac_down_margin = this->current_Annuity_m->search((int)(n_down+1),(int)(deferment_age+2));
+			ac_up_margin = this->current_Annuity_m->search((int)(n_up+1),(int)(deferment_age+2));
+   		}
+		else if (sex == "F") 
+		{
+			ac_down_margin = this->current_Annuity_f->search((int)(n_down+1),(int)(deferment_age+2));
+			ac_up_margin = this->current_Annuity_f->search((int)(n_up+1),(int)(deferment_age+2));
+		}
+	}
+	virtual double Get_itm_factor(double itm)
+	{
+		double result;
+		if(itm <=this->itm_factors->search(1,1))
+			result = this->itm_factors->search(1,2);
+		else
+		{
+			if(itm <=this->itm_factors->search(2,1))
+				result = this->itm_factors->search(2,2);
+			else
+			{
+				if(itm <=this->itm_factors->search(3,1))
+					result = this->itm_factors->search(3,2);
+				else
+					result = this->itm_factors->search(3,2);
+			}
+		}
+		return result;
+	}
+	virtual double Get_itm_factor_paid_up(double itm)
+	{
+		double result;
+		result = this->election_rate_paid_up->search(1,2);
+		for (int i=1; i<4;i++)
+		{
+			
+			
+			if(itm >=this->election_rate_paid_up->search(i,1))
+			{
+				result = this->election_rate_paid_up->search(i,2);
+			}
+		}	
+		return result;
+	}
+	virtual int Get_ger_lapse_dist_group(int table_lookup)
+	{
+		int result=1;
+		for (int i=1;i<=9;i++)
+		{
+			if( table_lookup >this->lapse_grouping->search(result,2))
+				result++;
+		}
+		return result;
+	
+	}
+	virtual void initialize_election_bound(int tax_layer)
+	{
+		if (tax_layer==1)
+		{
+			first_election_bound = this->election_rate_tax_layer1->search(1,1)  ;
+			second_election_bound = this->election_rate_tax_layer1->search(2,1)  ;
+			third_election_bound = this->election_rate_tax_layer1->search(3,1)  ;
+			fourth_election_bound = this->election_rate_tax_layer1->search(4,1) ;
+			
+			first_election_rate = this->election_rate_tax_layer1->search(1,2)  ;
+			second_election_rate = this->election_rate_tax_layer1->search(2,2) ;
+			third_election_rate = this->election_rate_tax_layer1->search(3,2) ;
+			fourth_election_rate = this->election_rate_tax_layer1->search(4,2);
+		}
+		else
+		{ //tax_layer =3 
+		first_election_bound = this->election_rate_tax_layer3->search(1,1) ;
+			second_election_bound = this->election_rate_tax_layer3->search(2,1) ;
+			third_election_bound = this->election_rate_tax_layer3->search(3,1) ;
+			fourth_election_bound = this->election_rate_tax_layer3->search(4,1) ;
+			
+			first_election_rate = this->election_rate_tax_layer3->search(1,2)  ;
+			second_election_rate = this->election_rate_tax_layer3->search(2,2) ;
+			third_election_rate = this->election_rate_tax_layer3->search(3,2);
+			fourth_election_rate = this->election_rate_tax_layer3->search(4,2);
+		}
+	
+	}
+	double Get_itm_factor(double a, int b){ return 0.;}
+	double Get_election_rate_from_function(double a){return 0.;}
+
+};
+class Projection_DEU_AB_IB : public Projection {
+
+public:
+	//Assumption Class	
+	Assumption_DEU_IAB *Assumption;
+	//Model Point Class
+	Model_Point_DEU *model_point_DEU;
+	//Tables used in the projection
+	double main_proj_array_DEU[DEU_MAIN_PROJ_NUM_COLS][SUBACCT_MAX_PERIOD +1];
+	double timing_items_DEU[TOTAL_TIMING_ITEMS_DEU][SUBACCT_MAX_PERIOD +1];
+	double Bonus[SUBACCT_MAX_PERIOD +1];
+	double av_paidup[SUBACCT_MAX_PERIOD +1][SUBACCT_MAX_PERIOD +1];
+	double av_base_paidup[SUBACCT_MAX_PERIOD +1][SUBACCT_MAX_PERIOD +1];
+	double charges_paidup[SUBACCT_MAX_PERIOD +1][SUBACCT_MAX_PERIOD +1];
+	//Others parameters used in the projection
+	int ** shock_array_DEU;
+	int shock_size_DEU;		
+	int shock_number_DEU;
+	int current_scen_DEU;
+	
+	double comm_acct_first_year;
+	double ger_min_invested_amount;
+	double german_prem_prorata;
+	double pv_comm_not_amort;
+	double premium_schedular;
+	bool generate_debug_files_DEU;
+	string dbg_file_path_DEU;
+	//////////////Modeling of first year///////////////////
+	int total_number_decompositions;
+	double prorata_decompositions;
+	int remaining_decompositions;
+	int premium_prorata_factor;
+	double gross_premium;
+	double administration_charges;
+	double commission_charges;
+	double remaining_premium ;
+	double fixed_fees;
+	double hedge_fees_on_premium;
+	double hedge_fees_on_sum_of_premiums;
+	double Commission_account;
+	double Commission_repayment;
+	int mth_dur_val_last_prem_date;//Riester
+	int bonus_indicator;//Riester
+	int bonus_indicator_First_period;//Riester
+	int bonus_indicator_Second_period;//Riester
+	int Year_next_June_decomposition;//Riester
+	int Next_June_belongs_to_first_proction_period;//Riester
+	int indicator_five_year_premium;//Riester
+	double Premium_paid_net;//Riester
+	double Effect_on_AV; //Riester
+	double Effect_on_AB; //Riester
+	double Effect_on_IB; //Riester
+	///////////end Modeling of first year/////////////////////
+	double * l_x;
+	double a_g;
+	double Mortality_shock_vector[2*SUBACCT_MAX_PERIOD +2];
+	double Lapse_shock_vector[2*SUBACCT_MAX_PERIOD +2];
+	double Paidup_shock_vector[2*SUBACCT_MAX_PERIOD +2];
+	double election_shock;
+
+	~Projection_DEU_AB_IB()
+	{
+		delete[] this->l_x;
+		delete this->Assumption;
+		for(int i = 0; i <this->shock_size_DEU; i++)
+		{
+			if(this->shock_array_DEU[i]!=0)
+			delete[] this->shock_array_DEU[i];
+		}
+		if (this->shock_array_DEU!=0)
+			delete[] this->shock_array_DEU;
+	}
+	Projection_DEU_AB_IB( const vector<vector <int>>& i_s_a,const vector<vector <int>>& f_s_a,
+			const char * tables, bool generate_dbg_files,const string& debug_file_path, 
+			int t_high_shorter, bool l_longevity_tables):Projection(t_high_shorter)
+	{
+		if(t_high_shorter != t_high)
+		{
+			char message[MAX_LENGTH_MESSAGE_EXCEPTION];
+			sprintf_s(message, " Tt_high_shorter != t_high (60)");
+			throw new GMXBException(message);	
+		}
+		this->mort_table_m = 0;
+		this->mort_table_f = 0;
+		this->lapse_rates = 0;
+		this->assump = 0;
+		this->index_shock_array = 0;
+		this->index_shock_size = 0;
+		this->load_longevity_tables = l_longevity_tables;
+		this->Assumption =new Assumption_DEU_IAB(tables);
+		this->set_main_proj_arrays_to_zero();
+		this->set_timing_items_to_zero();
+		this->shock_size_DEU = i_s_a.size();
+		this->set_other_vectors_to_zero();
+		this->shock_number_DEU=0;
+		this->current_scen_DEU=1;
+		this->generate_debug_files_DEU = generate_dbg_files;
+		this->dbg_file_path_DEU  = debug_file_path;
+		this->shock_array_DEU = new int* [this->shock_size_DEU];
+		for(int i = 0; i < this->shock_size_DEU; i++)
+		{
+			this->shock_array_DEU[i] = new int [MAXIMUM_NUMBER_OF_INDEXES+1];
+			for(int j = 0; j<MAXIMUM_NUMBER_OF_INDEXES+1; j++)
+				this->shock_array_DEU[i][j] = i_s_a[i][j];
+		}
+		this->current_scen_DEU=1;
+		//this->time_step=1;
+		this->load_longevity_tables = l_longevity_tables;
+
+		if (this->load_longevity_tables)
+		{
+			longevity_shock_table_m = new GMXB_Assumption_Table(tables , "longevity_m");
+			longevity_shock_table_f = new GMXB_Assumption_Table(tables, "longevity_f");
+		}
+		for (int t=0; t<= 2*SUBACCT_MAX_PERIOD+1; t++) Mortality_shock_vector[t]=1.;
+		for (int t=0; t<= 2*SUBACCT_MAX_PERIOD+1; t++) Lapse_shock_vector[t]=0.;
+		for (int t=0; t<= 2*SUBACCT_MAX_PERIOD+1; t++) Paidup_shock_vector[t]=0.;
+		l_x = new double[this->Assumption->Const_Omega + 1];
+		election_shock=0.;
+	}
+	///////////////////////////////////////////////////////////////////////////////////
+	//////////////////////////////////////////////////////////////////////////////////
+	//////////////////////////////Others functions needed ////////////////////////////
+	//////////////////////////////////////////////////////////////////////////////////
+	//////////////////////////////////////////////////////////////////////////////////
+	void set_other_vectors_to_zero(){
+		memset(this->av_base_paidup, 0, sizeof(this->av_base_paidup));
+		memset(this->charges_paidup, 0, sizeof(this->charges_paidup));
+		memset(this->av_paidup, 0, sizeof(this->av_paidup));	
+	}
+	void Get_longevity_shock(const string& sex){
+	
+		if(sex=="F")
+		{
+			this->longevity_shock_table = longevity_shock_table_f;
+		}
+		
+		if(sex=="M")
+		{
+			this->longevity_shock_table = longevity_shock_table_m;
+		}
+	
+	}
+	void set_main_proj_arrays_to_zero(){ memset(this->main_proj_array_DEU, 0, sizeof(this->main_proj_array_DEU));}
+	void set_timing_items_to_zero(){ memset(this->timing_items_DEU, 0, sizeof(this->timing_items_DEU));}	
+	void write_main_proj()
+	{
+		int col;
+		this->open_debug_file(this->model_point_DEU->mp_position_in_file,this->current_scen_DEU);
+		this->set_debug_file_header();
+		
+		this->debug_file << "t" << ",";
+		for(int t =0; t <= SUBACCT_MAX_PERIOD; t++)
+			this->debug_file <<setprecision(15)<< t << ",";
+		this->debug_file << endl;
+
+		for(col = 0; col < TOTAL_TIMING_ITEMS_DEU ; col++)
+		{
+			this->display_debug_info_timing_items(col);
+		}
+		for(col = 0; col < DEU_MAIN_PROJ_NUM_COLS ; col++)
+		{
+			this->display_debug_info_main_array(col);
+		}
+		this->close_debug_file();
+	}
+	void open_debug_file(int mp, int scen)
+	{
+		char debug_file_name[MAX_LENGTH_FILE_NAME];
+		sprintf(debug_file_name, "%smain_array_mp%d_scn%d.csv" ,this->dbg_file_path_DEU.c_str(), mp, scen);
+		this->debug_file.open(debug_file_name);
+	}
+
+	void close_debug_file()
+	{
+		this->debug_file.close();
+	}
+	void set_debug_file_header()
+	{
+		this->debug_file <<"AGE_LAST_DEU,POL_YEAR_DEU,GMIB_AX_GUAR_DEU, DEATH_R,PAID_UP_BASE_BEF ,LAPSE_BASE_BEF ,LAPSE_BASE ,PAID_UP_BASE ,INSTANT_LAPSE_PAID_UP ,GROSS_PREMIUM_BEF ,ADMIN_CHG_PREMIUM_BEF, ";
+		this->debug_file <<"ACQUI_CHARGE_PREMIUM_BEF ,FIXED_FEE_PREMIUM_BEF ,HEDGE_FEE_PREMIUM_BEF ,HEDGE_FEE_SUM_PREMIUM_BEF ,NET_PREMIUM_BEF ,PV_NOT_AMORT_COMMISSIONS_BEF ,PV_AMORT_COMMISSIONS_BEF ,ROLL_UP ,BASE_GUAR_IB_BEF ,BASE_GUAR_ADD_IB_BEF ,";
+		this->debug_file <<"BASE_GUAR_DB_BEF ,SURVIVAL_AFTER_PAID_UP ,LAPSE_AFTER_PAID_UP ,TREND_PORT_PAID_UP_POLICIES ,TREND_INVERSE ,IFD_ROLL_UP_RATE_BEF_PAID_UP ,IFD_ROLL_UP_RATE_AFTER_PAID_UP ,NET_PREM_BB_EXCLU_FIXED_FEES ,NET_PREM_INCLUD_FIXED_FEES ,IB_PAID_UP ,";
+		this->debug_file <<"ACQUI_CHARGE_BONUS_BEF, GROSS_BONUS_BEF, COMMISSION_CHARGE_BONUS_BEF, HEDGE_FEES_BONUS_BEF, HEDGE_FEES_SUM_PREM_BONUS_BEF, FIXED_FEES_BONUS_BEF, NET_BONUS_BEF, GROSS_STATE_BONUS ,GMIB_AX_GUAR_ANN_FACT, BASE_GUAR_AB_BEF,";
+		this->debug_file <<"TIMING_ITEMS_DEU,TIMING_ITEMS_DEU,TIMING_ITEMS_DEU,TIMING_ITEMS_DEU,TIMING_ITEMS_DEU,TIMING_ITEMS_DEU,TIMING_ITEMS_DEU,TIMING_ITEMS_DEU,TIMING_ITEMS_DEU,";
+		this->debug_file <<"TEN_YEAR_INTEREST_RATE, FUND_RETURN, DISCOUNT_FACTOR_MA, GMIB_AX_CURR_DEU, GMIB_AX_CURR_MARGIN, GROSS_PREMIUM , ADMIN_CHG_PREMIUM , ACQUI_CHARGE_PREMIUM, FIXED_FEE_PREMIUM , HEDGE_FEE_PREMIUM , HEDGE_FEE_SUM_PREMIUM ,";
+		this->debug_file <<"NET_PREMIUM, BASE_GUAR_DB, GUAR_DB_DECREM, GUAR_DB_ELECTION_R, GUAR_DB_TOT, BASE_GUAR_IB, GUAR_IB_DECREM, GUAR_IB_ELECTION_R, GUAR_IB_TOT, BASE_GUAR_ADD_IB,";
+		this->debug_file <<"GUAR_ADD_IB_DECREM, GUAR_ADD_IB_ELECTION_R, GUAR_ADD_IB_TOT, ACCOUNT_VALUE_INIT, ACCOUNT_VALUE_FIXED_FEES, ACCOUNT_VALUE_HC_FEES, ACCOUNT_VALUE_DECREM, ACCOUNT_VALUE_ELECTION_RATE, ACCOUNT_VALUE_TOTAL, AV_BASE,";
+		this->debug_file <<"ACCOUNT_VALUE_ADD_INIT, ACCOUNT_VALUE_ADD_FIXED_FEES, ACCOUNT_VALUE_ADD_HC_FEES, ACCOUNT_VALUE_ADD_DECREM, ACCOUNT_VALUE_ADD_ELECTION_RATE, ACCOUNT_VALUE_ADD_TOTAL, AV_ADD_BASE, DYNAMIC_LAPSE_FACTOR, DYNAMIC_LAPSE_RATE, DYNAMIC_PAID_UP_FACTOR,";
+		this->debug_file <<"DYNAMIC_PAID_UP_RATE, ELECTION_OTM_FACTOR, FRACTION_WORK_1, FRACTION_WORK_2, ELECTION_RATE_FROM_FUNCTION, ELECTION_RATE, SURV_INDEX_DEU, SURV_INDEX_CUMUL, CLAIMS_IB, CLAIMS_DB,";
+		this->debug_file <<"NO_POLS_END, WEIGHTS_PAID_UP_IN_T , WEIGHTS_FINAL, TOTAL_INTEREST_FOR_X_PREMIUM_BEF , TOTAL_INTEREST_FOR_X_PREMIUM, ELECTION_RATE_WEIGHTS_PAID_UP, AV_PAID_UP, AV_FROM_ADD_PAY_IN_T, AV_CHARGES_ON_ADD_PAY, WEIGHTS_CHARGES,";
+		this->debug_file <<"WEIGHTS_AV_BASE, WEIGHTS_IB_CLAIMS, WEIGHTS_DB_CLAIMS, WEIGHTS_AB_CLAIMS, WEIGHTS_IB_FONDS_CLAIMS, MAX_IB_IB_FONDS_CLAIMS, ACQUI_CHARGE_BONUS, GROSS_BONUS, COMMISSION_CHARGE_BONUS, HEDGE_FEES_BONUS,";
+		this->debug_file <<"HEDGE_FEES_SUM_PREM_BONUS, FIXED_FEES_BONUS, NET_BONUS, BASE_GUAR_AB, GUAR_AB_DECREM, GUAR_AB_ELECTION_R, GUAR_AB_TOT, NET_STATE_BONUS, NET_STATE_BONUS_IB, IB_FONDS_PAID_UP,";
+		this->debug_file <<"CLAIMS_AB , AB_PAID_UP, HC_PAID_PREMIUM , ACCOUNT_VALUE_HC_PP_FEES , ACCOUNT_VALUE_ADD_HC_PP_FEES , BASE_GUAR_DB_ADD, PAID_PREMIUM_T , GUAR_ADD_DB_DECREM , GUAR_ADD_DB_ELECTION_R , GUAR_ADD_DB_TOT ,";
+		this->debug_file <<"CLAIMS_IB_FONDS, WEIGHTS_CHARGES_PP , AV_CHARGES_PP_ON_ADD_PAY , BASE_GUAR_ADD_AB , GUAR_ADD_AB_TOT , GUAR_ADD_AB_DECREM , GUAR_ADD_AB_ELECTION_R , MAX_CLAIMS_IB ,";
+		this->debug_file << endl;
+}
+
+	void display_debug_info_main_array(int col)
+	{	
+		this->debug_file << col << ",";
+		for(int t =0; t <= SUBACCT_MAX_PERIOD; t++)
+			this->debug_file << this->main_proj_array_DEU[col][t] << ",";
+		this->debug_file << endl;
+	}
+	void display_debug_info_present_value(int col)
+	{	
+		this->debug_file << col << ",";
+		for(int t =0; t <= SUBACCT_MAX_PERIOD; t++)
+			this->debug_file << this->model_point_DEU->index_shock_pvs[0][col] << ",";
+		this->debug_file << endl;
+	}
+	void display_debug_info_timing_items(int col)
+	{	
+
+		this->debug_file << col << ",";
+		for(int t =0; t <= SUBACCT_MAX_PERIOD; t++)
+			this->debug_file <<setprecision(15)<< this->timing_items_DEU[col][t] << ",";
+		this->debug_file << endl;
+	}
+	void set_annual_from_monthly(double *** ann_from_mthly, int scen_num)
+	{
+		this->afmr = ann_from_mthly;
+		this->current_scen_DEU= scen_num;
+	}
+	virtual void project_t(int t, double ** pvs, int curr_shock_nb, double lapse_mult, double mortality_mult, bool shock_av) {}
+	virtual void initialise_index_map(){}
+	///////////////////////////////////////////////////////////////////////////////////
+	//////////////////////////////////////////////////////////////////////////////////
+	/////////////////Initialize projection with timing items vector //////////////////
+	//////////////////////////////////////////////////////////////////////////////////
+	//////////////////////////////////////////////////////////////////////////////////
+	virtual void Calculate_PolicyYear_Age()
+	{
+		for( int t=0; t <= this->model_point_DEU->T_Max ; t++)
+		{
+			if (t==0){
+				timing_items_DEU[POL_YEAR_DEU][t]=(int)(this->model_point_DEU->age_at_valn-(this->model_point_DEU->age_exact_issue-0.0001))*(this->model_point_DEU->duration_valn!=0.);
+				timing_items_DEU[AGE_LAST_DEU][t] = (int) this->model_point_DEU->age_at_valn;
+			}
+			else{
+				timing_items_DEU[POL_YEAR_DEU][t]=timing_items_DEU[POL_YEAR_DEU][t-1]+1;
+				timing_items_DEU[AGE_LAST_DEU][t] = timing_items_DEU[AGE_LAST_DEU][t-1]+1*(t!=1);
+			}
+		}
+	}
+	virtual void Calculate_GuaranteedAnnuity(){
+		if(this->Assumption->ac_calculation=="N"){
+			this->Assumption->Get_guaranteed_annuity_vector(this->model_point_DEU->riester_type,
+			this->model_point_DEU->T_Max,this->model_point_DEU->deferment_age,this->timing_items_DEU[GMIB_AX_GUAR_DEU]);
+		}
+		else{
+			for (int t=1; t<=this->model_point_DEU->T_Max;t++){
+				this->timing_items_DEU[GMIB_AX_GUAR_DEU][t] = a_g;
+			}
+		}
+	}
+	virtual void Calculate_MortalityRate(int t,double mort_multiplicator){
+		this->Assumption->Get_mortality_rate_vector(this->model_point_DEU->sex,this->model_point_DEU->T_Max,
+						timing_items_DEU[AGE_LAST_DEU],timing_items_DEU[DEATH_R],
+						this->model_point_DEU->prorata_first_year,this->model_point_DEU->Calc_Valn_year,t,mort_multiplicator);
+	}
+	virtual void Calculate_BaseLapseRate_BasePaidUpRate()
+	{
+		this->Assumption->Get_base_paid_up_vector(this->model_point_DEU->ger_distribution_channel,
+				this->model_point_DEU->ger_lapse_dist_group,this->model_point_DEU->T_Max,timing_items_DEU[POL_YEAR_DEU],
+				timing_items_DEU[PAID_UP_BASE_BEF]);
+
+		this->Assumption->Get_base_lapse_vector(this->model_point_DEU->ger_distribution_channel,(int)this->model_point_DEU->payt_freq,
+				this->model_point_DEU->ger_lapse_dist_group,this->model_point_DEU->T_Max,timing_items_DEU[POL_YEAR_DEU],
+				timing_items_DEU[LAPSE_BASE_BEF]);
+
+		int t=0;
+		for( t=1; t <= this->model_point_DEU->T_Max ; t++)
+		{
+			if( (int)this->model_point_DEU->payt_freq == 0 ) timing_items_DEU[LAPSE_BASE_BEF][t] = 1./100. ;
+			
+			if( (int)this->model_point_DEU->payt_freq == 0 && t==1 ) timing_items_DEU[LAPSE_BASE][t] = this->Assumption->first_year_lapse ;
+			else timing_items_DEU[LAPSE_BASE][t] = timing_items_DEU[LAPSE_BASE_BEF][t];
+			
+			timing_items_DEU[PAID_UP_BASE][t] =timing_items_DEU[PAID_UP_BASE_BEF][t]* ( (int)timing_items_DEU[POL_YEAR_DEU][t] < this->model_point_DEU->ger_prem_duration )*((int)this->model_point_DEU->payt_freq != 0);
+			timing_items_DEU[INSTANT_LAPSE_PAID_UP][t] = timing_items_DEU[PAID_UP_BASE][t] *this->Assumption->instant_lapse_future;
+			timing_items_DEU[PAID_UP_BASE][t] -=  timing_items_DEU[INSTANT_LAPSE_PAID_UP][t];
+			
+			timing_items_DEU[LAPSE_BASE][t] +=timing_items_DEU[INSTANT_LAPSE_PAID_UP][t];
+		}		
+	}
+	virtual void Calculate_modelling_of_first_year_premium()
+	{
+		total_number_decompositions=((int)this->model_point_DEU->payt_freq<1)*12+((int)this->model_point_DEU->payt_freq>=1)*(int)this->model_point_DEU->payt_freq;
+		if(this->model_point_DEU->duration_valn==0.) prorata_decompositions=1.;
+		else if( (int) this->model_point_DEU->ger_prem_elapsed_months>=11 && fmod(this->model_point_DEU->duration_valn,1.)<=1./12.) prorata_decompositions=2.-this->model_point_DEU->ger_prem_elapsed_months/12.;
+		else prorata_decompositions=1.-this->model_point_DEU->ger_prem_elapsed_months/12.;
+		remaining_decompositions=(int) ((prorata_decompositions+SMALL_DOUBLE)*total_number_decompositions);
+		premium_prorata_factor=((int)this->model_point_DEU->payt_freq>=1)*remaining_decompositions;
+		//Monthly duration between valuation date and last premium date and bonus Indicator
+		if(this->model_point_DEU->elapsed_mths_in_valn_yr==0)
+			mth_dur_val_last_prem_date=12-this->model_point_DEU->ger_prem_elapsed_months;
+		else if(this->model_point_DEU->ger_prem_elapsed_months==12)
+			mth_dur_val_last_prem_date=this->model_point_DEU->elapsed_mths_in_valn_yr;
+		else
+			mth_dur_val_last_prem_date=this->model_point_DEU->elapsed_mths_in_valn_yr-this->model_point_DEU->ger_prem_elapsed_months;	
+
+		//int test1= 5-this->model_point_DEU->Calc_Valn_month-mth_dur_val_last_prem_date;
+		//int test2= (test1<0)*((24+test1)%12)+(test1>0)*((12+test1)%12);
+		//bonus_indicator=(test2<=(int)(prorata_decompositions*12.));
+		indicator_five_year_premium= ( ( this->model_point_DEU->duration_valn + ( (this->model_point_DEU->duration_valn-(int)this->model_point_DEU->duration_valn)>11./12.)) <5);
+	
+		gross_premium=((int)this->model_point_DEU->payt_freq>0)*
+			((this->model_point_DEU->age_at_valn-this->model_point_DEU->age_at_issue)<=this->model_point_DEU->ger_prem_duration)*
+			premium_prorata_factor*this->model_point_DEU->prem_period_ini;
+		
+		administration_charges=gross_premium*this->model_point_DEU->ger_prem_admin_loading;
+		fixed_fees=0.;
+		if(((int)this->model_point_DEU->payt_freq>0) &&((this->model_point_DEU->age_at_valn-this->model_point_DEU->age_at_issue)<=this->model_point_DEU->ger_prem_duration))
+			fixed_fees=this->model_point_DEU->ger_prem_fixed_fee*premium_prorata_factor/this->model_point_DEU->payt_freq;
+		Commission_repayment=0.;
+		commission_charges=0.;
+		Commission_account=0.;
+		Premium_paid_net=gross_premium*(1.-indicator_five_year_premium*this->model_point_DEU->acquisition_cost_rate)-
+				administration_charges-fixed_fees;
+		hedge_fees_on_premium=Premium_paid_net*this->model_point_DEU->ger_prem_hedge_charge / 100.;
+		hedge_fees_on_sum_of_premiums=0.;
+		remaining_premium=Premium_paid_net-hedge_fees_on_premium;
+		if ( (int)timing_items_DEU[POL_YEAR_DEU][1] <= (this->model_point_DEU->deferment_age - this->model_point_DEU->age_at_issue)){
+			timing_items_DEU[GROSS_PREMIUM_BEF][1] = gross_premium; 
+			timing_items_DEU[ADMIN_CHG_PREMIUM_BEF][1] =administration_charges;
+			timing_items_DEU[NET_PREMIUM_BEF][1]=remaining_premium;
+		}
+		if(timing_items_DEU[GROSS_PREMIUM_BEF][1]!=0.)
+			timing_items_DEU[ACQUI_CHARGE_PREMIUM_BEF][1]=timing_items_DEU[GROSS_PREMIUM_BEF][1]*this->model_point_DEU->acquisition_cost_rate*indicator_five_year_premium;
+
+		timing_items_DEU[FIXED_FEE_PREMIUM_BEF][1]=fixed_fees;
+
+		if( (timing_items_DEU[GROSS_PREMIUM_BEF][1]+timing_items_DEU[ADMIN_CHG_PREMIUM_BEF][1]
+				+timing_items_DEU[ACQUI_CHARGE_PREMIUM_BEF][1]+timing_items_DEU[FIXED_FEE_PREMIUM_BEF][1]) >0. )
+			timing_items_DEU[HEDGE_FEE_PREMIUM_BEF][1] =  (timing_items_DEU[GROSS_PREMIUM_BEF][1]-timing_items_DEU[ACQUI_CHARGE_PREMIUM_BEF][1]
+						-timing_items_DEU[ADMIN_CHG_PREMIUM_BEF][1]-timing_items_DEU[FIXED_FEE_PREMIUM_BEF][1]>0.)*hedge_fees_on_premium;
+
+		timing_items_DEU[HEDGE_FEE_SUM_PREMIUM_BEF][1]=0.;
+		
+		//Benefit Base Riester IST <-> SOLL
+		int elapsed_dur=(int)(this->model_point_DEU->age_at_valn-this->model_point_DEU->age_at_issue)+1;
+		double premium_paid = this->model_point_DEU->gmab_valn;
+		double premium_this_year = gross_premium;
+		double premiums_in_later_years = this->model_point_DEU->prem_curr_ini*(this->model_point_DEU->ger_prem_duration-(elapsed_dur==0)-(elapsed_dur!=0)*elapsed_dur);
+		double projected_total_premium=premiums_in_later_years+premium_this_year+premium_paid;
+		double total_premium=this->model_point_DEU->tot_prem;
+		double Difference=total_premium-projected_total_premium;
+		if (this->model_point_DEU->prem_curr_ini==0.)
+			Effect_on_AV= 0.;
+		else
+			Effect_on_AV= Difference*(1.- this->Assumption->riester_prem_admin_loading/100.-this->model_point_DEU->ger_prem_hedge_charge/100.-
+				( this->model_point_DEU->duration_valn<5)*this->model_point_DEU->acquisition_cost_rate   ) -
+				Difference*this->model_point_DEU->ger_prem_fixed_fee/this->model_point_DEU->prem_curr_ini;
+	
+//////////////////////////////////////////////////////////////////////////////////////////////////////		
+
+				//new bonus modelling
+		memset(this->Bonus, 0, sizeof(this->Bonus));
+		int test1=0;
+		int test2=0;
+		int test3=0;
+
+		test1= ((24+5-this->model_point_DEU->last_premium_month)%12)+1;
+		if( this->model_point_DEU->issue_month==7 &&  this->model_point_DEU->Calc_Valn_month == 6)
+			{test2=1;}
+		else if (this->model_point_DEU->issue_month==7)
+			{test2=0;}
+		else {test2 = (int)((prorata_decompositions+SMALL_DOUBLE)*12.);}
+		
+		test3= ((12-this->model_point_DEU->valn_month)%12)+1; 
+		
+		Next_June_belongs_to_first_proction_period= 1*(test1<=test2);
+
+		if(test1<=test3) {Year_next_June_decomposition = this->model_point_DEU->valn_year;}
+		else Year_next_June_decomposition = this->model_point_DEU->valn_year+1;
+		bonus_indicator_First_period = Next_June_belongs_to_first_proction_period * (Year_next_June_decomposition > (this->model_point_DEU->year_last_bonus+1));
+		
+		if((this->model_point_DEU->year_last_bonus+1==Year_next_June_decomposition)
+			&&(this->model_point_DEU->Calc_Valn_month+1  <  this->model_point_DEU->issue_month)
+			&&(this->model_point_DEU->issue_month<=7))
+		{bonus_indicator_Second_period=0;}
+		else bonus_indicator_Second_period=1;
+
+		this->model_point_DEU->Bonus_weight=0.;
+		int test0= (int)(this->model_point_DEU->duration_valn)+1;
+		if(this->model_point_DEU->last_year_bonus!=0.)
+			this->model_point_DEU->Bonus_weight = 1.;
+		else if (test0<1)
+			this->model_point_DEU->Bonus_weight = 1.;
+		else if (test0<2)
+			this->model_point_DEU->Bonus_weight = 0.7;
+		else if (test0<3)
+			this->model_point_DEU->Bonus_weight = 0.4;
+		else 	this->model_point_DEU->Bonus_weight=0.;
+
+		for (int t=1; t<=this->model_point_DEU->T_Max;t++)
+		{
+			int age_clasification_for_bonus=0;
+			if((int)timing_items_DEU[AGE_LAST_DEU][t]<20) age_clasification_for_bonus=1;
+			else if((int)timing_items_DEU[AGE_LAST_DEU][t]<25) age_clasification_for_bonus=2;
+			else if((int)timing_items_DEU[AGE_LAST_DEU][t]<30) age_clasification_for_bonus=3;
+			else if((int)timing_items_DEU[AGE_LAST_DEU][t]<35) age_clasification_for_bonus=4;
+			else if((int)timing_items_DEU[AGE_LAST_DEU][t]<40) age_clasification_for_bonus=5;
+			else if((int)timing_items_DEU[AGE_LAST_DEU][t]<45) age_clasification_for_bonus=6;
+			else if((int)timing_items_DEU[AGE_LAST_DEU][t]<50) age_clasification_for_bonus=7;
+			else if((int)timing_items_DEU[AGE_LAST_DEU][t]<55) age_clasification_for_bonus=8;
+			else if((int)timing_items_DEU[AGE_LAST_DEU][t]<60) age_clasification_for_bonus=9;
+			else  age_clasification_for_bonus=10;
+
+			Bonus[t] = this->Assumption->bonus_table->search(age_clasification_for_bonus,(this->model_point_DEU->sex !="M")+1)*this->model_point_DEU->Bonus_weight;
+
+		}
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////		
+
+		Effect_on_AB=Difference;
+		Effect_on_IB=0.;
+	}
+	virtual void Calculate_gross_premium(){
+		for (int t=2; t<=this->model_point_DEU->T_Max;t++)
+			if ( (int) timing_items_DEU[POL_YEAR_DEU][t] <= this->model_point_DEU->ger_prem_duration )
+				timing_items_DEU[GROSS_PREMIUM_BEF][t] =  this->model_point_DEU->prem_curr_ini; 
+	}
+	virtual void Calculate_administration_charge_premium(){
+		for (int t=2; t<=this->model_point_DEU->T_Max;t++)
+			timing_items_DEU[ADMIN_CHG_PREMIUM_BEF][t] = timing_items_DEU[GROSS_PREMIUM_BEF][t] * this->model_point_DEU->ger_prem_admin_loading;
+	}
+	virtual void Calculate_commission_charge_premium()
+	{	
+		for (int t=2; t<=this->model_point_DEU->T_Max;t++)
+		{
+			if( timing_items_DEU[GROSS_PREMIUM_BEF][t]!=0. && (int) timing_items_DEU[POL_YEAR_DEU][t]!=1 && (int) timing_items_DEU[POL_YEAR_DEU][t]<=5)
+				timing_items_DEU[ACQUI_CHARGE_PREMIUM_BEF][t]=timing_items_DEU[GROSS_PREMIUM_BEF][t]*this->model_point_DEU->acquisition_cost_rate;
+		}
+	}
+	virtual void Calculate_fixed_fee_premium(){
+		for (int t=2; t<=this->model_point_DEU->T_Max;t++)
+			if ( (int)timing_items_DEU[POL_YEAR_DEU][t] <= this->model_point_DEU->ger_prem_duration  )
+				timing_items_DEU[FIXED_FEE_PREMIUM_BEF][t] = this->model_point_DEU->ger_prem_fixed_fee;
+	}
+	virtual void Calculate_hedge_fee_premium(){
+		double premium_bef_h_c=0.;
+		for (int t=2; t<=this->model_point_DEU->T_Max;t++)
+		{
+			premium_bef_h_c = timing_items_DEU[GROSS_PREMIUM_BEF][t]-timing_items_DEU[ADMIN_CHG_PREMIUM_BEF][t]
+						-timing_items_DEU[ACQUI_CHARGE_PREMIUM_BEF][t]-timing_items_DEU[FIXED_FEE_PREMIUM_BEF][t];
+			timing_items_DEU[HEDGE_FEE_PREMIUM_BEF][t] = max(0., premium_bef_h_c  * this->model_point_DEU->ger_prem_hedge_charge / 100.);
+			timing_items_DEU[HEDGE_FEE_SUM_PREMIUM_BEF][t] =0.;	
+		}
+	}
+	virtual void Calculate_net_premium(){
+		for (int t=2; t<=this->model_point_DEU->T_Max;t++)
+			timing_items_DEU[NET_PREMIUM_BEF][t] = timing_items_DEU[GROSS_PREMIUM_BEF][t] - timing_items_DEU[ADMIN_CHG_PREMIUM_BEF][t] 
+									- timing_items_DEU[ACQUI_CHARGE_PREMIUM_BEF][t] - timing_items_DEU[FIXED_FEE_PREMIUM_BEF][t] - 
+									timing_items_DEU[HEDGE_FEE_PREMIUM_BEF][t] - timing_items_DEU[HEDGE_FEE_SUM_PREMIUM_BEF][t];
+	}
+	virtual void Calculate_Premium()
+	{
+		Calculate_modelling_of_first_year_premium();
+		Calculate_gross_premium();
+		Calculate_administration_charge_premium();
+		Calculate_commission_charge_premium();
+		Calculate_fixed_fee_premium();
+		Calculate_hedge_fee_premium();
+		Calculate_net_premium();
+	}
+	virtual void Calculate_gross_bonus()
+	{
+		for (int t=1; t<=this->model_point_DEU->T_Max;t++){
+			if(t==1){
+				if (((int)timing_items_DEU[POL_YEAR_DEU][t]>=2) && ((int)timing_items_DEU[POL_YEAR_DEU][t]<= this->model_point_DEU->ger_prem_duration))
+					timing_items_DEU[GROSS_STATE_BONUS][t]=bonus_indicator_First_period * Bonus[t];
+					}
+			else if( max(t,(int)timing_items_DEU[POL_YEAR_DEU][t])<=this->model_point_DEU->ger_prem_duration)
+			{
+				timing_items_DEU[GROSS_STATE_BONUS][t]=(bonus_indicator_Second_period*(t==2)+(t!=2))*Bonus[t];
+			}
+
+			if (this->model_point_DEU->ger_gpp==1) timing_items_DEU[GROSS_BONUS_BEF][t]=0.;
+			else timing_items_DEU[GROSS_BONUS_BEF][t]=timing_items_DEU[GROSS_STATE_BONUS][t];
+		}
+	}
+	virtual void Calculate_administration_charge_bonus()
+	{
+		for (int t=1; t<=this->model_point_DEU->T_Max;t++){
+			if((int)timing_items_DEU[POL_YEAR_DEU][t]>=2) {
+				if(this->model_point_DEU->ger_gpp!=1) timing_items_DEU[ADMIN_CHG_BONUS_BEF][t]=timing_items_DEU[GROSS_STATE_BONUS][t]*this->Assumption->ger_alpha/100.;
+				else if ( timing_items_DEU[POL_YEAR_DEU][t] <= 6 ) timing_items_DEU[ADMIN_CHG_BONUS_BEF][t]=timing_items_DEU[GROSS_STATE_BONUS][t]*(- this->model_point_DEU->acquisition_cost_rate + this->Assumption->ger_alpha/100. );
+				else timing_items_DEU[ADMIN_CHG_BONUS_BEF][t]=timing_items_DEU[GROSS_STATE_BONUS][t]*this->Assumption->ger_alpha/100.;
+			}
+		}
+	}
+	virtual void Calculate_commission_charge_bonus()
+	{
+		for (int t=1; t<=this->model_point_DEU->T_Max;t++){
+			if ( timing_items_DEU[POL_YEAR_DEU][t] >= 2 ){
+				if ( this->model_point_DEU->ger_gpp != 1 ) timing_items_DEU[ACQUI_CHARGE_BONUS_BEF][t] =  this->Assumption->ger_beta/100. * timing_items_DEU[GROSS_STATE_BONUS][t];
+				else timing_items_DEU[ACQUI_CHARGE_BONUS_BEF][t] = timing_items_DEU[GROSS_STATE_BONUS][t] * (this->Assumption->ger_beta/100. - this->model_point_DEU->ger_prem_admin_loading);		
+			}
+		}
+	}
+	virtual void Calculate_fixed_fee_bonus()
+	{
+		for (int t=1; t<=this->model_point_DEU->T_Max;t++) 
+			timing_items_DEU[FIXED_FEES_BONUS_BEF][t] = 0.;
+	}
+	virtual void Calculate_hedge_fee_bonus()
+	{
+		for (int t=1; t<=this->model_point_DEU->T_Max;t++){
+			timing_items_DEU[HEDGE_FEES_BONUS_BEF][t] =  ( timing_items_DEU[GROSS_BONUS_BEF][t] - timing_items_DEU[ACQUI_CHARGE_BONUS_BEF][t] - timing_items_DEU[ADMIN_CHG_BONUS_BEF][t] ) *
+							this->model_point_DEU->ger_prem_hedge_charge / 100.;
+			timing_items_DEU[HEDGE_FEES_SUM_PREM_BONUS_BEF][t] =0.;
+		}
+	}
+	virtual void Calculate_net_bonus()
+	{
+		for (int t=1; t<=this->model_point_DEU->T_Max;t++)
+			timing_items_DEU[NET_BONUS_BEF][t] = timing_items_DEU[GROSS_BONUS_BEF][t] - timing_items_DEU[ACQUI_CHARGE_BONUS_BEF][t] -
+							timing_items_DEU[ADMIN_CHG_BONUS_BEF][t] - timing_items_DEU[HEDGE_FEES_BONUS_BEF][t]-
+							timing_items_DEU[FIXED_FEES_BONUS_BEF][t]- timing_items_DEU[HEDGE_FEES_SUM_PREM_BONUS_BEF][t];
+	}
+	virtual void Calculate_Bonus()
+	{
+		Calculate_gross_bonus();
+		Calculate_administration_charge_bonus();
+		Calculate_commission_charge_bonus();
+		Calculate_fixed_fee_bonus();
+		Calculate_hedge_fee_bonus();
+		Calculate_net_bonus();
+	}
+	virtual void Calculate_Roll_up()
+	{
+		for (int t=1; t<=this->model_point_DEU->T_Max;t++)
+			timing_items_DEU[ROLL_UP][t]=this->model_point_DEU->gmib_rollup_rate_at_valn/100.;
+	}
+	virtual void Calculate_guarantiee_initialize_IB()
+	{
+		timing_items_DEU[BASE_GUAR_IB_BEF][0]=this->model_point_DEU->gmib_rollup_valn - this->model_point_DEU->bb_add;
+		for (int t=1; t<=this->model_point_DEU->T_Max;t++)
+		{
+			if ( (int)(timing_items_DEU[AGE_LAST_DEU][t]) != this->model_point_DEU->deferment_age )
+			{
+				timing_items_DEU[BASE_GUAR_IB_BEF][t]=max(0., max(0.,timing_items_DEU[BASE_GUAR_IB_BEF][t-1] )
+					+(this->model_point_DEU->riester_type==2)*(timing_items_DEU[GROSS_PREMIUM_BEF][t]+timing_items_DEU[GROSS_BONUS_BEF][t])
+					+(this->model_point_DEU->riester_type!=2)*(timing_items_DEU[GROSS_PREMIUM_BEF][t]+timing_items_DEU[GROSS_BONUS_BEF][t]
+						-timing_items_DEU[ADMIN_CHG_PREMIUM_BEF][t]-timing_items_DEU[ADMIN_CHG_BONUS_BEF][t]
+						-timing_items_DEU[ACQUI_CHARGE_PREMIUM_BEF][t]-timing_items_DEU[ACQUI_CHARGE_BONUS_BEF][t]
+						-timing_items_DEU[FIXED_FEE_PREMIUM_BEF][t]-timing_items_DEU[FIXED_FEES_BONUS_BEF][t]));
+			}
+			if ( ( (int)(timing_items_DEU[AGE_LAST_DEU][t]) != this->model_point_DEU->deferment_age )&&(this->model_point_DEU->riester_type!=2))
+				timing_items_DEU[BASE_GUAR_IB_BEF][t] -= (timing_items_DEU[GROSS_PREMIUM_BEF][t]==0.)*
+					( (int)(timing_items_DEU[AGE_LAST_DEU][t]) <= this->model_point_DEU->deferment_age )*
+					(t!=1)*this->model_point_DEU->ger_gmib_fixed_fee;
+
+			if(t==1) timing_items_DEU[BASE_GUAR_IB_BEF][t] *= pow( 1. + timing_items_DEU[ROLL_UP][t],prorata_decompositions);
+			else timing_items_DEU[BASE_GUAR_IB_BEF][t] *= ( 1. + timing_items_DEU[ROLL_UP][t]);
+		}
+	}
+	virtual void Calculate_guarantiee_initialize_ADD_IB()
+	{
+		timing_items_DEU[BASE_GUAR_ADD_IB_BEF][0] = this->model_point_DEU->bb_add;
+		for (int t=1; t<=this->model_point_DEU->T_Max;t++)
+		{
+			timing_items_DEU[BASE_GUAR_ADD_IB_BEF][t] = max(0.,timing_items_DEU[BASE_GUAR_ADD_IB_BEF][t-1]);
+
+			if(t==1) timing_items_DEU[BASE_GUAR_ADD_IB_BEF][t] *=( 1. + timing_items_DEU[ROLL_UP][t]*prorata_decompositions);
+			else timing_items_DEU[BASE_GUAR_ADD_IB_BEF][t] *= ( 1. + timing_items_DEU[ROLL_UP][t]);
+		}
+	}
+	virtual void Calculate_guarantiee_initialize_AB()
+	{
+		timing_items_DEU[BASE_GUAR_AB_BEF][0]=this->model_point_DEU->gmab_valn+this->Effect_on_AB;	
+		for (int t=1; t<=this->model_point_DEU->T_Max;t++)
+			timing_items_DEU[BASE_GUAR_AB_BEF][t]=timing_items_DEU[BASE_GUAR_AB_BEF][t-1]+timing_items_DEU[GROSS_PREMIUM_BEF][t]+timing_items_DEU[GROSS_BONUS_BEF][t];	
+	}
+	virtual void Calculate_guarantees_initialize()
+	{
+		Calculate_Roll_up();
+		Calculate_guarantiee_initialize_IB();
+		Calculate_guarantiee_initialize_ADD_IB();
+		Calculate_guarantiee_initialize_AB();
+	}
+	virtual void Calculate_timing_paid_up()
+	{
+		timing_items_DEU[SURVIVAL_AFTER_PAID_UP][0]=1.;
+		timing_items_DEU[LAPSE_AFTER_PAID_UP][0]=1.;
+		timing_items_DEU[TREND_PORT_PAID_UP_POLICIES][0] =1.;
+		for (int t=1; t<=this->model_point_DEU->T_Max;t++)
+		{
+			timing_items_DEU[LAPSE_AFTER_PAID_UP][t]= 1./100.*( t <= this->model_point_DEU->remain_duration )* (1 + Paidup_shock_vector[t]);
+			timing_items_DEU[SURVIVAL_AFTER_PAID_UP][t]=( 1. - timing_items_DEU[DEATH_R][t] * ( t <= this->model_point_DEU->remain_duration ) )
+				*(1. -timing_items_DEU[LAPSE_AFTER_PAID_UP][t]);
+			timing_items_DEU[TREND_PORT_PAID_UP_POLICIES][t] = timing_items_DEU[TREND_PORT_PAID_UP_POLICIES][t-1]*timing_items_DEU[SURVIVAL_AFTER_PAID_UP][t];	
+			timing_items_DEU[TREND_INVERSE][t] = 1./ timing_items_DEU[TREND_PORT_PAID_UP_POLICIES][t];
+		}	
+		//calculate IFD_ROLL_UP_RATE_BEF_PAID_UP and IFD_ROLL_UP_RATE_AFTER_PAID_UP
+		timing_items_DEU[IFD_ROLL_UP_RATE_AFTER_PAID_UP][0]=0.;
+		for (int t=1; t<=this->model_point_DEU->T_Max;t++)
+		{
+			timing_items_DEU[IFD_ROLL_UP_RATE_BEF_PAID_UP][t] = ( this->model_point_DEU->remain_duration >= t )*
+					pow(1.+timing_items_DEU[ROLL_UP][t], (int)(this->model_point_DEU->remain_duration - t))*
+					(1. + timing_items_DEU[ROLL_UP][t] * ((t==1)*prorata_decompositions+(t!=1)));
+			timing_items_DEU[IFD_ROLL_UP_RATE_AFTER_PAID_UP][t] = ( this->model_point_DEU->remain_duration >= t )*
+									 pow(1. + (this->model_point_DEU->riester_type==1)*this->Assumption->reduced_rollup_rate, (int)(this->model_point_DEU->remain_duration - t))*
+									 (1. +(this->model_point_DEU->riester_type==1)*this->Assumption->reduced_rollup_rate * ((t==1)*prorata_decompositions+(t!=1)));
+			timing_items_DEU[IFD_ROLL_UP_RATE_AFTER_PAID_UP][0]+=timing_items_DEU[IFD_ROLL_UP_RATE_AFTER_PAID_UP][t];
+		}
+		// calculate GROSS_PREM_BB GROSS_BONUS_BB
+		for (int t=1; t<=this->model_point_DEU->T_Max;t++)
+		{
+			if(t==1) timing_items_DEU[GROSS_PREM_BB][t]=( t <= this->model_point_DEU->ger_prem_duration)*this->gross_premium;
+			else timing_items_DEU[GROSS_PREM_BB][t]=timing_items_DEU[GROSS_PREMIUM_BEF][t];	
+			timing_items_DEU[GROSS_BONUS_BB][t]=timing_items_DEU[GROSS_STATE_BONUS][t];
+		}
+		//Calculate NET_PREM_BB_EXCLU_FIXED_FEES
+		for (int t=1; t<=this->model_point_DEU->T_Max;t++)
+		{
+			if(t==1) timing_items_DEU[NET_PREM_BB_EXCLU_FIXED_FEES][t]=max(0.,gross_premium-administration_charges-timing_items_DEU[ACQUI_CHARGE_PREMIUM_BEF][t]);
+			else
+				timing_items_DEU[NET_PREM_BB_EXCLU_FIXED_FEES][t] =max(0.,timing_items_DEU[GROSS_PREMIUM_BEF][t]*(1.-(t>this->Assumption->premium_paid_up_year)*this->model_point_DEU->ger_prem_admin_loading/2.-(t<=this->Assumption->premium_paid_up_year)*this->model_point_DEU->ger_prem_admin_loading)  -
+												timing_items_DEU[ACQUI_CHARGE_PREMIUM_BEF][t]);
+
+			timing_items_DEU[NET_BONUS_BB_EXCLU_FIXED_FEES][t]=timing_items_DEU[GROSS_BONUS_BEF][t]-timing_items_DEU[ACQUI_CHARGE_BONUS_BEF][t]-timing_items_DEU[ADMIN_CHG_BONUS_BEF][t];
+
+		}
+		//Calculate NET_PREM_INCLUD_FIXED_FEES
+		for (int t=1; t<=this->model_point_DEU->T_Max;t++)
+		{
+			if(t==1)	
+				/*timing_items_DEU[NET_PREM_INCLUD_FIXED_FEES][t]=timing_items_DEU[NET_PREM_BB_EXCLU_FIXED_FEES][t]
+					-fixed_fees -timing_items_DEU[HEDGE_FEE_PREMIUM_BEF][t] - timing_items_DEU[HEDGE_FEE_SUM_PREMIUM_BEF][t];	*/
+					timing_items_DEU[NET_PREM_INCLUD_FIXED_FEES][t]=gross_premium-administration_charges-timing_items_DEU[ACQUI_CHARGE_PREMIUM_BEF][t]
+					-fixed_fees -timing_items_DEU[HEDGE_FEE_PREMIUM_BEF][t] - timing_items_DEU[HEDGE_FEE_SUM_PREMIUM_BEF][t];	
+				
+			else
+				timing_items_DEU[NET_PREM_INCLUD_FIXED_FEES][t]=max(0.,timing_items_DEU[NET_PREM_BB_EXCLU_FIXED_FEES][t]
+					-this->model_point_DEU->ger_prem_fixed_fee -timing_items_DEU[HEDGE_FEE_PREMIUM_BEF][t] 
+					-timing_items_DEU[HEDGE_FEE_SUM_PREMIUM_BEF][t]);
+			
+			timing_items_DEU[NET_BONUS_INCLUD_FIXED_FEES][t]=timing_items_DEU[NET_BONUS_BB_EXCLU_FIXED_FEES][t]-timing_items_DEU[HEDGE_FEES_BONUS_BEF][t];
+		}	
+	}
+	virtual void Calculate_ab_paid_up()
+	{
+		double sum_local=timing_items_DEU[BASE_GUAR_AB_BEF][0];
+		for (int t=1; t<=this->model_point_DEU->T_Max;t++)
+		{
+			sum_local+=timing_items_DEU[GROSS_BONUS_BB][t]+timing_items_DEU[GROSS_PREM_BB][t];
+			timing_items_DEU[AB_PAID_UP][t]= max(0.,sum_local);
+			if(t!=1) timing_items_DEU[AB_PAID_UP][t]*=(t<=this->model_point_DEU->remain_duration);	
+		}	
+	}
+	virtual void Calculate_ib_paid_up()
+	{
+		double indic_local=0.;
+		int indic_remaining_local=0;
+		double sum_product_roll_up_local=0.;
+		double benefit_base_add_local=this->model_point_DEU->bb_add * timing_items_DEU[IFD_ROLL_UP_RATE_BEF_PAID_UP][1];
+		double benefit_base_init_local=timing_items_DEU[BASE_GUAR_IB_BEF][0] *timing_items_DEU[IFD_ROLL_UP_RATE_BEF_PAID_UP][1];
+		double fixed_fees_local=fixed_fees*timing_items_DEU[IFD_ROLL_UP_RATE_BEF_PAID_UP][1];
+		double sum_product_local= 0.;
+		//double sum_product_local= timing_items_DEU[NET_PREM_BB_EXCLU_FIXED_FEES][1]*timing_items_DEU[IFD_ROLL_UP_RATE_BEF_PAID_UP][1];
+		
+		for (int t=1; t<=this->model_point_DEU->T_Max;t++)
+		{
+			if ( timing_items_DEU[IFD_ROLL_UP_RATE_BEF_PAID_UP][t+1]!=0 ) indic_local=(timing_items_DEU[IFD_ROLL_UP_RATE_AFTER_PAID_UP][t+1]/timing_items_DEU[IFD_ROLL_UP_RATE_BEF_PAID_UP][t+1]);
+			else indic_local=1.;	
+			
+			indic_remaining_local=( t <= this->model_point_DEU->remain_duration );
+
+			if ( t!=1 ){
+				sum_product_roll_up_local += timing_items_DEU[IFD_ROLL_UP_RATE_BEF_PAID_UP][t];
+				sum_product_local += ( (this->model_point_DEU->riester_type==2)*(timing_items_DEU[GROSS_BONUS_BB][t]+timing_items_DEU[GROSS_PREM_BB][t] )
+					+(this->model_point_DEU->riester_type!=2)*(timing_items_DEU[NET_BONUS_BB_EXCLU_FIXED_FEES][t]+timing_items_DEU[NET_PREM_BB_EXCLU_FIXED_FEES][t]))
+					*timing_items_DEU[IFD_ROLL_UP_RATE_BEF_PAID_UP][t];
+				timing_items_DEU[IFD_ROLL_UP_RATE_AFTER_PAID_UP][0]-=timing_items_DEU[IFD_ROLL_UP_RATE_AFTER_PAID_UP][t];
+									
+				timing_items_DEU[IB_PAID_UP][t] = max(timing_items_DEU[AB_PAID_UP][t], ( benefit_base_init_local-
+									this->model_point_DEU->ger_prem_fixed_fee *sum_product_roll_up_local-
+									fixed_fees_local+sum_product_local )* indic_local-
+									this->model_point_DEU->admin_fee_dollar*timing_items_DEU[IFD_ROLL_UP_RATE_AFTER_PAID_UP][0]  +
+									benefit_base_add_local)*indic_remaining_local;
+			}
+			else{
+				sum_product_local += ( (this->model_point_DEU->riester_type==2)*(timing_items_DEU[GROSS_BONUS_BB][t]+timing_items_DEU[GROSS_PREM_BB][t] )
+					+(this->model_point_DEU->riester_type!=2)*(timing_items_DEU[NET_BONUS_BB_EXCLU_FIXED_FEES][t]+timing_items_DEU[NET_PREM_BB_EXCLU_FIXED_FEES][t]))
+					*timing_items_DEU[IFD_ROLL_UP_RATE_BEF_PAID_UP][t];
+
+				timing_items_DEU[IFD_ROLL_UP_RATE_AFTER_PAID_UP][0]-=timing_items_DEU[IFD_ROLL_UP_RATE_AFTER_PAID_UP][t];
+				timing_items_DEU[IB_PAID_UP][t] = max(timing_items_DEU[AB_PAID_UP][t],
+					(((this->model_point_DEU->riester_type==2)*(timing_items_DEU[GROSS_BONUS_BB][t]+timing_items_DEU[GROSS_PREM_BB][t])
+					+(this->model_point_DEU->riester_type!=2)*(timing_items_DEU[NET_BONUS_BB_EXCLU_FIXED_FEES][t]+timing_items_DEU[NET_PREM_BB_EXCLU_FIXED_FEES][t]) )
+					*timing_items_DEU[IFD_ROLL_UP_RATE_BEF_PAID_UP][1]-fixed_fees_local+benefit_base_init_local )*indic_local 
+					-this->model_point_DEU->admin_fee_dollar *timing_items_DEU[IFD_ROLL_UP_RATE_AFTER_PAID_UP][0]+
+					benefit_base_add_local)*indic_remaining_local;
+			}
+		}
+	}
+	virtual void InitProjection()
+	{
+		Calculate_PolicyYear_Age();
+		
+		Calculate_GuaranteedAnnuity();
+		int t;
+		for (t = 1; t <= SUBACCT_MAX_PERIOD; t++){Calculate_MortalityRate(t,1);}
+		Calculate_BaseLapseRate_BasePaidUpRate();
+		Calculate_Premium();
+		Calculate_Bonus();
+		benefit_base_riester_ist_soll();
+
+
+
+		Calculate_guarantees_initialize();
+		if(this->Assumption->use_paid_up != "N" && this->model_point_DEU->payt_freq != 0)
+		{
+			Calculate_timing_paid_up();
+			Calculate_ab_paid_up();
+			Calculate_ib_paid_up();
+			
+		}
+	}
+	virtual void InitializeVariables()
+	{
+		//Calculate_PolicyYear_Age();
+
+		this->model_point_DEU->Const_Omega=this->Assumption->Const_Omega;
+		if(this->Assumption->use_assumption_date==1){
+			this->model_point_DEU->Calc_Valn_month=this->Assumption->month_valn;
+			this->model_point_DEU->Calc_Valn_year=this->Assumption->year_valn;
+		}
+		else{
+			this->model_point_DEU->Calc_Valn_month=this->model_point_DEU->valn_month;
+			this->model_point_DEU->Calc_Valn_year=this->model_point_DEU->valn_year;
+		}
+		this->model_point_DEU->valn_month = this->model_point_DEU->Calc_Valn_month;
+		this->model_point_DEU->valn_year = this->model_point_DEU->Calc_Valn_year;
+
+		this->set_timing_items_to_zero();
+		this->set_main_proj_arrays_to_zero();
+		this->set_other_vectors_to_zero();
+
+		this->model_point_DEU->av_total_init=0.;
+		this->model_point_DEU->av_add=this->model_point_DEU->av_add_inforce;
+
+		int table_lookup=this->model_point_DEU->deferment_age - (int)this->model_point_DEU->age_exact_issue;
+		this->model_point_DEU->ger_lapse_dist_group=this->Assumption->Get_ger_lapse_dist_group(table_lookup);
+		this->Assumption->initialize_election_bound(this->model_point_DEU->tax_layer);
+		//this->model_point_DEU->ger_prem_duration *=(this->model_point_DEU->pay_status ==1);//mehdi
+		
+		this->maturity_yr=60;
+
+		this->model_point_DEU->prem_curr_ini = this->model_point_DEU->prem_period_ini*this->model_point_DEU->payt_freq;
+
+		//Initialize frequency_factor HE
+		if(this->model_point_DEU->payt_freq==0) this->model_point_DEU->frequency_factor=1/12.;
+		else this->model_point_DEU->frequency_factor=1/this->model_point_DEU->payt_freq;
+		
+		this->model_point_DEU->age_exact_issue = this->model_point_DEU->age_at_valn - this->model_point_DEU->duration_valn/*+10*SMALL_DOUBLE*/;
+		this->model_point_DEU->age_exact_issue=(int)(100.*this->model_point_DEU->age_exact_issue+0.5)/100.;
+		if( this->model_point_DEU->duration_valn==0.) this->model_point_DEU->elapsed_months=(int)(ceil((this->model_point_DEU->duration_valn)*12.));//Change for HE
+		else this->model_point_DEU->elapsed_months = (int)(ceil((this->model_point_DEU->duration_valn-0.0001)*12.));//Change for HE
+		
+		this->model_point_DEU->prem_type= "R";
+		if (this->model_point_DEU->prem_curr_ini == 1) this->model_point_DEU->prem_type= "S";
+
+		this->model_point_DEU->elapsed_mths_in_valn_yr = this->model_point_DEU->elapsed_months % 12;
+		//this->model_point_DEU->ger_riester_month_bef_08 = (this->model_point_DEU->valn_year<2008)*(12-this->model_point_DEU->valn_month);
+		this->model_point_DEU->ger_riester_month_bef_08 = (this->model_point_DEU->Calc_Valn_year<2008)*(12-this->model_point_DEU->Calc_Valn_month);
+		
+		this->model_point_DEU->elapsed_years = this->model_point_DEU->elapsed_months/12;
+
+		this->model_point_DEU->ger_prem_admin_loading = this->Assumption->administrative_loading;
+		this->model_point_DEU->ger_min_invested_amount = 0.20*((int)this->model_point_DEU->ger_product_number==1)+0.40*((int)this->model_point_DEU->ger_product_number==2)+0.25*((int)this->model_point_DEU->ger_product_number==3);
+		this->model_point_DEU->prorata_first_year=(1.-this->model_point_DEU->elapsed_mths_in_valn_yr/12.);
+		this->model_point_DEU->age_at_issue= (int)(this->model_point_DEU->age_exact_issue+0.0001);
+		//this->model_point_DEU->age_exact_issue=this->model_point_DEU->age_exact_issue-0.0001;
+		
+		total_number_decompositions=0;
+		prorata_decompositions=0.;
+		remaining_decompositions=0;
+		premium_prorata_factor=0;
+		gross_premium=0.;
+		administration_charges=0.;
+		commission_charges=0.;
+		remaining_premium =0.;
+		fixed_fees=0.;
+		hedge_fees_on_premium=0.;
+		hedge_fees_on_sum_of_premiums=0.;
+		Commission_account=0.;
+		Commission_repayment=0.;
+
+		int pol_year_deu_first_year=(int)(this->model_point_DEU->age_at_valn-this->model_point_DEU->age_at_issue)*(this->model_point_DEU->duration_valn!=0.);
+		this->model_point_DEU->remain_duration=min(60,(int)this->model_point_DEU->deferment_age-
+				(int)this->model_point_DEU->age_at_issue-pol_year_deu_first_year );
+		
+		this->model_point_DEU->T_Max=this->model_point_DEU->remain_duration+1;
+		
+		if (this->model_point_DEU->ger_prem_duration <= 15.)
+			this->model_point_DEU->acquisition_cost_rate = 0.1125 + 0.02625 * (this->model_point_DEU->ger_prem_duration - 5.);
+		else 
+			this->model_point_DEU->acquisition_cost_rate = 0.375 + 0.042 * (this->model_point_DEU->ger_prem_duration - 15.);
+		this->model_point_DEU->acquisition_cost_rate = min (1. , this->model_point_DEU->acquisition_cost_rate*0.4);
+
+		/*this->model_point_DEU->bonus_paid=0.;
+		if(this->model_point_DEU->last_year_bonus!=0.)
+			this->model_point_DEU->bonus_paid=this->model_point_DEU->last_year_bonus;
+		else if( (this->model_point_DEU->age_at_valn - this->model_point_DEU->age_at_issue)<=4)
+		{
+			int age_clasification_for_bonus=0;
+			if(this->model_point_DEU->age_at_valn<20) age_clasification_for_bonus=1;
+			else if(this->model_point_DEU->age_at_valn<25) age_clasification_for_bonus=2;
+			else if(this->model_point_DEU->age_at_valn<30) age_clasification_for_bonus=3;
+			else if(this->model_point_DEU->age_at_valn<35) age_clasification_for_bonus=4;
+			else if(this->model_point_DEU->age_at_valn<40) age_clasification_for_bonus=5;
+			else if(this->model_point_DEU->age_at_valn<45) age_clasification_for_bonus=6;
+			else if(this->model_point_DEU->age_at_valn<50) age_clasification_for_bonus=7;
+			else if(this->model_point_DEU->age_at_valn<55) age_clasification_for_bonus=8;
+			else if(this->model_point_DEU->age_at_valn<60) age_clasification_for_bonus=9;
+			else  age_clasification_for_bonus=10;
+
+			this->model_point_DEU->bonus_paid = this->Assumption->bonus_table->search(age_clasification_for_bonus,(this->model_point_DEU->sex !="M")+1);
+
+			if( (this->model_point_DEU->age_at_valn - this->model_point_DEU->age_at_issue)<1)
+				this->model_point_DEU->bonus_paid*=1.;
+			else if( (this->model_point_DEU->age_at_valn - this->model_point_DEU->age_at_issue)<2)
+				this->model_point_DEU->bonus_paid*=0.7;
+			else if( (this->model_point_DEU->age_at_valn - this->model_point_DEU->age_at_issue)<3)
+				this->model_point_DEU->bonus_paid*=0.4;
+			else this->model_point_DEU->bonus_paid *=0.;
+		}
+		else this->model_point_DEU->bonus_paid=0.;*/
+		
+		//if(this->model_point_DEU->riester_type!=1) this->Assumption->reduced_rollup_rate=0.;
+		this->Effect_on_AB=0.;
+		this->Effect_on_AV=0.;
+		this->Effect_on_IB=0.;
+
+
+	}
+	virtual void set_current_model_point(Model_Point *mp)
+	{
+		this->model_point_DEU = dynamic_cast<Model_Point_DEU*>(mp);
+		this->model_point_DEU->Calc_Unisex=1;
+		this->InitializeVariables();
+		this->InitProjection();
+	}
+	///////////////////////////////////////////////////////////////////////////////////
+	//////////////////////////////////////////////////////////////////////////////////
+	/////////////////projection calculus with main_proj_array_2 vector //////////////////
+	//////////////////////////////////////////////////////////////////////////////////
+	//////////////////////////////////////////////////////////////////////////////////
+	virtual void InitializeMainProjArrayUsed(int t)
+	{
+		if (t ==1 )
+		{
+			main_proj_array_DEU[SURV_INDEX_DEU][0] = 1.;
+			main_proj_array_DEU[ACCOUNT_VALUE_TOTAL][0] = max(0.,this->model_point_DEU->av_total_init-this->model_point_DEU->av_add+this->Effect_on_AV);
+			main_proj_array_DEU[ACCOUNT_VALUE_ADD_TOTAL][0] = this->model_point_DEU->av_add;
+			main_proj_array_DEU[SURV_INDEX_CUMUL][0] =1.;
+			main_proj_array_DEU[GUAR_IB_TOT][0]=timing_items_DEU[BASE_GUAR_IB_BEF][0];
+			main_proj_array_DEU[GUAR_ADD_IB_TOT][0]=timing_items_DEU[BASE_GUAR_ADD_IB_BEF][0];
+			main_proj_array_DEU[GUAR_AB_TOT][0]=timing_items_DEU[BASE_GUAR_AB_BEF][0];
+		}
+		main_proj_array_DEU[GROSS_BONUS][t]=timing_items_DEU[GROSS_BONUS_BEF][t] * main_proj_array_DEU[SURV_INDEX_DEU][t-1];
+		main_proj_array_DEU[ADMIN_CHG_BONUS][t]=timing_items_DEU[ADMIN_CHG_BONUS_BEF][t] * main_proj_array_DEU[SURV_INDEX_DEU][t-1];
+		main_proj_array_DEU[ACQUI_CHARGE_BONUS][t]=timing_items_DEU[ACQUI_CHARGE_BONUS_BEF][t] * main_proj_array_DEU[SURV_INDEX_DEU][t-1];
+		main_proj_array_DEU[FIXED_FEES_BONUS][t]=timing_items_DEU[FIXED_FEES_BONUS_BEF][t] * main_proj_array_DEU[SURV_INDEX_DEU][t-1];
+		main_proj_array_DEU[HEDGE_FEES_BONUS][t]=timing_items_DEU[HEDGE_FEES_BONUS_BEF][t] * main_proj_array_DEU[SURV_INDEX_DEU][t-1];
+		main_proj_array_DEU[HEDGE_FEES_SUM_PREM_BONUS][t]=timing_items_DEU[HEDGE_FEES_SUM_PREM_BONUS_BEF][t] * main_proj_array_DEU[SURV_INDEX_DEU][t-1];
+		main_proj_array_DEU[NET_BONUS][t]=timing_items_DEU[NET_BONUS_BEF][t] * main_proj_array_DEU[SURV_INDEX_DEU][t-1];
+		main_proj_array_DEU[ADMIN_CHG_PREMIUM][t]=timing_items_DEU[ADMIN_CHG_PREMIUM_BEF][t] * main_proj_array_DEU[SURV_INDEX_DEU][t-1];
+		main_proj_array_DEU[GROSS_PREMIUM][t]=timing_items_DEU[GROSS_PREMIUM_BEF][t] * main_proj_array_DEU[SURV_INDEX_DEU][t-1];
+		main_proj_array_DEU[HEDGE_FEE_SUM_PREMIUM][t]=timing_items_DEU[HEDGE_FEE_SUM_PREMIUM_BEF][t] * main_proj_array_DEU[SURV_INDEX_DEU][t-1];
+		main_proj_array_DEU[FIXED_FEE_PREMIUM][t]=timing_items_DEU[FIXED_FEE_PREMIUM_BEF][t] * main_proj_array_DEU[SURV_INDEX_DEU][t-1];
+		main_proj_array_DEU[HEDGE_FEE_PREMIUM][t]=timing_items_DEU[HEDGE_FEE_PREMIUM_BEF][t] * main_proj_array_DEU[SURV_INDEX_DEU][t-1];
+		main_proj_array_DEU[NET_PREMIUM][t]=timing_items_DEU[NET_PREMIUM_BEF][t] * main_proj_array_DEU[SURV_INDEX_DEU][t-1];
+		main_proj_array_DEU[ACQUI_CHARGE_PREMIUM][t]=timing_items_DEU[ACQUI_CHARGE_PREMIUM_BEF][t] * main_proj_array_DEU[SURV_INDEX_DEU][t-1];
+		main_proj_array_DEU[BASE_GUAR_AB][t]=timing_items_DEU[BASE_GUAR_AB_BEF][t] * main_proj_array_DEU[SURV_INDEX_DEU][t-1];
+		main_proj_array_DEU[BASE_GUAR_IB][t]=timing_items_DEU[BASE_GUAR_IB_BEF][t] * main_proj_array_DEU[SURV_INDEX_DEU][t-1];
+		main_proj_array_DEU[BASE_GUAR_ADD_IB][t]=timing_items_DEU[BASE_GUAR_ADD_IB_BEF][t] * main_proj_array_DEU[SURV_INDEX_DEU][t-1];
+		main_proj_array_DEU[SURV_INDEX_CUMUL][t]=main_proj_array_DEU[SURV_INDEX_CUMUL][t] * main_proj_array_DEU[SURV_INDEX_DEU][t-1];
+	}
+	virtual void AccountValueAtBeginingOfTheYear(int t)
+	{
+		main_proj_array_DEU[ACCOUNT_VALUE_INIT][t] = max(0., main_proj_array_DEU[ACCOUNT_VALUE_TOTAL][t-1] +
+					 +main_proj_array_DEU[NET_PREMIUM][t] +main_proj_array_DEU[NET_BONUS][t])*(1.+ main_proj_array_DEU[FUND_RETURN][t]) ;
+	
+		main_proj_array_DEU[ACCOUNT_VALUE_ADD_INIT][t] = max(0., main_proj_array_DEU[ACCOUNT_VALUE_ADD_TOTAL][t-1] )*
+					 (1.+ main_proj_array_DEU[FUND_RETURN][t]) ;
+	}
+	virtual void FixedFeesAccountValue(int t)
+	{
+		if  ( ((int)(timing_items_DEU[POL_YEAR_DEU][t]) <= this->model_point_DEU->ger_prem_duration) ||( (int)timing_items_DEU[AGE_LAST_DEU][t]==(int)(this->model_point_DEU->deferment_age)) )
+			main_proj_array_DEU[ACCOUNT_VALUE_FIXED_FEES][t] =0.;
+		else if (t==1)
+			main_proj_array_DEU[ACCOUNT_VALUE_FIXED_FEES][t] = this->model_point_DEU->admin_fee_dollar *prorata_decompositions*(1.+main_proj_array_DEU[FUND_RETURN][t]) ;	
+		else
+			main_proj_array_DEU[ACCOUNT_VALUE_FIXED_FEES][t] =this->model_point_DEU->admin_fee_dollar * main_proj_array_DEU[SURV_INDEX_DEU][t-1]*(1.+main_proj_array_DEU[FUND_RETURN][t]) ;
+
+		main_proj_array_DEU[ACCOUNT_VALUE_ADD_FIXED_FEES][t] =0.;
+	}
+	virtual void HedgeCostFeesAccountValue(int t)
+	{
+		if ((int)(timing_items_DEU[AGE_LAST_DEU][t]) != this->model_point_DEU->deferment_age)
+		{
+		
+			main_proj_array_DEU[ACCOUNT_VALUE_HC_FEES][t] = ( main_proj_array_DEU[ACCOUNT_VALUE_INIT][t] -
+								main_proj_array_DEU[ACCOUNT_VALUE_FIXED_FEES][t] )* this->model_point_DEU->gmxb_chg_perc/100. ;
+		
+			main_proj_array_DEU[ACCOUNT_VALUE_ADD_HC_FEES][t] = ( main_proj_array_DEU[ACCOUNT_VALUE_ADD_INIT][t] -
+								main_proj_array_DEU[ACCOUNT_VALUE_ADD_FIXED_FEES][t] )* this->model_point_DEU->hc_add/100. ;
+		
+			main_proj_array_DEU[AV_BASE][t] = ( main_proj_array_DEU[ACCOUNT_VALUE_INIT][t] -
+								main_proj_array_DEU[ACCOUNT_VALUE_FIXED_FEES][t] );
+		
+			main_proj_array_DEU[AV_ADD_BASE][t] = ( main_proj_array_DEU[ACCOUNT_VALUE_ADD_INIT][t] -
+								main_proj_array_DEU[ACCOUNT_VALUE_ADD_FIXED_FEES][t] );
+			if(t==1)
+			{
+				main_proj_array_DEU[ACCOUNT_VALUE_HC_FEES][t] *=prorata_decompositions; 
+				main_proj_array_DEU[AV_BASE][t] *=prorata_decompositions;
+				main_proj_array_DEU[ACCOUNT_VALUE_ADD_HC_FEES][t] *=prorata_decompositions; 
+				main_proj_array_DEU[AV_ADD_BASE][t] *=prorata_decompositions;
+			}
+		}
+	}
+	virtual void DynamicLapseRate_PaidUpRate(int t,double lapse_multiplicator, double paidup_multiplicator)
+	{
+		//Projected AV
+		double p;
+		if(this->model_point_DEU->riester_type==2)
+			p =  max(59,this->model_point_DEU->deferment_age-5) - (int)(timing_items_DEU[AGE_LAST_DEU][t]);	
+		else
+			p =  this->model_point_DEU->deferment_age - (int)(timing_items_DEU[AGE_LAST_DEU][t])-1;	
+		double tenyr = max(0.,main_proj_array_DEU[TEN_YEAR_INTEREST_RATE][t] );
+		double k1 =  pow((1 + tenyr - this->model_point_DEU->management_fee_perc/100. - this->model_point_DEU->gmxb_chg_perc/100.),p);
+		double k2 =  pow((1 + tenyr - this->model_point_DEU->management_fee_perc/100. - this->model_point_DEU->hc_add/100.),p);
+		double account_value_part_local;
+		double account_value_part_local_1;
+		double account_value_part_local_2;
+
+		account_value_part_local_1 =( main_proj_array_DEU[ ACCOUNT_VALUE_INIT][t] 
+								   -  main_proj_array_DEU[ ACCOUNT_VALUE_FIXED_FEES][t] 
+								   -main_proj_array_DEU[ ACCOUNT_VALUE_HC_FEES][t]) * k1;
+
+		account_value_part_local_2 =( main_proj_array_DEU[ ACCOUNT_VALUE_ADD_INIT][t] 
+								   -  main_proj_array_DEU[ ACCOUNT_VALUE_ADD_FIXED_FEES][t] 
+								   -main_proj_array_DEU[ ACCOUNT_VALUE_ADD_HC_FEES][t]) * k2;
+
+		account_value_part_local=account_value_part_local_1+account_value_part_local_2;
+
+		// required capital for guaranteed annuities
+		double benefit_base_part_local1;
+		double benefit_base_part_local2;
+		double benefit_base_part_local;
+		double k3 =  pow((1 + this->model_point_DEU->gmib_rollup_rate_at_valn  /100.),p);
+		double guarantee_coupon = timing_items_DEU[GMIB_AX_GUAR_DEU][t];
+		double current_coupon = main_proj_array_DEU[GMIB_AX_CURR_MARGIN][t];
+		benefit_base_part_local1 = main_proj_array_DEU[BASE_GUAR_IB][t]+main_proj_array_DEU[BASE_GUAR_ADD_IB][t];
+		double indic = benefit_base_part_local1;
+
+		if(guarantee_coupon==0.)
+			benefit_base_part_local1=0.;
+		else
+			benefit_base_part_local1 = benefit_base_part_local1 *k3 * current_coupon / guarantee_coupon;
+		
+		benefit_base_part_local2=max(benefit_base_part_local1,main_proj_array_DEU[BASE_GUAR_AB][t]);
+		
+		benefit_base_part_local=(1.-this->Assumption->riester_guarantee_perc)*benefit_base_part_local1+this->Assumption->riester_guarantee_perc*benefit_base_part_local2;
+
+		if(indic>SMALL_DOUBLE)
+			main_proj_array_DEU[DYNAMIC_LAPSE_FACTOR][t]= account_value_part_local/benefit_base_part_local;	
+		else
+			main_proj_array_DEU[DYNAMIC_LAPSE_FACTOR][t]= 999999.;	
+
+		//adjusted lapse
+		double itm_factor;
+		if ((int)(timing_items_DEU[POL_YEAR_DEU][t]) <= this->Assumption->lapses_delay)
+			itm_factor = 1.0;
+		else
+			itm_factor = this->Assumption->Get_itm_factor(1.-main_proj_array_DEU[DYNAMIC_LAPSE_FACTOR][t]);
+
+		double ind_local = 1. + (t==1)*( this->model_point_DEU->prorata_first_year -1.);
+		
+		if ((main_proj_array_DEU[ ACCOUNT_VALUE_INIT][t] -  main_proj_array_DEU[ ACCOUNT_VALUE_FIXED_FEES][t] 
+			-main_proj_array_DEU[ ACCOUNT_VALUE_HC_FEES][t]+main_proj_array_DEU[ ACCOUNT_VALUE_ADD_INIT][t] 
+			-main_proj_array_DEU[ ACCOUNT_VALUE_ADD_FIXED_FEES][t] -main_proj_array_DEU[ ACCOUNT_VALUE_ADD_HC_FEES][t])> SMALL_DOUBLE)
+		{
+			if( t!=61   && (int)(timing_items_DEU[AGE_LAST_DEU][t]) != (this->model_point_DEU->deferment_age ) )
+			{
+				double elec_local= ( (int)(timing_items_DEU[AGE_LAST_DEU][t]) < this->Assumption->age_upper_bound_1 ) * this->Assumption->lapse_floor_value_1 + 
+						( (int)(timing_items_DEU[AGE_LAST_DEU][t]) >= this->Assumption->age_upper_bound_1 ) * this->Assumption->lapse_floor_value_2 ;//main_proj_array_DEU[AGE_LAST][t]??
+								
+				main_proj_array_DEU[DYNAMIC_LAPSE_RATE][t] = ind_local* max(elec_local,
+						timing_items_DEU[LAPSE_BASE][t] * itm_factor) ;		
+			}
+			else main_proj_array_DEU[DYNAMIC_LAPSE_RATE][t]=1.;
+		}
+		else  main_proj_array_DEU[DYNAMIC_LAPSE_RATE][t]=0.;
+
+		main_proj_array_DEU[DYNAMIC_LAPSE_RATE][t]*=lapse_multiplicator;
+
+		//adjusted paid Up
+		main_proj_array_DEU[DYNAMIC_PAID_UP_FACTOR][t] = main_proj_array_DEU[DYNAMIC_LAPSE_FACTOR][t];		
+
+		if ((int)(timing_items_DEU[POL_YEAR_DEU][t]) <= this->Assumption->dynamic_paid_up_delay) itm_factor = 1.0;
+		else itm_factor = this->Assumption->Get_itm_factor_paid_up( main_proj_array_DEU[DYNAMIC_PAID_UP_FACTOR][t]);
+				
+		if( t!=61   && (int)(timing_items_DEU[AGE_LAST_DEU][t]) != (this->model_point_DEU->deferment_age ) &&((main_proj_array_DEU[ ACCOUNT_VALUE_INIT][t] -  main_proj_array_DEU[ ACCOUNT_VALUE_FIXED_FEES][t] 
+			-main_proj_array_DEU[ ACCOUNT_VALUE_HC_FEES][t]+main_proj_array_DEU[ ACCOUNT_VALUE_ADD_INIT][t] 
+			-main_proj_array_DEU[ ACCOUNT_VALUE_ADD_FIXED_FEES][t] -main_proj_array_DEU[ ACCOUNT_VALUE_ADD_HC_FEES][t])> SMALL_DOUBLE) )
+			main_proj_array_DEU[DYNAMIC_PAID_UP_RATE][t] = timing_items_DEU[PAID_UP_BASE][t] * itm_factor * ind_local ;
+		else
+			main_proj_array_DEU[DYNAMIC_PAID_UP_RATE][t] = 0.;
+
+		main_proj_array_DEU[DYNAMIC_PAID_UP_RATE][t] *=paidup_multiplicator;
+	}	
+	virtual void DecrementAccountValue_DecrementGuarantees(int t)
+	{					
+		main_proj_array_DEU[ACCOUNT_VALUE_DECREM][t] = (main_proj_array_DEU[ACCOUNT_VALUE_INIT][t] -
+			main_proj_array_DEU[ACCOUNT_VALUE_FIXED_FEES][t] -main_proj_array_DEU[ACCOUNT_VALUE_HC_FEES][t]) *
+			( main_proj_array_DEU[DYNAMIC_LAPSE_RATE][t]+ main_proj_array_DEU[DYNAMIC_PAID_UP_RATE][t] );
+	
+		main_proj_array_DEU[ACCOUNT_VALUE_DECREM][t] += (main_proj_array_DEU[ACCOUNT_VALUE_INIT][t] -
+			main_proj_array_DEU[ACCOUNT_VALUE_FIXED_FEES][t] -main_proj_array_DEU[ACCOUNT_VALUE_HC_FEES][t]-
+			main_proj_array_DEU[ACCOUNT_VALUE_DECREM][t]) *timing_items_DEU[DEATH_R][t];
+								
+		main_proj_array_DEU[ACCOUNT_VALUE_ADD_DECREM][t] = (main_proj_array_DEU[ACCOUNT_VALUE_ADD_INIT][t] -
+			main_proj_array_DEU[ACCOUNT_VALUE_ADD_FIXED_FEES][t] -main_proj_array_DEU[ACCOUNT_VALUE_ADD_HC_FEES][t]) *
+			( main_proj_array_DEU[DYNAMIC_LAPSE_RATE][t]+ main_proj_array_DEU[DYNAMIC_PAID_UP_RATE][t] );
+								
+		main_proj_array_DEU[ACCOUNT_VALUE_ADD_DECREM][t] += (main_proj_array_DEU[ACCOUNT_VALUE_ADD_INIT][t] -
+			main_proj_array_DEU[ACCOUNT_VALUE_ADD_FIXED_FEES][t] -main_proj_array_DEU[ACCOUNT_VALUE_ADD_HC_FEES][t]-
+			main_proj_array_DEU[ACCOUNT_VALUE_ADD_DECREM][t]) *timing_items_DEU[DEATH_R][t];
+		
+		main_proj_array_DEU[GUAR_IB_DECREM][t] = main_proj_array_DEU[BASE_GUAR_IB][t]* ( main_proj_array_DEU[DYNAMIC_LAPSE_RATE][t] +main_proj_array_DEU[DYNAMIC_PAID_UP_RATE][t] );
+		main_proj_array_DEU[GUAR_IB_DECREM][t] += (main_proj_array_DEU[BASE_GUAR_IB][t]-main_proj_array_DEU[GUAR_IB_DECREM][t])* timing_items_DEU[DEATH_R][t];
+	
+		main_proj_array_DEU[GUAR_ADD_IB_DECREM][t] = main_proj_array_DEU[BASE_GUAR_ADD_IB][t]* ( main_proj_array_DEU[DYNAMIC_LAPSE_RATE][t] +main_proj_array_DEU[DYNAMIC_PAID_UP_RATE][t] ) ;
+		main_proj_array_DEU[GUAR_ADD_IB_DECREM][t] += (main_proj_array_DEU[BASE_GUAR_ADD_IB][t]-main_proj_array_DEU[GUAR_ADD_IB_DECREM][t])* timing_items_DEU[DEATH_R][t];
+	
+		main_proj_array_DEU[GUAR_AB_DECREM][t] = main_proj_array_DEU[BASE_GUAR_AB][t]* ( main_proj_array_DEU[DYNAMIC_LAPSE_RATE][t] +main_proj_array_DEU[DYNAMIC_PAID_UP_RATE][t] );
+		main_proj_array_DEU[GUAR_AB_DECREM][t] += (main_proj_array_DEU[BASE_GUAR_AB][t]-main_proj_array_DEU[GUAR_AB_DECREM][t])* timing_items_DEU[DEATH_R][t];	
+	}
+	virtual void ElectionRate(int t)
+	{
+		if( fabs(main_proj_array_DEU[DYNAMIC_LAPSE_FACTOR][t])>0.)
+		{
+			if(main_proj_array_DEU[DYNAMIC_LAPSE_FACTOR][t]!=999999.)
+				main_proj_array_DEU[ELECTION_OTM_FACTOR][t] =1./main_proj_array_DEU[DYNAMIC_LAPSE_FACTOR][t];
+			else 
+				main_proj_array_DEU[ELECTION_OTM_FACTOR][t] =0.;
+		}
+		else
+			main_proj_array_DEU[ELECTION_OTM_FACTOR][t] = 999999.;
+			
+		if (main_proj_array_DEU[ELECTION_OTM_FACTOR][t] < this->Assumption->first_election_bound)
+				main_proj_array_DEU[FRACTION_WORK_1][t] = 1.0;
+		else if (main_proj_array_DEU[ELECTION_OTM_FACTOR][t] < this->Assumption->second_election_bound)
+				main_proj_array_DEU[FRACTION_WORK_1][t] = (this->Assumption->second_election_bound - main_proj_array_DEU[ELECTION_OTM_FACTOR][t])
+										   / (this->Assumption->second_election_bound - this->Assumption->first_election_bound);
+		else if (main_proj_array_DEU[ELECTION_OTM_FACTOR][t] < this->Assumption->third_election_bound)
+				main_proj_array_DEU[FRACTION_WORK_1][t] = (this->Assumption->third_election_bound - main_proj_array_DEU[ELECTION_OTM_FACTOR][t])
+										   / (this->Assumption->third_election_bound - this->Assumption->second_election_bound);
+		else if (main_proj_array_DEU[ELECTION_OTM_FACTOR][t] < this->Assumption->fourth_election_bound)
+				main_proj_array_DEU[FRACTION_WORK_1][t] = (this->Assumption->fourth_election_bound - main_proj_array_DEU[ELECTION_OTM_FACTOR][t])
+										   / (this->Assumption->fourth_election_bound - this->Assumption->third_election_bound);
+		else
+				main_proj_array_DEU[FRACTION_WORK_1][t] = (this->Assumption->fourth_election_bound +0.1 - main_proj_array_DEU[ELECTION_OTM_FACTOR][t])/0.1 ;
+			
+			
+		if (main_proj_array_DEU[FRACTION_WORK_1][t] < 0.)
+				main_proj_array_DEU[FRACTION_WORK_2][t] = 0.;
+		else if (main_proj_array_DEU[FRACTION_WORK_1][t] > 1.0)
+				main_proj_array_DEU[FRACTION_WORK_2][t] = 1.0;
+		else
+				main_proj_array_DEU[FRACTION_WORK_2][t] = main_proj_array_DEU[FRACTION_WORK_1][t];
+			
+		if (main_proj_array_DEU[ELECTION_OTM_FACTOR][t] < this->Assumption->first_election_bound){
+				main_proj_array_DEU[ELECTION_RATE_FROM_FUNCTION][t] = 0.0;}
+		else if (main_proj_array_DEU[ELECTION_OTM_FACTOR][t] < this->Assumption->second_election_bound){
+				main_proj_array_DEU[ELECTION_RATE_FROM_FUNCTION][t] = (1-main_proj_array_DEU[FRACTION_WORK_2][t])*this->Assumption->first_election_rate;}
+		else if (main_proj_array_DEU[ELECTION_OTM_FACTOR][t] < this->Assumption->third_election_bound){
+				main_proj_array_DEU[ELECTION_RATE_FROM_FUNCTION][t] = (1-main_proj_array_DEU[FRACTION_WORK_2][t])*this->Assumption->second_election_rate + main_proj_array_DEU[FRACTION_WORK_2][t] * this->Assumption->first_election_rate;}
+		else if (main_proj_array_DEU[ELECTION_OTM_FACTOR][t] < this->Assumption->fourth_election_bound)
+				main_proj_array_DEU[ELECTION_RATE_FROM_FUNCTION][t] = (1-main_proj_array_DEU[FRACTION_WORK_2][t])*this->Assumption->third_election_rate + main_proj_array_DEU[FRACTION_WORK_2][t] * this->Assumption->second_election_rate;
+		else
+				main_proj_array_DEU[ELECTION_RATE_FROM_FUNCTION][t] = (1-main_proj_array_DEU[FRACTION_WORK_2][t])*this->Assumption->fourth_election_rate + main_proj_array_DEU[FRACTION_WORK_2][t] * this->Assumption->third_election_rate; ;
+		
+		
+		if ( ( t==60  || ((int)(timing_items_DEU[AGE_LAST_DEU][t]) == (this->model_point_DEU->deferment_age-1) ) ) && 
+			((int)(timing_items_DEU[AGE_LAST_DEU][t]) < (this->Assumption->maximum_election_age-1) ))
+				main_proj_array_DEU[ELECTION_RATE][t] = main_proj_array_DEU[ELECTION_RATE_FROM_FUNCTION][t] * (1. + election_shock);
+		else
+				main_proj_array_DEU[ELECTION_RATE][t]=0.; 
+
+		//Adjusted election rate
+		double guar_ab_local =  main_proj_array_DEU[BASE_GUAR_AB][t] - main_proj_array_DEU[GUAR_AB_DECREM][t];
+		double account_value_local= main_proj_array_DEU[ACCOUNT_VALUE_INIT][t]-main_proj_array_DEU[ACCOUNT_VALUE_DECREM][t] -main_proj_array_DEU[ACCOUNT_VALUE_FIXED_FEES][t]-main_proj_array_DEU[ACCOUNT_VALUE_HC_FEES][t]
+				+main_proj_array_DEU[ACCOUNT_VALUE_ADD_INIT][t]-main_proj_array_DEU[ACCOUNT_VALUE_ADD_DECREM][t] -main_proj_array_DEU[ACCOUNT_VALUE_ADD_FIXED_FEES][t]-main_proj_array_DEU[ACCOUNT_VALUE_ADD_HC_FEES][t];
+		double guar_ib_local=main_proj_array_DEU[BASE_GUAR_IB][t] - main_proj_array_DEU[GUAR_IB_DECREM][t]+main_proj_array_DEU[BASE_GUAR_ADD_IB][t] - main_proj_array_DEU[GUAR_ADD_IB_DECREM][t];
+		int indicator_adjusted_local=(guar_ab_local>account_value_local)*
+			(guar_ab_local>=( max(guar_ib_local,guar_ab_local)*main_proj_array_DEU[GMIB_AX_CURR_DEU][t]/timing_items_DEU[GMIB_AX_GUAR_DEU][t]));
+
+		main_proj_array_DEU[ELECTION_RATE][t]=min(1., main_proj_array_DEU[ELECTION_RATE][t])*(indicator_adjusted_local*(1.-this->Assumption->riester_guarantee_perc)+(1.-indicator_adjusted_local));
+	}
+	virtual void TotalAccountValue(int t)
+	{
+	
+		main_proj_array_DEU[ACCOUNT_VALUE_ELECTION_RATE][t]=  (main_proj_array_DEU[ACCOUNT_VALUE_INIT][t]-
+						main_proj_array_DEU[ACCOUNT_VALUE_DECREM][t] -main_proj_array_DEU[ACCOUNT_VALUE_FIXED_FEES][t]-
+						main_proj_array_DEU[ACCOUNT_VALUE_HC_FEES][t])*	main_proj_array_DEU[ELECTION_RATE][t];
+	
+		main_proj_array_DEU[ACCOUNT_VALUE_ADD_ELECTION_RATE][t]=  (main_proj_array_DEU[ACCOUNT_VALUE_ADD_INIT][t]-
+						main_proj_array_DEU[ACCOUNT_VALUE_ADD_DECREM][t] -main_proj_array_DEU[ACCOUNT_VALUE_ADD_FIXED_FEES][t]-
+						main_proj_array_DEU[ACCOUNT_VALUE_ADD_HC_FEES][t])*	main_proj_array_DEU[ELECTION_RATE][t];
+
+	
+		double indicator_local_= ( (int)(timing_items_DEU[AGE_LAST_DEU][t]) >=this->model_point_DEU->deferment_age);
+	
+		main_proj_array_DEU[ACCOUNT_VALUE_TOTAL][t] =max(0.,(main_proj_array_DEU[ACCOUNT_VALUE_INIT][t]-
+						main_proj_array_DEU[ACCOUNT_VALUE_DECREM][t] -main_proj_array_DEU[ACCOUNT_VALUE_FIXED_FEES][t]-
+						main_proj_array_DEU[ACCOUNT_VALUE_HC_FEES][t]-main_proj_array_DEU[ACCOUNT_VALUE_ELECTION_RATE][t])*
+						(1.-indicator_local_));
+	
+		main_proj_array_DEU[ACCOUNT_VALUE_ADD_TOTAL][t] =max(0.,(main_proj_array_DEU[ACCOUNT_VALUE_ADD_INIT][t]-
+						main_proj_array_DEU[ACCOUNT_VALUE_ADD_DECREM][t] -main_proj_array_DEU[ACCOUNT_VALUE_ADD_FIXED_FEES][t]-
+						main_proj_array_DEU[ACCOUNT_VALUE_ADD_HC_FEES][t]-main_proj_array_DEU[ACCOUNT_VALUE_ADD_ELECTION_RATE][t])*
+						(1.-indicator_local_));
+	
+	}
+	virtual void TotalGuarantees(int t)
+	{
+		int indicator_local_= ( (int)(timing_items_DEU[AGE_LAST_DEU][t]) >=this->model_point_DEU->deferment_age);
+		int indicator_local_2= ( (int)(timing_items_DEU[POL_YEAR_DEU][t]) ==(int)(this->model_point_DEU->deferment_age-this->model_point_DEU->age_at_issue));
+
+		main_proj_array_DEU[GUAR_AB_ELECTION_R][t]= ( main_proj_array_DEU[BASE_GUAR_AB][t] -
+								main_proj_array_DEU[GUAR_AB_DECREM][t]) * main_proj_array_DEU[ELECTION_RATE][t];
+		main_proj_array_DEU[GUAR_AB_TOT][t]=(main_proj_array_DEU[BASE_GUAR_AB][t]-main_proj_array_DEU[GUAR_AB_DECREM][t]-
+								main_proj_array_DEU[GUAR_AB_ELECTION_R][t])*(1.-indicator_local_);
+
+		main_proj_array_DEU[GUAR_IB_ELECTION_R][t]= ( main_proj_array_DEU[BASE_GUAR_IB][t] -
+								main_proj_array_DEU[GUAR_IB_DECREM][t]) * main_proj_array_DEU[ELECTION_RATE][t];
+		main_proj_array_DEU[GUAR_IB_TOT][t]= (main_proj_array_DEU[BASE_GUAR_IB][t]-main_proj_array_DEU[GUAR_IB_DECREM][t]-
+								main_proj_array_DEU[GUAR_IB_ELECTION_R][t])*(1.-indicator_local_);
+		
+		main_proj_array_DEU[GUAR_IB_TOT][t]=max(0.,indicator_local_2*max(main_proj_array_DEU[GUAR_IB_TOT][t],main_proj_array_DEU[GUAR_AB_TOT][t])+(1.-indicator_local_2)*main_proj_array_DEU[GUAR_IB_TOT][t]);
+
+		main_proj_array_DEU[GUAR_ADD_IB_ELECTION_R][t]= ( main_proj_array_DEU[BASE_GUAR_ADD_IB][t] -
+								main_proj_array_DEU[GUAR_ADD_IB_DECREM][t]) * main_proj_array_DEU[ELECTION_RATE][t];
+		main_proj_array_DEU[GUAR_ADD_IB_TOT][t]= max(0.,(main_proj_array_DEU[BASE_GUAR_ADD_IB][t]-main_proj_array_DEU[GUAR_ADD_IB_DECREM][t]-
+								main_proj_array_DEU[GUAR_ADD_IB_ELECTION_R][t]))*(1.-indicator_local_);
+	
+
+	}
+	virtual void SurvivalIndex(int t)
+	{	
+		double indicator_local_= ( (int)(timing_items_DEU[AGE_LAST_DEU][t]) >=this->model_point_DEU->deferment_age-1);
+	
+		main_proj_array_DEU[SURV_INDEX_DEU][t]=max(0.,main_proj_array_DEU[SURV_INDEX_DEU][t-1]* ( 1.- main_proj_array_DEU[ELECTION_RATE][t] )*
+							( 1.- timing_items_DEU[DEATH_R][t] )* ( 1. - main_proj_array_DEU[DYNAMIC_LAPSE_RATE][t] - main_proj_array_DEU[DYNAMIC_PAID_UP_RATE][t])*
+							( 1. - indicator_local_)*(t!=60));
+	}
+	virtual void ClaimsAb(int t)
+	{
+		if ( (int)(timing_items_DEU[AGE_LAST_DEU][t]) == ((int)this->model_point_DEU->deferment_age-1) )
+		{
+			double guarantee_ab_local =  main_proj_array_DEU[BASE_GUAR_AB][t] - main_proj_array_DEU[GUAR_AB_DECREM][t];
+
+			double av_local = (main_proj_array_DEU[ACCOUNT_VALUE_INIT][t] - main_proj_array_DEU[ACCOUNT_VALUE_FIXED_FEES][t] -
+								main_proj_array_DEU[ACCOUNT_VALUE_HC_FEES][t]-main_proj_array_DEU[ACCOUNT_VALUE_DECREM][t] 
+								+ main_proj_array_DEU[ACCOUNT_VALUE_ADD_INIT][t] -main_proj_array_DEU[ACCOUNT_VALUE_ADD_FIXED_FEES][t] 
+								- main_proj_array_DEU[ACCOUNT_VALUE_ADD_HC_FEES][t]-main_proj_array_DEU[ACCOUNT_VALUE_ADD_DECREM][t] );
+			
+			main_proj_array_DEU[CLAIMS_AB][t] = max(0., guarantee_ab_local - av_local)*this->Assumption->riester_guarantee_perc*
+				max( this->Assumption->riester_election_fonds_perc/100.,( main_proj_array_DEU[ELECTION_RATE][t]!=1.)*1.);
+		}
+	}
+	virtual void ClaimsIb(int t)
+	{	
+		if (t!=0 && timing_items_DEU[GMIB_AX_GUAR_DEU][t]!=0. )
+		{
+			double av_local =  main_proj_array_DEU[ACCOUNT_VALUE_INIT][t] - main_proj_array_DEU[ACCOUNT_VALUE_DECREM][t] -
+					main_proj_array_DEU[ACCOUNT_VALUE_FIXED_FEES][t]- main_proj_array_DEU[ACCOUNT_VALUE_HC_FEES][t]+
+					 main_proj_array_DEU[ACCOUNT_VALUE_ADD_INIT][t] - main_proj_array_DEU[ACCOUNT_VALUE_ADD_DECREM][t] -
+					main_proj_array_DEU[ACCOUNT_VALUE_ADD_FIXED_FEES][t]- main_proj_array_DEU[ACCOUNT_VALUE_ADD_HC_FEES][t];
+	
+			double guarantee_ib_local = main_proj_array_DEU[BASE_GUAR_IB][t]-main_proj_array_DEU[GUAR_IB_DECREM][t]+
+							 main_proj_array_DEU[BASE_GUAR_ADD_IB][t]-main_proj_array_DEU[GUAR_ADD_IB_DECREM][t];
+			double current_annuity_local =main_proj_array_DEU[GMIB_AX_CURR_MARGIN][t];
+			double guarantee_annuity_local =timing_items_DEU[GMIB_AX_GUAR_DEU][t]; 
+			double guarantee_ab_local =  main_proj_array_DEU[BASE_GUAR_AB][t]-main_proj_array_DEU[GUAR_AB_DECREM][t];
+			int indic_local=( (int)(timing_items_DEU[AGE_LAST_DEU][t]) == (this->model_point_DEU->deferment_age-1) );
+			main_proj_array_DEU[CLAIMS_IB][t] = max(0., current_annuity_local* 
+										max(guarantee_ib_local, guarantee_ab_local*indic_local)/guarantee_annuity_local  - 
+										max(0.,av_local) ) * main_proj_array_DEU[ELECTION_RATE][t] *
+										(1. -  this->Assumption->riester_election_fonds_perc/100.);
+		}
+	}
+	virtual void PerformProjection(int t,double lapse_multiplicator,double paidup_multiplicator)
+	{
+	
+			InitializeMainProjArrayUsed(t);
+			//AV INIT
+			AccountValueAtBeginingOfTheYear(t);
+			//fixed fees
+			FixedFeesAccountValue(t);
+			// Hedge cost
+			HedgeCostFeesAccountValue(t);
+			//Decrement
+			DynamicLapseRate_PaidUpRate(t,lapse_multiplicator,paidup_multiplicator);
+			// calculate_decrement_account_value
+			DecrementAccountValue_DecrementGuarantees(t);
+			//election rate
+			ElectionRate(t);
+			//calculate_total_rate_account_value
+			TotalAccountValue(t);
+			//calculate_total_guarantees
+			TotalGuarantees(t);
+			// calculate_survival_index
+			SurvivalIndex(t);
+			//calculate_Claims
+			ClaimsAb(t);
+			ClaimsIb(t);
+			
+	}
+	///////////////////////////////////////////////////////////////////////////////////
+	//////////////////////////////////////////////////////////////////////////////////
+	///////////////////////////////Paid Up projection ////////////////////////////////
+	//////////////////////////////////////////////////////////////////////////////////
+	//////////////////////////////////////////////////////////////////////////////////
+	virtual void PaidUpWeights()
+	{
+		main_proj_array_DEU[NO_POLS_END][0]=1.;
+		main_proj_array_DEU[WEIGHTS_FINAL][0]=1.;
+		main_proj_array_DEU[WEIGHTS_PAID_UP_IN_T][0] =1.;
+		for (int t=1; t<=this->model_point_DEU->T_Max;t++)
+		{
+			main_proj_array_DEU[NO_POLS_END][t]= main_proj_array_DEU[NO_POLS_END][t-1] * ( 1. - timing_items_DEU[DEATH_R][t] ) 
+				*( 1. - main_proj_array_DEU[DYNAMIC_LAPSE_RATE][t] -main_proj_array_DEU[DYNAMIC_PAID_UP_RATE][t] )
+				*( t <= this->model_point_DEU->remain_duration );
+	
+			main_proj_array_DEU[WEIGHTS_FINAL][0] *= timing_items_DEU[SURVIVAL_AFTER_PAID_UP][t];
+
+			main_proj_array_DEU[WEIGHTS_PAID_UP_IN_T][t] = main_proj_array_DEU[NO_POLS_END][t-1] * 
+				main_proj_array_DEU[DYNAMIC_PAID_UP_RATE][t]*( 1. - timing_items_DEU[DEATH_R][t] * ( t <= this->model_point_DEU->remain_duration ) );
+		}	
+		for (int t=1; t<=this->model_point_DEU->T_Max;t++)
+		{
+			main_proj_array_DEU[WEIGHTS_FINAL][t] =main_proj_array_DEU[WEIGHTS_FINAL][0]*main_proj_array_DEU[WEIGHTS_PAID_UP_IN_T][t]
+											/ timing_items_DEU[SURVIVAL_AFTER_PAID_UP][t];
+			main_proj_array_DEU[WEIGHTS_FINAL][0] /= timing_items_DEU[SURVIVAL_AFTER_PAID_UP][t];
+		}
+		//calculate TOTAL_INTEREST_FOR_X_PREMIUM_BEF
+		main_proj_array_DEU[TOTAL_INTEREST_FOR_X_PREMIUM_BEF][0]=1.;
+		for (int t=1; t<=this->model_point_DEU->T_Max;t++)
+		{
+			if(this->model_point_DEU->remain_duration < t) main_proj_array_DEU[TOTAL_INTEREST_FOR_X_PREMIUM_BEF][t]=1.;
+			else
+				main_proj_array_DEU[TOTAL_INTEREST_FOR_X_PREMIUM_BEF][t]=(1. +  main_proj_array_DEU[FUND_RETURN][t] )
+					* (1. - this->model_point_DEU->gmxb_chg_perc/100. *( 1. + (t==1)*(prorata_decompositions-1.)));
+			
+			main_proj_array_DEU[TOTAL_INTEREST_FOR_X_PREMIUM_BEF][0]*=main_proj_array_DEU[TOTAL_INTEREST_FOR_X_PREMIUM_BEF][t];
+		}
+		//calculate TOTAL_INTEREST_FOR_X_PREMIUM
+		main_proj_array_DEU[TOTAL_INTEREST_FOR_X_PREMIUM][1]=main_proj_array_DEU[TOTAL_INTEREST_FOR_X_PREMIUM_BEF][0];
+		main_proj_array_DEU[TOTAL_INTEREST_FOR_X_PREMIUM][0]=main_proj_array_DEU[TOTAL_INTEREST_FOR_X_PREMIUM][1];
+		for (int t=2; t<=this->model_point_DEU->T_Max;t++)
+		{
+			if(this->model_point_DEU->remain_duration < t) main_proj_array_DEU[TOTAL_INTEREST_FOR_X_PREMIUM][t]=0;
+			else main_proj_array_DEU[TOTAL_INTEREST_FOR_X_PREMIUM][t]=main_proj_array_DEU[TOTAL_INTEREST_FOR_X_PREMIUM][t-1]/main_proj_array_DEU[TOTAL_INTEREST_FOR_X_PREMIUM_BEF][t-1];
+			
+			main_proj_array_DEU[TOTAL_INTEREST_FOR_X_PREMIUM][0]+=main_proj_array_DEU[TOTAL_INTEREST_FOR_X_PREMIUM][t];
+		}
+	}
+	virtual void PaidUpAccountValue()
+	{
+		double sum_product_local=0.;
+		double sum_product_local2=0.;
+		double account_value_local=main_proj_array_DEU[ACCOUNT_VALUE_TOTAL][0] *main_proj_array_DEU[TOTAL_INTEREST_FOR_X_PREMIUM][1];
+		double account_value_add_local=this->model_point_DEU->av_add * main_proj_array_DEU[TOTAL_INTEREST_FOR_X_PREMIUM][1];
+		//double fixed_fees_local=this->model_point_DEU->admin_fee_dollar* main_proj_array_DEU[TOTAL_INTEREST_FOR_X_PREMIUM][0];
+
+		for (int t=1; t<=this->model_point_DEU->T_Max;t++)
+		{
+			sum_product_local += timing_items_DEU[NET_PREM_INCLUD_FIXED_FEES][t] *main_proj_array_DEU[TOTAL_INTEREST_FOR_X_PREMIUM][t];
+			sum_product_local2 += timing_items_DEU[NET_BONUS_INCLUD_FIXED_FEES][t] *main_proj_array_DEU[TOTAL_INTEREST_FOR_X_PREMIUM][t];
+			main_proj_array_DEU[TOTAL_INTEREST_FOR_X_PREMIUM][0] -= main_proj_array_DEU[TOTAL_INTEREST_FOR_X_PREMIUM][t];
+			
+			main_proj_array_DEU[AV_PAID_UP][t] = max(0., account_value_local + sum_product_local+sum_product_local2-  this->model_point_DEU->admin_fee_dollar*main_proj_array_DEU[TOTAL_INTEREST_FOR_X_PREMIUM][0]
+				+ account_value_add_local) *((t!=1)*( t <= this->model_point_DEU->remain_duration )+(t==1)); 
+		
+			if (main_proj_array_DEU[NO_POLS_END][t]!=0)
+				main_proj_array_DEU[AV_FROM_ADD_PAY_IN_T][t]= main_proj_array_DEU[ACCOUNT_VALUE_ADD_TOTAL][t]/main_proj_array_DEU[NO_POLS_END][t];
+			else
+				main_proj_array_DEU[AV_FROM_ADD_PAY_IN_T][t] =0.;
+		}
+	}
+	virtual void PaidUpDynamicElectionWeightsRate()
+	{
+		double guarantee_coupon = timing_items_DEU[GMIB_AX_GUAR_DEU][max(1,(int)(this->model_point_DEU->remain_duration))];
+		double current_coupon = main_proj_array_DEU[GMIB_AX_CURR_MARGIN][(int)(this->model_point_DEU->remain_duration)];
+		double fraction_work_1=0.;
+		double fraction_work_2=0.;
+		double otm_factor_local=0.;
+	
+		for (int t=1; t<=this->model_point_DEU->T_Max;t++)
+		{
+			if ( abs(main_proj_array_DEU[AV_PAID_UP][t]) > SMALL_DOUBLE && abs(main_proj_array_DEU[GUAR_AB_TOT][t-1]) > SMALL_DOUBLE)
+				otm_factor_local =  timing_items_DEU[IB_PAID_UP][t]*current_coupon/guarantee_coupon/main_proj_array_DEU[AV_PAID_UP][t];
+			else
+				otm_factor_local=999999.;
+		
+			if (otm_factor_local < this->Assumption->first_election_bound)
+				fraction_work_1 = 1.0;
+			else if (otm_factor_local < this->Assumption->second_election_bound)
+				fraction_work_1 = (this->Assumption->second_election_bound - otm_factor_local)/ (this->Assumption->second_election_bound - this->Assumption->first_election_bound);
+			else if (otm_factor_local < this->Assumption->third_election_bound)
+				fraction_work_1 = (this->Assumption->third_election_bound - otm_factor_local)/ (this->Assumption->third_election_bound - this->Assumption->second_election_bound);
+			else if (otm_factor_local < this->Assumption->fourth_election_bound)
+				fraction_work_1 = (this->Assumption->fourth_election_bound - otm_factor_local)/ (this->Assumption->fourth_election_bound - this->Assumption->third_election_bound);
+			else
+				fraction_work_1 = (this->Assumption->fourth_election_bound +0.1 - otm_factor_local)/0.1 ;
+			
+			if (fraction_work_1 < 0.)
+				fraction_work_2 = 0.;
+			else if (fraction_work_1 > 1.0)
+				fraction_work_2 = 1.0;
+			else
+				fraction_work_2 = fraction_work_1;
+		
+			if (otm_factor_local < this->Assumption->first_election_bound){
+					main_proj_array_DEU[ELECTION_RATE_WEIGHTS_PAID_UP][t] = 0.0;}
+			else if (otm_factor_local < this->Assumption->second_election_bound){
+					main_proj_array_DEU[ELECTION_RATE_WEIGHTS_PAID_UP][t] = (1-fraction_work_2)*this->Assumption->first_election_rate;}
+			else if (otm_factor_local < this->Assumption->third_election_bound){
+					main_proj_array_DEU[ELECTION_RATE_WEIGHTS_PAID_UP][t] = (1-fraction_work_2)*this->Assumption->second_election_rate + fraction_work_2 * this->Assumption->first_election_rate;}
+			else if (otm_factor_local < this->Assumption->fourth_election_bound)
+					main_proj_array_DEU[ELECTION_RATE_WEIGHTS_PAID_UP][t] = (1-fraction_work_2)*this->Assumption->third_election_rate + fraction_work_2 * this->Assumption->second_election_rate;
+			else
+					main_proj_array_DEU[ELECTION_RATE_WEIGHTS_PAID_UP][t] = (1-fraction_work_2)*this->Assumption->fourth_election_rate + fraction_work_2 * this->Assumption->third_election_rate; 
+
+			//Adjusted election rate
+			double ajustement_election_rate=1.;
+			if (  (timing_items_DEU[AB_PAID_UP][t] > main_proj_array_DEU[AV_PAID_UP][t]) && 
+						(timing_items_DEU[AB_PAID_UP][t] > ( timing_items_DEU[IB_PAID_UP][t]*current_coupon/ guarantee_coupon )   ))
+			{
+				ajustement_election_rate= 1. - this->Assumption->riester_guarantee_perc;
+			}
+			main_proj_array_DEU[ELECTION_RATE_WEIGHTS_PAID_UP][t] = ajustement_election_rate *
+										min(1.,	main_proj_array_DEU[ELECTION_RATE_WEIGHTS_PAID_UP][t]*(1.+election_shock));
+			//main_proj_array_DEU[ELECTION_RATE_WEIGHTS_PAID_UP][t] = min(1.,main_proj_array_DEU[ELECTION_RATE_WEIGHTS_PAID_UP][t]*(1.+election_shock));
+		}
+	}
+	virtual void PaidUpInitializeAv()
+	{
+		int i=0;
+		int j=0;
+		//Calculate account value paid up and hedge charges on premium paid
+		av_paidup[1][1]=(main_proj_array_DEU[ACCOUNT_VALUE_TOTAL][0]+timing_items_DEU[NET_PREM_INCLUD_FIXED_FEES][1]+timing_items_DEU[NET_BONUS_INCLUD_FIXED_FEES][1])
+						*(1.+ main_proj_array_DEU[FUND_RETURN][1])
+						* (1.- this->model_point_DEU->gmxb_chg_perc/100.*this->model_point_DEU->prorata_first_year)*(1<=this->model_point_DEU->remain_duration);	
+		
+		for (i = 1; i <= this->model_point_DEU->T_Max; i++) 
+		{
+			if(i!=1)
+				av_paidup[i][i]=max(0.,av_paidup[i-1][i-1]+timing_items_DEU[NET_PREM_INCLUD_FIXED_FEES][i]+timing_items_DEU[NET_BONUS_INCLUD_FIXED_FEES][i])*(1.+ main_proj_array_DEU[FUND_RETURN][i])
+					* (1.- this->model_point_DEU->gmxb_chg_perc/100.)*(i<=this->model_point_DEU->remain_duration);
+			
+			for (j = i+1; j <= this->model_point_DEU->T_Max; j++) 
+				av_paidup[i][j]=max(0.,av_paidup[i][j-1]-this->model_point_DEU->admin_fee_dollar)*(1.+ main_proj_array_DEU[FUND_RETURN][j])
+					* (1.- this->model_point_DEU->gmxb_chg_perc/100.)*(j<=this->model_point_DEU->remain_duration);
+		}
+
+	}
+
+	virtual void PaidUpWeightsAvCharges()
+	{
+		int i=0;
+		int j=0;
+		int t=0;	
+		//Calculate the weights on the paid up charges 
+		for (i = 1; i <= this->model_point_DEU->T_Max; i++) 
+			charges_paidup[i][0]=main_proj_array_DEU[WEIGHTS_PAID_UP_IN_T][i]/timing_items_DEU[TREND_PORT_PAID_UP_POLICIES][i];
+
+		for (j = 1; j <=this->model_point_DEU->T_Max; j++) 
+			charges_paidup[0][j]=timing_items_DEU[TREND_PORT_PAID_UP_POLICIES][j]*(j<=this->model_point_DEU->remain_duration);
+
+		//Calculate the charges on the paid up account value
+		for (i = 1; i <=this->model_point_DEU->T_Max; i++) 
+			for (j = i+1; j <=this->model_point_DEU->T_Max; j++) 
+				charges_paidup[i][j] =- ( this->model_point_DEU->gmxb_chg_perc/100./(1.- this->model_point_DEU->gmxb_chg_perc/100.)*av_paidup[i][j] )*
+								charges_paidup[i][0] *charges_paidup[0][j]*	(j<=this->model_point_DEU->remain_duration);
+
+		//Calculate the av_base on the paid up policies
+		for (i = 1; i <=this->model_point_DEU->T_Max; i++) 
+			for (j = i+1; j <=this->model_point_DEU->T_Max; j++) 
+				av_base_paidup[i][j] =av_paidup[i][j]/(1.- this->model_point_DEU->gmxb_chg_perc/100.)*charges_paidup[i][0] *
+								charges_paidup[0][j]*	(j<=this->model_point_DEU->remain_duration);
+
+		//Calculate the charges  for additional payment
+		double sum_product_w_local=0.;
+		for (t = 1; t <=this->model_point_DEU->T_Max; t++) 
+		{
+			sum_product_w_local += timing_items_DEU[TREND_INVERSE][t-1]*main_proj_array_DEU[WEIGHTS_PAID_UP_IN_T][t-1];
+			main_proj_array_DEU[AV_CHARGES_ON_ADD_PAY][t] = this->model_point_DEU->hc_add/100./(1.-this->model_point_DEU->hc_add/100.)*main_proj_array_DEU[AV_FROM_ADD_PAY_IN_T][t]*
+								timing_items_DEU[TREND_PORT_PAID_UP_POLICIES][t]* sum_product_w_local;	
+		}
+		main_proj_array_DEU[AV_CHARGES_ON_ADD_PAY][1]=0.;
+
+		//Calculate the charges 
+		for (t = 2; t <=this->model_point_DEU->T_Max; t++) 
+		{
+			main_proj_array_DEU[WEIGHTS_CHARGES][t]=0.;
+			for (i = 1; i <=this->model_point_DEU->T_Max; i++) 
+			{
+				main_proj_array_DEU[WEIGHTS_CHARGES][t] += charges_paidup[i][t];			
+			}
+			main_proj_array_DEU[WEIGHTS_CHARGES][t] +=-main_proj_array_DEU[AV_CHARGES_ON_ADD_PAY][t];
+		}
+		
+		//Calculate the weights account values base charges 
+		sum_product_w_local=0.;
+		for (t = 2; t <=this->model_point_DEU->T_Max; t++) 
+		{
+			for (i = 1; i <=this->model_point_DEU->T_Max; i++) 
+			{
+				main_proj_array_DEU[WEIGHTS_AV_BASE][t] += av_base_paidup[i][t];	
+			}
+			sum_product_w_local += timing_items_DEU[TREND_INVERSE][t-1]*main_proj_array_DEU[WEIGHTS_PAID_UP_IN_T][t-1];
+			main_proj_array_DEU[WEIGHTS_AV_BASE][t] +=1./(1.-this->model_point_DEU->hc_add/100.)*main_proj_array_DEU[AV_FROM_ADD_PAY_IN_T][t]*
+								timing_items_DEU[TREND_PORT_PAID_UP_POLICIES][t]	* sum_product_w_local;						
+		}
+	}
+	virtual void PaidUpWeightsAbClaims()
+	{
+		int t;
+		main_proj_array_DEU[WEIGHTS_AB_CLAIMS][0] = 0.;
+		for (t = 1; t<=this->model_point_DEU->T_Max; t++) 
+		{
+			if (main_proj_array_DEU[WEIGHTS_FINAL][t] ==0.)
+				main_proj_array_DEU[WEIGHTS_AB_CLAIMS][t]=0.;
+			else
+				main_proj_array_DEU[WEIGHTS_AB_CLAIMS][t] = this->Assumption->riester_guarantee_perc * max(this->Assumption->riester_election_fonds_perc/100.,
+									(main_proj_array_DEU[ELECTION_RATE_WEIGHTS_PAID_UP][t] != 1.)*1. )*
+									 main_proj_array_DEU[WEIGHTS_FINAL][t]*
+									 max(0.,timing_items_DEU[AB_PAID_UP][t]-main_proj_array_DEU[AV_PAID_UP][t] );
+			main_proj_array_DEU[WEIGHTS_AB_CLAIMS][0]+=main_proj_array_DEU[WEIGHTS_AB_CLAIMS][t];
+		}
+	}
+	virtual void PaidUpWeightsIbClaims()
+	{
+		int t;
+		double guarantee_coupon = timing_items_DEU[GMIB_AX_GUAR_DEU][(int)(this->model_point_DEU->remain_duration)];
+		double current_coupon = main_proj_array_DEU[GMIB_AX_CURR_MARGIN][(int)(this->model_point_DEU->remain_duration)];
+		main_proj_array_DEU[WEIGHTS_IB_CLAIMS][0] = 0.;
+		for (t = 1;t<=this->model_point_DEU->T_Max; t++) 
+		{
+			if (main_proj_array_DEU[WEIGHTS_FINAL][t] ==0.)
+				main_proj_array_DEU[WEIGHTS_IB_CLAIMS][t]=0.;
+			else
+			{
+				main_proj_array_DEU[WEIGHTS_IB_CLAIMS][t] = main_proj_array_DEU[WEIGHTS_FINAL][t]*
+											main_proj_array_DEU[ELECTION_RATE_WEIGHTS_PAID_UP][t]*
+											max(0., timing_items_DEU[IB_PAID_UP][t]*current_coupon/guarantee_coupon
+											-main_proj_array_DEU[AV_PAID_UP][t])*(1.- this->Assumption->riester_election_fonds_perc/100.)  ;
+			}
+			main_proj_array_DEU[WEIGHTS_IB_CLAIMS][0]+=main_proj_array_DEU[WEIGHTS_IB_CLAIMS][t];
+		}
+	}
+	virtual void PaidUpProjection()
+	{
+		PaidUpWeights();
+		PaidUpAccountValue();
+		PaidUpDynamicElectionWeightsRate();
+		PaidUpInitializeAv();
+		PaidUpWeightsAvCharges();
+		PaidUpWeightsAbClaims();
+		PaidUpWeightsIbClaims();
+	}
+	/////////////////////////////////////////////////////////////////////////////////////////
+	//////////////////////////////////////////////////////////////////////////////////////////
+	///////set_market_data()///////calculate_current_annuity()////////init_av_total()//////////
+	/////////////////////////////////////////////////////////////////////////////////////////
+	/////////////////////////////////////////////////////////////////////////////////////////
+	virtual void InitAvTotal(bool shock_AV)
+	{
+		this->model_point_DEU->av_total_init=0.;
+		double av_total_local = 0.;
+		this->model_point_DEU->av_total_init=0.;
+		this->model_point_DEU->av_add=this->model_point_DEU->av_add_inforce;
+		
+		if(shock_AV==true)
+		{
+			for(int i=0;i<MAXIMUM_NUMBER_OF_INDEXES;i++)
+			{
+				this->model_point_DEU->av_total_init +=this->model_point_DEU->av_if_array[i]*
+						(this->shock_array_DEU[this->shock_number_DEU][i+1]/100.0+1.);
+
+				av_total_local +=this->model_point_DEU->av_if_array[i];
+			}
+		}
+
+		else
+		{
+			for(int i=0;i<MAXIMUM_NUMBER_OF_INDEXES;i++)
+			{
+				this->model_point_DEU->av_total_init +=this->model_point_DEU->av_if_array[i];
+
+				av_total_local +=this->model_point_DEU->av_if_array[i];
+			}
+
+		}
+	}
+	virtual void InitializeFundReturn(bool shock_AV)
+	{
+		int fund_num;
+		main_proj_array_DEU[FUND_RETURN][1]=0.;
+		for(fund_num = 0; fund_num<MAXIMUM_NUMBER_OF_INDEXES; fund_num++)
+		{
+			if(max(0.,this->model_point_DEU->av_total_init )>0.)
+			{
+				if (shock_AV==true){
+				
+					main_proj_array_DEU[FUND_RETURN][1] +=( this->afmr[this->model_point_DEU->elapsed_mths_in_valn_yr + 1][1][fund_num]
+							-model_point_DEU->management_fee_perc/100.0*(1.-this->model_point_DEU->elapsed_mths_in_valn_yr/12.))*
+							this->model_point_DEU->av_if_array[fund_num]*(this->shock_array_DEU[this->shock_number_DEU][fund_num+1]/100.0+1.)/
+							(this->model_point_DEU->av_total_init);
+				}
+				
+				else{
+
+					main_proj_array_DEU[FUND_RETURN][1] +=( this->afmr[this->model_point_DEU->elapsed_mths_in_valn_yr + 1][1][fund_num]
+							-model_point_DEU->management_fee_perc/100.0*(1.-this->model_point_DEU->elapsed_mths_in_valn_yr/12.))*
+							this->model_point_DEU->av_if_array[fund_num]/
+							(this->model_point_DEU->av_total_init);
+				}
+			}
+			else
+				main_proj_array_DEU[FUND_RETURN][1] += (this->afmr[this->model_point_DEU->elapsed_mths_in_valn_yr + 1][1][fund_num]
+							-model_point_DEU->management_fee_perc/100.0*(1.-this->model_point_DEU->elapsed_mths_in_valn_yr/12.))*this->model_point_DEU->av_split_prop_array[fund_num]/100.;		
+		}
+
+		for (int t = 2; t <= SUBACCT_MAX_PERIOD ; t++)
+		{
+			for(fund_num = 0; fund_num<MAXIMUM_NUMBER_OF_INDEXES; fund_num++)
+			{
+				main_proj_array_DEU[FUND_RETURN][t] += (this->afmr[this->model_point_DEU->elapsed_mths_in_valn_yr + 1][t][fund_num]
+							-model_point_DEU->management_fee_perc/100.0)*this->model_point_DEU->av_split_prop_array[fund_num]/100.;
+			}
+		}
+	}
+	virtual void InitializeTenYearInterestRate()
+	{
+		for (int t = 1; t <= SUBACCT_MAX_PERIOD ; t++)
+		{	
+			main_proj_array_DEU[TEN_YEAR_INTEREST_RATE][t] = 
+				max(0.,this->afmr[this->model_point_DEU->elapsed_mths_in_valn_yr + 1][t][MAXIMUM_NUMBER_OF_INDEXES])/100.;	   		
+		} 
+	}
+	virtual void InitializeDiscountFactor()
+	{
+		for (int t = 1; t <= SUBACCT_MAX_PERIOD ; t++)
+		{
+			if (t==1) 
+			{
+				main_proj_array_DEU[DISCOUNT_FACTOR_MA][0]=1.;	
+			}	
+			main_proj_array_DEU[DISCOUNT_FACTOR_MA][t] = 
+				this->afmr[this->model_point_DEU->elapsed_mths_in_valn_yr + 1][t][MAXIMUM_NUMBER_OF_INDEXES + 1]; 
+		} 	 
+	}
+	virtual void InitializeMarketData(bool shock_AV)
+	{
+		InitializeTenYearInterestRate();
+		InitializeFundReturn(shock_AV);
+		InitializeDiscountFactor();
+	}
+	virtual void InitializeCurrentAnnuity(int t,double mort_multiplicator)
+	{
+		if(this->Assumption->ac_calculation=="N"){
+			//current annuity calcuation
+			double r_target = min(.15, main_proj_array_DEU[TEN_YEAR_INTEREST_RATE][t]);
+			double ac_down_margin = 0.;
+			double ac_up_margin = 0.;		
+			double u_eff_margin = 0.;
+			double ac_interp_margin = 0.;
+
+			this->Assumption->Get_current_annuity(this->model_point_DEU->sex,this->model_point_DEU->deferment_age  ,
+										r_target,ac_down_margin,ac_up_margin,mort_multiplicator);
+
+			double interp_dist = (main_proj_array_DEU[TEN_YEAR_INTEREST_RATE][t] - .0075 * ((int)(main_proj_array_DEU[TEN_YEAR_INTEREST_RATE][t] / .0075))) /  .0075;
+			u_eff_margin = (1.0 - interp_dist) * (1.0 / ac_down_margin - r_target) + interp_dist * (1.0 / ac_up_margin - r_target);
+			ac_interp_margin = 1.0 / (u_eff_margin + r_target);
+		
+			main_proj_array_DEU[GMIB_AX_CURR_MARGIN][t] = ac_interp_margin;
+			main_proj_array_DEU[GMIB_AX_CURR_DEU][t]=main_proj_array_DEU[GMIB_AX_CURR_MARGIN][t];
+		}
+		else{
+			double r_target = min(.15, main_proj_array_DEU[TEN_YEAR_INTEREST_RATE][t]);
+			double ac_loc = 0.;
+			double discount = 1.;
+			for( int i=this->model_point_DEU->deferment_age; i <= this->model_point_DEU->Const_Omega ; i++){
+				ac_loc += l_x[i] * discount;
+				discount /= (1 + r_target * this->Assumption->interest_rate_decrease_for_a_c);
+			}
+			main_proj_array_DEU[GMIB_AX_CURR_MARGIN][t] = ac_loc;
+			main_proj_array_DEU[GMIB_AX_CURR_DEU][t]=main_proj_array_DEU[GMIB_AX_CURR_MARGIN][t];
+		}
+			
+	}
+	//////////////////////////////////////////////////////////////////////////////////////////
+	//////////////////////////////////////////////////////////////////////////////////////////
+	//////////////////////present_value_calculation()//////////project()/////////////////////
+	/////////////////////////////////////////////////////////////////////////////////////////
+	/////////////////////////////////////////////////////////////////////////////////////////
+	virtual void set_index_shock_array(const vector<vector <int>>& i_s_a)
+	{
+
+			// Deletes the old shock array
+
+			for(int i = 0; i <this->shock_size_DEU; i++)
+
+			{
+
+				if(this->shock_array_DEU[i] != 0)
+
+				delete[] this->shock_array_DEU[i];
+
+			}
+
+			if (this->shock_size_DEU > 0)
+
+			delete[] this->shock_array_DEU;
+
+			this->shock_size_DEU = i_s_a.size();
+
+			if (this->shock_size_DEU > 0)
+
+			{
+
+				this->shock_array_DEU = new int* [this->shock_size_DEU];
+
+				for(int i = 0; i < this->shock_size_DEU; i++)
+
+					{
+
+						this->shock_array_DEU[i] = new int [MAXIMUM_NUMBER_OF_INDEXES+1];
+
+						for(int j = 0; j<MAXIMUM_NUMBER_OF_INDEXES+1; j++)
+
+						this->shock_array_DEU[i][j] = i_s_a[i][j];
+
+					}
+
+			}
+
+	}
+	virtual void PresentValueCalculation(double **pvs,int curr_shock_number)
+	{	
+
+		for (int t = 1 ; t <= min(60,this->model_point_DEU->T_Max) ; t++)
+		{
+			//Calculate present value deposit fees (Net premuim)
+			if( (this->model_point_DEU->ger_abrufphase==0) || (this->timing_items_DEU[AGE_LAST_DEU][t]< (this->model_point_DEU->deferment_age-min(5,this->model_point_DEU->deferment_age-60))))
+			{
+				pvs[curr_shock_number][PV_DEP_FEE_PREMIUM]+=main_proj_array_DEU[HEDGE_FEE_PREMIUM][t]*main_proj_array_DEU[DISCOUNT_FACTOR_MA][t];
+				pvs[curr_shock_number][PV_DEP_FEE_BONUS]+=main_proj_array_DEU[HEDGE_FEES_BONUS][t]* main_proj_array_DEU[DISCOUNT_FACTOR_MA][t];
+				pvs[curr_shock_number][PV_DEP_FEE_TOT] +=main_proj_array_DEU[HEDGE_FEE_PREMIUM][t]*main_proj_array_DEU[DISCOUNT_FACTOR_MA][t]+main_proj_array_DEU[HEDGE_FEES_BONUS][t]* main_proj_array_DEU[DISCOUNT_FACTOR_MA][t];
+				if ((int)(this->Assumption->gr_symbol) == 1 && t == 1)
+					pvs[curr_shock_number][PV_DEP_FEE_TOT] +=this->model_point_DEU->gmib_rollup_valn * this->model_point_DEU->ger_prem_hedge_charge/100.;
+			}
+			//Calculate present value deposit fees sum of premium
+			if( (this->model_point_DEU->ger_abrufphase==0) || (this->timing_items_DEU[AGE_LAST_DEU][t]< (this->model_point_DEU->deferment_age-min(5,this->model_point_DEU->deferment_age-60))))
+			{
+				pvs[curr_shock_number][PV_DEP_FEE_SUM_PREMIUM]+=main_proj_array_DEU[HEDGE_FEE_SUM_PREMIUM][t]*main_proj_array_DEU[DISCOUNT_FACTOR_MA][t];
+				pvs[curr_shock_number][PV_DEP_FEE_SUM_BONUS]+=main_proj_array_DEU[HEDGE_FEES_SUM_PREM_BONUS][t]*main_proj_array_DEU[DISCOUNT_FACTOR_MA][t];
+				pvs[curr_shock_number][PV_DEP_FEE_SUM_TOT]+=main_proj_array_DEU[HEDGE_FEE_SUM_PREMIUM][t]*main_proj_array_DEU[DISCOUNT_FACTOR_MA][t]+main_proj_array_DEU[HEDGE_FEES_SUM_PREM_BONUS][t]*main_proj_array_DEU[DISCOUNT_FACTOR_MA][t];
+				//if (((int)(this->Assumption->gr_symbol) == 1 && t == 1)&&(this->model_point_DEU->payt_freq != 0))
+				//		pvs[curr_shock_number][PV_DEP_FEE_SUM_TOT]+=this->model_point_DEU->acqu_ch_t0 * this->ger_factor_prem_hc_bs   /this->model_point_DEU->payt_freq ;
+			}
+			//Calculate present value of hedge cost fees
+			if( (this->model_point_DEU->ger_abrufphase==0) || (this->timing_items_DEU[AGE_LAST_DEU][t]< (this->model_point_DEU->deferment_age-min(5,this->model_point_DEU->deferment_age-60))))
+			{
+				pvs[curr_shock_number][PV_HC_AV]+=main_proj_array_DEU[ACCOUNT_VALUE_HC_FEES][t]*main_proj_array_DEU[DISCOUNT_FACTOR_MA][t];
+				pvs[curr_shock_number][PV_HC_AV_ADD]+=main_proj_array_DEU[ACCOUNT_VALUE_ADD_HC_FEES][t]*main_proj_array_DEU[DISCOUNT_FACTOR_MA][t];
+				pvs[curr_shock_number][PV_HC_AV_PAID_UP]-=main_proj_array_DEU[WEIGHTS_CHARGES][t]*main_proj_array_DEU[DISCOUNT_FACTOR_MA][t];
+			}
+
+			//Calculate present value of the total account value charges
+			if( (this->model_point_DEU->ger_abrufphase==0) || (this->timing_items_DEU[AGE_LAST_DEU][t]< (this->model_point_DEU->deferment_age-min(5,this->model_point_DEU->deferment_age-60))))
+			{
+				pvs[curr_shock_number][PV_HC_AV_TOT]+=main_proj_array_DEU[ACCOUNT_VALUE_HC_FEES][t]*main_proj_array_DEU[DISCOUNT_FACTOR_MA][t]+main_proj_array_DEU[ACCOUNT_VALUE_ADD_HC_FEES][t]*main_proj_array_DEU[DISCOUNT_FACTOR_MA][t]-main_proj_array_DEU[WEIGHTS_CHARGES][t]*main_proj_array_DEU[DISCOUNT_FACTOR_MA][t];
+			}
+			//Calculate present value of the total account value base
+			if( (this->model_point_DEU->ger_abrufphase==0) || (this->timing_items_DEU[AGE_LAST_DEU][t]< (this->model_point_DEU->deferment_age-min(5,this->model_point_DEU->deferment_age-60))))
+			{
+				pvs[curr_shock_number][PV_HC_AV_BASE]+=  main_proj_array_DEU[AV_BASE][t]* main_proj_array_DEU[DISCOUNT_FACTOR_MA][t];
+				pvs[curr_shock_number][PV_HC_AV_ADD_BASE]+=main_proj_array_DEU[AV_ADD_BASE][t]* main_proj_array_DEU[DISCOUNT_FACTOR_MA][t];
+				pvs[curr_shock_number][PV_HC_AV_PAID_UP_BASE]+=main_proj_array_DEU[WEIGHTS_AV_BASE][t]* main_proj_array_DEU[DISCOUNT_FACTOR_MA][t];
+				pvs[curr_shock_number][PV_HC_AV_BASE_TOT] +=main_proj_array_DEU[AV_BASE][t]* main_proj_array_DEU[DISCOUNT_FACTOR_MA][t]+main_proj_array_DEU[AV_ADD_BASE][t]* main_proj_array_DEU[DISCOUNT_FACTOR_MA][t]+main_proj_array_DEU[WEIGHTS_AV_BASE][t]* main_proj_array_DEU[DISCOUNT_FACTOR_MA][t];
+			}
+			//Calculate present values claims IB
+			pvs[curr_shock_number][PV_GMIB_DEU]+=main_proj_array_DEU[CLAIMS_IB][t]* main_proj_array_DEU[DISCOUNT_FACTOR_MA][t];
+			pvs[curr_shock_number][PV_GMIB_FONDS_DEU]+=main_proj_array_DEU[CLAIMS_IB_FONDS][t]* main_proj_array_DEU[DISCOUNT_FACTOR_MA][t];
+			pvs[curr_shock_number][PV_GMIB_TOT] +=main_proj_array_DEU[CLAIMS_IB][t]* main_proj_array_DEU[DISCOUNT_FACTOR_MA][t];
+			
+			if ((t==60 && this->timing_items_DEU[AGE_LAST_DEU][t] < this->model_point_DEU->deferment_age - 1)||(this->timing_items_DEU[AGE_LAST_DEU][t] == this->model_point_DEU->deferment_age - 1))
+			{
+				pvs[curr_shock_number][PV_GMIB_WEIGHTS]+=main_proj_array_DEU[WEIGHTS_IB_CLAIMS][0]* main_proj_array_DEU[DISCOUNT_FACTOR_MA][t];
+				pvs[curr_shock_number][PV_GMIB_FONDS_DEU]+=main_proj_array_DEU[WEIGHTS_IB_FONDS_CLAIMS][0]* main_proj_array_DEU[DISCOUNT_FACTOR_MA][t];
+				pvs[curr_shock_number][PV_GMIB_TOT] +=main_proj_array_DEU[WEIGHTS_IB_CLAIMS][0]* main_proj_array_DEU[DISCOUNT_FACTOR_MA][t];
+			}
+
+			//Calculate present values claims AB
+			pvs[curr_shock_number][PV_GMAB_DEU]+=main_proj_array_DEU[CLAIMS_AB][t] * main_proj_array_DEU[DISCOUNT_FACTOR_MA][t];
+			pvs[curr_shock_number][PV_GMAB_TOT]+=main_proj_array_DEU[CLAIMS_AB][t] * main_proj_array_DEU[DISCOUNT_FACTOR_MA][t];
+			if ((t==60 && this->timing_items_DEU[AGE_LAST_DEU][t] < this->model_point_DEU->deferment_age - 1)||(this->timing_items_DEU[AGE_LAST_DEU][t] == this->model_point_DEU->deferment_age - 1))
+			{			
+				pvs[curr_shock_number][PV_GMAB_WEIGHTS]+=main_proj_array_DEU[WEIGHTS_AB_CLAIMS][0] * main_proj_array_DEU[DISCOUNT_FACTOR_MA][t];
+				pvs[curr_shock_number][PV_GMAB_TOT]+=main_proj_array_DEU[WEIGHTS_AB_CLAIMS][0] * main_proj_array_DEU[DISCOUNT_FACTOR_MA][t];
+			}
+			pvs[curr_shock_number][PV_ITM_DEU]+=main_proj_array_DEU[DYNAMIC_LAPSE_FACTOR][1];
+		}
+	}
+	virtual void ChiLovCalculation(double **pvs,int curr_shock_number,bool delta)
+	{
+			//Calculate real ride charges
+			pvs[curr_shock_number][PV_RRC]=this->model_point_DEU->gmxb_chg_perc*(this->total_number_scn);
+
+			//Calculate present value of the total account value real charges
+			pvs[curr_shock_number][PV_REAL_CHARGES_DEU]=
+				pvs[curr_shock_number][PV_HC_AV_TOT];
+
+			//Calculate present values total claims 
+			pvs[curr_shock_number][PV_CLAIMS_DEU]=
+				pvs[curr_shock_number][PV_GMIB_TOT]
+				+pvs[curr_shock_number][PV_GMAB_TOT];
+
+			//Calculate adjustment of sum premium charges value
+			pvs[curr_shock_number][PV_DEP_FEE_SUM_TOT]*=this->Assumption->alpha_ch_factor;
+
+			//Calculate ehc value
+			if((delta == true && curr_shock_number==0) || delta==false)
+			{
+				if((int)this->Assumption->gr_symbol==1)
+					
+					pvs[curr_shock_number][PV_CHI_DEU]=
+						(pvs[curr_shock_number][PV_CLAIMS_DEU]-
+						pvs[curr_shock_number][PV_DEP_FEE_TOT]-
+						pvs[curr_shock_number][PV_DEP_FEE_SUM_TOT])/
+						(pvs[curr_shock_number][PV_HC_AV_BASE_TOT]*(pvs[curr_shock_number][PV_HC_AV_BASE_TOT]!=0)+0.01*(pvs[curr_shock_number][PV_HC_AV_BASE_TOT]==0))*
+						this->model_point_DEU->gmxb_chg_perc*(this->total_number_scn);
+				else
+					pvs[curr_shock_number][PV_CHI_DEU]=this->model_point_DEU->gmxb_ehc_charge*(this->total_number_scn);
+			}
+			else
+				pvs[curr_shock_number][PV_CHI_DEU]=this->model_point_DEU->index_shock_pvs[0][PV_CHI_DEU];
+
+			//Calculate present value of the total account value ehc charges
+			pvs[curr_shock_number][PV_EHC_CHARGES_DEU]=
+				pvs[curr_shock_number][PV_CHI_DEU]/(this->total_number_scn*100.)*
+				pvs[curr_shock_number][PV_HC_AV_BASE_TOT];
+
+			//Calculate LOV
+			pvs[curr_shock_number][PV_LOV_DEU]=
+				(pvs[curr_shock_number][PV_CLAIMS_DEU]-
+					pvs[curr_shock_number][PV_DEP_FEE_TOT]-
+				pvs[curr_shock_number][PV_DEP_FEE_SUM_TOT])-
+				pvs[curr_shock_number][PV_EHC_CHARGES_DEU];
+	}
+
+	virtual void benefit_base_riester_ist_soll(){
+
+	}
+
+	virtual void calculate_ac_and_ag(){
+		double * f_t = new double[this->model_point_DEU->Const_Omega+1];
+		double * dav_trend = new double[this->model_point_DEU->Const_Omega+1];
+		double * stec_trend = new double[this->model_point_DEU->Const_Omega+1];
+		double * mortality_shock = new double[this->model_point_DEU->Const_Omega+1];
+		double * q_x_raw = new double[this->model_point_DEU->Const_Omega+1];
+		double * q_x_final = new double[this->model_point_DEU->Const_Omega+1];
+		int issue_year = this->model_point_DEU->Calc_Valn_year - (int) this->model_point_DEU->duration_valn;
+		double local_var = 12*(this->model_point_DEU->duration_valn - (int) this->model_point_DEU->duration_valn);
+		if(local_var - (int) local_var >= 0.5){
+			local_var  = (int) local_var + 1;
+		}
+		else{
+			local_var = (int) local_var; 
+		}
+		if(local_var > this->model_point_DEU->Calc_Valn_month){
+			issue_year --;
+		}
+		int election_year = issue_year + this->model_point_DEU->deferment_age - this->model_point_DEU->age_at_issue;
+		
+		for(int t=this->model_point_DEU->deferment_age; t<=this->model_point_DEU->Const_Omega; t++){
+			if(this->model_point_DEU->sex=="M"){f_t[t] = this->Assumption->selection_factor_m->quick_search(t-this->model_point_DEU->deferment_age+1,0);}
+			else{f_t[t] = this->Assumption->selection_factor_f->quick_search(t-this->model_point_DEU->deferment_age+1,0);}
+		}
+		for(int t=this->model_point_DEU->deferment_age; t<=this->model_point_DEU->Const_Omega; t++){
+			
+			double trend = 0.;
+			if(this->model_point_DEU->sex=="M"){trend = this->Assumption->trends_ac_1_2_m->quick_search(t,0);}
+			else{trend = this->Assumption->trends_ac_1_2_f->quick_search(t,0);}
+
+			int year = 0;
+			if (this->Assumption->longevity_calculation==0){year = election_year+t-this->model_point_DEU->deferment_age-1999;}
+			else{year = this->model_point_DEU->Calc_Valn_year - 1999;}
+
+			dav_trend[t]=exp(-trend*year);
+		}
+
+		for(int t=this->model_point_DEU->deferment_age; t<=this->model_point_DEU->Const_Omega; t++){
+			if (this->Assumption->longevity_calculation==0){stec_trend[t]=1.;}
+			else{stec_trend[t]=this->longevity_shock_table->search(t,election_year-this->model_point_DEU->Calc_Valn_year+t-this->model_point_DEU->deferment_age+1);}
+		}
+
+		for(int t=this->model_point_DEU->deferment_age; t<=this->model_point_DEU->Const_Omega; t++){
+			mortality_shock[t] = Mortality_shock_vector[t- (int) this->model_point_DEU->age_at_valn];
+			if(this->Assumption->longevity_calculation==1){mortality_shock[t]=1.;}
+		}
+
+		for(int t=this->model_point_DEU->deferment_age; t<=this->model_point_DEU->Const_Omega; t++){
+			if(this->model_point_DEU->sex=="M"){q_x_raw[t] = this->Assumption->aggregated_table_ac_m->quick_search(t,0);}
+			else{q_x_raw[t] = this->Assumption->aggregated_table_ac_f->quick_search(t,0);}
+		}
+
+		for(int t=this->model_point_DEU->deferment_age; t<this->model_point_DEU->Const_Omega; t++){
+			q_x_final[t] = 0.9 * q_x_raw[t] * mortality_shock[t] * stec_trend[t] * dav_trend[t] * f_t[t];
+		}
+		q_x_final[this->model_point_DEU->Const_Omega]=1.0;
+
+		l_x[this->model_point_DEU->deferment_age]=1.;
+		for(int t=this->model_point_DEU->deferment_age+1; t<=this->model_point_DEU->Const_Omega; t++){
+			l_x[t] = l_x[t-1] * (1 - q_x_final[t-1]);
+		}
+		delete[] f_t;
+		delete[] dav_trend;
+		delete[] stec_trend;
+		delete[] mortality_shock;
+		delete[] q_x_raw;
+		delete[] q_x_final;
+
+		double * male_help = new double[this->model_point_DEU->Const_Omega+1];
+		double * female_help = new double[this->model_point_DEU->Const_Omega+1];
+		double * q_x_table = new double[this->model_point_DEU->Const_Omega+1];
+		double * selection = new double[this->model_point_DEU->Const_Omega+1];
+		double * trend_table = new double[this->model_point_DEU->Const_Omega+1];
+		double * q_x_raw_for_a_g = new double[this->model_point_DEU->Const_Omega+1];
+		double * q_x_final_for_a_g = new double[this->model_point_DEU->Const_Omega+1];
+		double * l_x_for_a_g = new double[this->model_point_DEU->Const_Omega+1];	
+
+		if(this->model_point_DEU->Calc_Unisex==1){male_help[60]=0.3;}
+		else if(this->model_point_DEU->sex=="M"){male_help[60]=1.;}
+		else{male_help[60]=0.;}
+		for(int t=61; t<=this->model_point_DEU->Const_Omega; t++){
+			male_help[t] = male_help[t-1] * (1. - this->Assumption->aggregated_table_ac_m->quick_search(t-1,0));
+		}
+		for(int t=59; t>=0; t--){
+			male_help[t] = male_help[t+1] / (1. - this->Assumption->aggregated_table_ac_m->quick_search(t,0));
+		}
+
+		female_help[60]=1-male_help[60];
+		for(int t=61; t<=this->model_point_DEU->Const_Omega; t++){
+			female_help[t] = female_help[t-1] * (1. - this->Assumption->aggregated_table_ac_f->quick_search(t-1,0));
+		}
+		for(int t=59; t>=0; t--){
+			female_help[t] = female_help[t+1] / (1. - this->Assumption->aggregated_table_ac_f->quick_search(t,0));
+		}
+
+		for(int t=0; t<this->model_point_DEU->Const_Omega; t++){
+			q_x_table[t] = (male_help[t] * this->Assumption->aggregated_table_ac_m->quick_search(t,0) + female_help[t] * this->Assumption->aggregated_table_ac_f->quick_search(t,0) ) / (male_help[t] + female_help[t]);
+		}
+
+		for(int t=this->model_point_DEU->deferment_age; t<=this->model_point_DEU->Const_Omega; t++){
+			selection[t] = this->Assumption->selection_factor_m->quick_search(t-this->model_point_DEU->deferment_age+1,0) * male_help[60] + this->Assumption->selection_factor_f->quick_search(t-this->model_point_DEU->deferment_age+1,0) * female_help[60];
+		}
+
+		for(int t=this->model_point_DEU->deferment_age; t<=this->model_point_DEU->Const_Omega; t++){
+			double trend = 0.;
+			if(this->model_point_DEU->Calc_Unisex==1){trend = max(this->Assumption->trends_ac_1_2_m->quick_search(t,0),this->Assumption->trends_ac_1_2_f->quick_search(t,0));}
+			else if(this->model_point_DEU->sex=="M"){trend = this->Assumption->trends_ac_1_2_m->quick_search(t,0);}
+			else{trend = this->Assumption->trends_ac_1_2_f->quick_search(t,0);}
+			trend_table[t] = exp(-trend*(election_year-1999+t-this->model_point_DEU->deferment_age));
+		}
+
+		for(int t=this->model_point_DEU->deferment_age; t<=this->model_point_DEU->Const_Omega; t++){
+			q_x_raw_for_a_g[t] = q_x_table[t];
+		}
+		
+		double mult_fact = 0.9;
+		for(int t=this->model_point_DEU->deferment_age; t<=this->model_point_DEU->Const_Omega; t++){
+			q_x_final_for_a_g[t] = mult_fact * q_x_raw_for_a_g[t] * trend_table[t] * selection[t];
+		}
+		q_x_final_for_a_g[this->model_point_DEU->Const_Omega]=1.0;
+
+		l_x_for_a_g[this->model_point_DEU->deferment_age]=1.;
+		for(int t=this->model_point_DEU->deferment_age+1; t<=this->model_point_DEU->Const_Omega; t++){
+			l_x_for_a_g[t] = l_x_for_a_g[t-1] * (1 - q_x_final_for_a_g[t-1]);
+		}
+
+		double * ag_interest = new double[this->model_point_DEU->Const_Omega+1];
+		ag_interest[this->model_point_DEU->deferment_age]=1;
+		
+		double interest_rate = 0.;
+		if(this->model_point_DEU->riester_type==1){interest_rate=0.01;}
+		else{interest_rate=0.0275;}
+		for(int t=this->model_point_DEU->deferment_age+1; t<=this->model_point_DEU->Const_Omega; t++){
+			ag_interest[t] = ag_interest[t-1] * (1. + interest_rate);
+		}
+		
+		a_g = 0;
+		for(int t=this->model_point_DEU->deferment_age; t<=this->model_point_DEU->Const_Omega; t++){
+			a_g += l_x_for_a_g[t] / ag_interest[t];
+		}
+		
+		delete[] ag_interest;
+		delete[] male_help;
+		delete[] female_help;
+		delete[] q_x_table;
+		delete[] selection;
+		delete[] trend_table;
+		delete[] q_x_raw_for_a_g;
+		delete[] q_x_final_for_a_g;
+		delete[] l_x_for_a_g;
+	}
+
+	void Initialize_longevity_table()
+	{
+		Mortality_shock_vector[1]=this->longevity_shock_table->search((int) this->timing_items_DEU[AGE_LAST_DEU][1],1);
+
+		for (int t=2; t<= 2*SUBACCT_MAX_PERIOD+1; t++)
+			Mortality_shock_vector[t]=this->model_point_DEU->prorata_first_year*this->longevity_shock_table->search((int) this->timing_items_DEU[AGE_LAST_DEU][t],t)+
+			(1.-this->model_point_DEU->prorata_first_year)*this->longevity_shock_table->search((int) this->timing_items_DEU[AGE_LAST_DEU][t],t);
+	}
+
+	void Initialize_mortality_table(GMXB_Assumption_Table *m_motality_tab)
+	{
+		Mortality_shock_vector[1]=1.+ m_motality_tab->search(1, 1)/100.;
+
+		for (int t=2; t<= 2*SUBACCT_MAX_PERIOD+1; t++)
+			Mortality_shock_vector[t]=1.+this->model_point_DEU->prorata_first_year*m_motality_tab->search(t, 1)/100.+
+			(1.-this->model_point_DEU->prorata_first_year)*m_motality_tab->search(t-1, 1)/100.;
+	}
+
+	void Set_mortality_table_to_zero(){for (int t=0; t<= 2*SUBACCT_MAX_PERIOD+1; t++) Mortality_shock_vector[t]=1.; }
+
+	void Initialize_lapse_table(GMXB_Assumption_Table *m_lapse_tab)
+	{
+		Lapse_shock_vector[1]=m_lapse_tab->search(1, 1)/100.;
+
+		for (int t=2; t<= SUBACCT_MAX_PERIOD; t++)
+			Lapse_shock_vector[t]=this->model_point_DEU->prorata_first_year*m_lapse_tab->search(t, 1)/100.+
+			(1.-this->model_point_DEU->prorata_first_year)*m_lapse_tab->search(t-1, 1)/100.;
+	}
+	void Set_lapse_table_to_zero(){for (int t=0; t<= SUBACCT_MAX_PERIOD; t++) Lapse_shock_vector[t]=0.; }
+	void Initialize_paidup_table(GMXB_Assumption_Table *m_paidup_tab)
+	{
+		Lapse_shock_vector[1]=m_paidup_tab->search(1, 1)/100.;
+
+		for (int t=2; t<= SUBACCT_MAX_PERIOD; t++)
+			Lapse_shock_vector[t]=this->model_point_DEU->prorata_first_year*m_paidup_tab->search(t, 1)/100.+
+			(1.-this->model_point_DEU->prorata_first_year)*m_paidup_tab->search(t-1, 1)/100.;
+
+		Paidup_shock_vector[1]=m_paidup_tab->search(1, 1)/100.;
+
+		for (int t=2; t<= SUBACCT_MAX_PERIOD; t++)
+			Paidup_shock_vector[t]=this->model_point_DEU->prorata_first_year*m_paidup_tab->search(t, 1)/100.+
+			(1.-this->model_point_DEU->prorata_first_year)*m_paidup_tab->search(t-1, 1)/100.;
+	}
+	void Set_paidup_table_to_zero(){for (int t=0; t<= SUBACCT_MAX_PERIOD; t++) Paidup_shock_vector[t]=0.; }
+
+	virtual void project()
+	{	
+		Projection::compt_sen +=1;
+		// Loop over the indexes shocks
+		for(int sh_n = 0; sh_n < this->shock_size_DEU; sh_n++)
+		{	
+			this->shock_number_DEU = sh_n;
+			this->set_main_proj_arrays_to_zero();
+			this->set_other_vectors_to_zero();
+			
+			this->InitAvTotal(true);
+			this->InitializeMarketData(true);
+
+			if(this->Assumption->ac_calculation=="Y"){this->calculate_ac_and_ag();}
+			if(this->Assumption->ac_calculation=="Y"){this->Calculate_GuaranteedAnnuity();}
+
+			for (int t = 1; t <=this->model_point_DEU->T_Max; t++) 
+			{	
+				this->Calculate_MortalityRate(t,1);
+				this->InitializeCurrentAnnuity(t,1);
+				this->PerformProjection(t,1,1);
+			}
+			
+			if(this->Assumption->use_paid_up != "N" /*&& this->model_point_DEU->payt_freq != 0*/){
+				this->Calculate_timing_paid_up();
+				this->Calculate_ib_paid_up();	
+				this->PaidUpProjection();
+			}
+
+			this->PresentValueCalculation(this->model_point_DEU->index_shock_pvs, this->shock_number_DEU);
+
+			if(generate_debug_files_DEU)
+				this->write_main_proj();
+			if(Projection::compt_sen==this->total_number_scn)
+			this->ChiLovCalculation(this->model_point_DEU->index_shock_pvs, sh_n,true);
+
+		}
+		
+		// Loop over the election shocks
+		int election_shock_size_DEU;
+		election_shock_size_DEU = this->v_election_mult_table.size();
+		for(int l = 0; l < election_shock_size_DEU; l++)
+		{
+			GMXB_Assumption_Table * m_election_tab = this->v_election_mult_table[l];
+				
+			this->set_main_proj_arrays_to_zero();
+			this->set_other_vectors_to_zero();
+
+			election_shock = m_election_tab->search(1,1)/100;
+			
+			double memorize_election_fonds = this->Assumption->riester_election_fonds_perc;
+			this->Assumption->riester_election_fonds_perc = max(0.,min(100.,100.-(100.-this->Assumption->riester_election_fonds_perc)*(1.+election_shock)));
+			this->InitAvTotal(false);
+			this->InitializeMarketData(false);
+
+			if(this->Assumption->ac_calculation=="Y"){this->calculate_ac_and_ag();}
+			if(this->Assumption->ac_calculation=="Y"){this->Calculate_GuaranteedAnnuity();}
+
+			for (int t = 1; t <=this->model_point_DEU->T_Max; t++) 
+			{	
+				this->Calculate_MortalityRate(t,1);
+				this->InitializeCurrentAnnuity(t,1);
+				this->PerformProjection(t,1,1);
+			}
+
+			if(this->Assumption->use_paid_up != "N" && this->model_point_DEU->payt_freq != 0){
+				Calculate_timing_paid_up();
+				Calculate_ib_paid_up();			
+				this->PaidUpProjection();
+			}
+			
+			this->PresentValueCalculation(this->model_point_DEU->pv_election, l);
+
+			if(generate_debug_files_DEU)
+				this->write_main_proj();
+			if(Projection::compt_sen==this->total_number_scn)
+				this->ChiLovCalculation(this->model_point_DEU->pv_election, l,false);
+			election_shock = 0.;
+			this->Assumption->riester_election_fonds_perc = memorize_election_fonds;
+		}
+
+		//Loop over the lapses shocks
+		int lapse_shock_size_DEU;
+		lapse_shock_size_DEU = this->v_lapse_mult_table.size();
+
+		for(int l = 0; l < lapse_shock_size_DEU; l++)
+		{
+			GMXB_Assumption_Table * m_lapse_tab = this->v_lapse_mult_table[l];
+				
+			this->set_main_proj_arrays_to_zero();
+			this->set_other_vectors_to_zero();
+			Initialize_lapse_table(m_lapse_tab);
+			
+			this->InitAvTotal(false);
+			this->InitializeMarketData(false);
+
+			if(this->Assumption->ac_calculation=="Y"){this->calculate_ac_and_ag();}
+			if(this->Assumption->ac_calculation=="Y"){this->Calculate_GuaranteedAnnuity();}
+
+			for (int t = 1; t <=this->model_point_DEU->T_Max; t++) 
+			{	
+				this->Calculate_MortalityRate(t,1);
+				this->InitializeCurrentAnnuity(t,1);
+				double lapse_mult = 1 + Lapse_shock_vector[t];
+				this->PerformProjection(t,lapse_mult,1);
+			}
+
+			if(this->Assumption->use_paid_up != "N" && this->model_point_DEU->payt_freq != 0){
+				Calculate_timing_paid_up();
+				Calculate_ib_paid_up();			
+				this->PaidUpProjection();
+			}
+			
+			this->PresentValueCalculation(this->model_point_DEU->pv_lapse, l);
+
+			if(generate_debug_files_DEU)
+				this->write_main_proj();
+			if(Projection::compt_sen==this->total_number_scn)
+				this->ChiLovCalculation(this->model_point_DEU->pv_lapse, l,false);
+			Set_lapse_table_to_zero();
+
+		}
+
+		//Loop over the paidup shocks
+		int paidup_shock_size_DEU;
+		paidup_shock_size_DEU = this->v_paidup_mult_table.size();
+
+		for(int l = 0; l < paidup_shock_size_DEU; l++)
+		{
+			GMXB_Assumption_Table * m_paidup_tab = this->v_paidup_mult_table[l];
+
+			this->set_main_proj_arrays_to_zero();
+			this->set_other_vectors_to_zero();
+			Initialize_paidup_table(m_paidup_tab);
+			
+			this->InitAvTotal(false);
+			this->InitializeMarketData(false);
+
+			if(this->Assumption->ac_calculation=="Y"){this->calculate_ac_and_ag();}
+			if(this->Assumption->ac_calculation=="Y"){this->Calculate_GuaranteedAnnuity();}
+			
+			for (int t = 1; t <=this->model_point_DEU->T_Max; t++) 
+			{	
+				this->Calculate_MortalityRate(t,1);
+				this->InitializeCurrentAnnuity(t,1);
+				double lapse_mult = 1 + Lapse_shock_vector[t];
+				double paidup_mult = 1 + Paidup_shock_vector[t];
+				this->PerformProjection(t,lapse_mult,paidup_mult);
+			}
+			
+			if(this->Assumption->use_paid_up != "N" && this->model_point_DEU->payt_freq != 0){
+				Calculate_timing_paid_up();
+				Calculate_ib_paid_up();
+				this->PaidUpProjection();
+			}
+
+			this->PresentValueCalculation(this->model_point_DEU->pv_paidup, l);
+
+			if(generate_debug_files_DEU)
+				this->write_main_proj();
+			if(Projection::compt_sen==this->total_number_scn)
+				this->ChiLovCalculation(this->model_point_DEU->pv_paidup, l,false);
+			Set_lapse_table_to_zero();
+			Set_paidup_table_to_zero();
+		}
+
+		//Loop over the mortality shocks
+		int mort_shock_size_DEU;
+		mort_shock_size_DEU = this->v_mortality_mult_table.size();	
+
+		for(int l = 0; l < mort_shock_size_DEU; l++)
+		{
+			GMXB_Assumption_Table * m_mort_tab = this->v_mortality_mult_table[l];
+
+			this->set_main_proj_arrays_to_zero();
+			this->set_other_vectors_to_zero();
+			Initialize_mortality_table(m_mort_tab);
+			
+			this->InitAvTotal(false);
+			this->InitializeMarketData(false);
+
+			if(this->Assumption->ac_calculation=="Y"){this->calculate_ac_and_ag();}
+			if(this->Assumption->ac_calculation=="Y"){this->Calculate_GuaranteedAnnuity();}
+
+			for (int t = 1; t <=this->model_point_DEU->T_Max; t++) 
+			{
+				double mortality_mult = Mortality_shock_vector[t];
+				this->Calculate_MortalityRate(t,mortality_mult);
+				this->InitializeCurrentAnnuity(t,mortality_mult);
+				this->PerformProjection(t,1,1);
+
+			}
+			
+			if(this->Assumption->use_paid_up != "N" && this->model_point_DEU->payt_freq != 0){
+				Calculate_timing_paid_up();
+				Calculate_ib_paid_up();
+				this->PaidUpProjection();
+			}
+			
+			this->PresentValueCalculation(this->model_point_DEU->pv_mortality, l);
+
+			if(generate_debug_files_DEU)
+				this->write_main_proj();
+			if(Projection::compt_sen==this->total_number_scn)
+				this->ChiLovCalculation(this->model_point_DEU->pv_mortality, l,false);
+			Set_mortality_table_to_zero();
+
+		}
+		if (this->load_longevity_tables){
+			
+			this->Assumption->longevity_calculation=1;
+
+			this->Get_longevity_shock(this->model_point_DEU->sex);
+			this->set_main_proj_arrays_to_zero();
+			this->set_other_vectors_to_zero();
+			Initialize_longevity_table();
+			
+			this->InitAvTotal(false);
+			this->InitializeMarketData(false);
+
+			if(this->Assumption->ac_calculation=="Y"){this->calculate_ac_and_ag();}
+			if(this->Assumption->ac_calculation=="Y"){this->Calculate_GuaranteedAnnuity();}
+
+			for (int t = 1; t <=this->model_point_DEU->T_Max; t++) 
+			{
+				double mortality_mult = Mortality_shock_vector[t];
+				this->Calculate_MortalityRate(t,1);
+				this->InitializeCurrentAnnuity(t,mortality_mult);
+				this->PerformProjection(t,1,1);
+
+			}
+			
+			if(this->Assumption->use_paid_up != "N" && this->model_point_DEU->payt_freq != 0){
+				Calculate_timing_paid_up();
+				Calculate_ib_paid_up();
+				this->PaidUpProjection();
+			}
+
+			this->PresentValueCalculation(this->model_point_DEU->pv_longevity, 0);
+
+			if(generate_debug_files_DEU)
+				this->write_main_proj();
+			if(Projection::compt_sen==this->total_number_scn)
+				this->ChiLovCalculation(this->model_point_DEU->pv_longevity, 0,false);
+			this->Assumption->longevity_calculation=0;
+			Set_mortality_table_to_zero();
+		}
+	}
+
+	void set_pvsScenOutput(Model_Point& mp,  unsigned int nScenPath_ip)
+	{
+	   	char message[MAX_LENGTH_MESSAGE_EXCEPTION];
+		sprintf_s(message, "DEU don't support scen_by_scen output");
+		throw new GMXBException(message);	
+	}
+};
+

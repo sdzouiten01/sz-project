@@ -1,0 +1,74 @@
+#pragma once
+#include "stdafx.h"
+#include "Projection classes/Guarantee projection classes/Projection.h"
+
+using namespace std;
+
+class Projection_JPN : virtual public Projection
+{
+protected:
+	GMXB_Assumption_Table *mort_table_selection_f;
+	GMXB_Assumption_Table *mort_table_selection_m;
+	GMXB_Assumption_Table *mort_table_selection;
+
+	double mult_factor;
+	double flat_value;
+	double min_factor_value;
+	double max_dyn_lapse_value;
+	//int mort_catastrophe_st;
+
+public:
+	Projection_JPN(const vector<vector <int>>& i_s_a,const vector<vector <int>>& f_s_a,
+					const char* tables, bool generate_dbg_files, const string& dbg_file_path,
+					const int t_high_shorter, bool l_longevity_tables, int t_step):
+		Projection(i_s_a, f_s_a, tables, generate_dbg_files, dbg_file_path, t_high_shorter, l_longevity_tables,  t_step)
+	{
+		mort_table_selection_m = new GMXB_Assumption_Table(tables , "mort_selection_m");
+		mort_table_selection_f = new GMXB_Assumption_Table(tables, "mort_selection_f");
+
+		mult_factor = atof(this->assump->search("multiplicative_factor").c_str());
+		flat_value = atof(this->assump->search("flat_value").c_str());
+		min_factor_value = atof(this->assump->search("min_factor_value").c_str());
+		max_dyn_lapse_value = atof(this->assump->search("max_dyn_lapse_value").c_str());
+		//mort_catastrophe_st = atof(this->assump->search("mort-catastrophe_stress-test").c_str());
+	}
+
+	~Projection_JPN()
+	{
+		delete mort_table_selection_m;
+		delete mort_table_selection_f;
+	}
+
+	virtual void load_tables()
+	{
+		Projection::load_tables();
+
+		if(model_point->sex=="F")
+		{
+				this->mort_table_selection = this->mort_table_selection_f;
+		}
+		else if(model_point->sex=="M")
+		{
+				this->mort_table_selection = this->mort_table_selection_m;
+		}
+		else 
+		{
+				char message[MAX_LENGTH_MESSAGE_EXCEPTION];
+				sprintf_s(message, "Only F or M are allowed for model_point->sex variable");
+				throw new GMXBException(message);		
+		}
+	}
+
+	double mortality_rate_calculation(int t) 
+	{
+		int pol_yr = int(timing_items[t][POL_YEAR]);
+		double table_age= (int)(timing_items[t][AGE_LAST]) + this->mort_age_adj;
+		
+		//if(mort_catastrophe_st == 1 && (t == 1 || t == 2))
+		//	return min(1.0, this->mort_table->search(int(table_age), 1)* this->mort_table_selection->search(int(pol_yr), 1) * 138./100.);
+
+		return min(1.0, this->mort_table->search(int(table_age), 1)* this->mort_table_selection->search(int(pol_yr), 1));		
+	}
+};
+	
+

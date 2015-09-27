@@ -1,0 +1,135 @@
+9
+
+dir
+637
+svn://10.206.16.186/SVN_projects/DLL
+svn://10.206.16.186
+
+
+
+2011-05-13T14:51:56.903823Z
+637
+Andrei
+
+
+svn:special svn:externals svn:needs-lock
+
+
+
+
+
+
+
+
+
+
+
+1de69a6b-f823-8a43-930d-b9bcf83417d9
+
+PRICER_DLL_EXECUTABLE
+dir
+
+HEDGEFF_COMPUTE
+dir
+
+Actuarial Tool Setup
+dir
+
+PRICER_GMXB_DLL.sln
+file
+
+
+
+
+2011-05-13T14:56:29.381745Z
+5df7d6cc8bc5956a748ce49f1e45bc9b
+2011-04-29T08:24:08.346142Z
+546
+Andrei
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+5568
+
+Calibration
+dir
+
+AHS_PARSER
+dir
+
+HE_Asset
+dir
+
+PRICER_GMXB_DLL
+dir
+
+PRICER_GMXB_DLL.ncb
+file
+
+
+
+
+2011-05-13T14:56:36.651095Z
+807ea50c675d34c86a8d11138f47b483
+2011-04-29T08:24:21.440143Z
+547
+Andrei
+has-props
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+16239616
+
+04_for_debug
+dir
+
+interface
+dir
+
+02_input
+dir
+
+03_output
+dir
+
+ScenarioGenerator(v2)
+dir
+
+01_run_conf
+dir
+

@@ -1,0 +1,5 @@
+#pragma once
+
+#define PRODUCT_CD1 59
+#define PRODUCT_CD2 60
+#define ADDITIONAL_ADMIN_FEES 100

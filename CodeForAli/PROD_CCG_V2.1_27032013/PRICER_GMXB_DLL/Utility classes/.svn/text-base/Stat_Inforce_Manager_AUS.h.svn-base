@@ -1,0 +1,165 @@
+#pragma once
+#include "Utility classes/Stat_Inforce_Manager.h"
+
+using namespace std;
+
+
+class Stat_Inforce_Manager_AUS: public Stat_Inforce_Manager
+{
+
+public:
+
+	Stat_Inforce_Manager_AUS()
+	{
+	}
+
+	~Stat_Inforce_Manager_AUS()
+	{
+	}
+
+	void compare_inforce_files(Stat_Inforce_Configuration& stat_inforce_config,double &total_lapse_amount, double &total_reappeared_amount,double &guaranted_payment_total,double &fees_and_others)
+	{
+		double mp_lapse_amount = 0.;
+		double mp_reappeared_amount = 0.;
+
+		Inforce_Manager inforce_mgr;
+
+		vector<string> v_prodKey = stat_inforce_config.get_v_product_codes_key();
+
+		for (unsigned int prod=0; prod<v_prodKey.size();prod++) //boucle les produits
+		{
+			double guaranted_payment_new = 0.;
+			double guaranted_payment_old = 0.;
+			double guaranted_payment_prod = 0.;
+			double fees_and_others_mp = 0.;
+			double av_new_inforce = 0.;
+			double av_ref_inforce = 0.;
+
+			string product_code = v_prodKey[prod];
+
+			string extension="N";
+
+			//vectors of policies (new & old)	
+			vector<Model_Point*> v_of_old_policies_c;
+			vector<Model_Point*> v_of_new_policies_c;
+
+			Product_configuration product_config(product_code, stat_inforce_config.get_inforce_file_name());
+			Product_configuration product_config_old(product_code, stat_inforce_config.get_reference_file());
+			Scenario_configuration scenario_config;
+
+			if ( product_code == "AUS_SWB01" || product_code == "AUS_AB01" || product_code == "AUS_PI01" 
+				|| product_code == "AUS_PG01")
+			{
+				inforce_mgr.get_list_of_model_points_per_product(product_code, v_of_new_policies_c, product_config, scenario_config);
+				inforce_mgr.get_list_of_model_points_per_product(product_code + extension, v_of_new_policies_c, product_config, scenario_config);
+
+				inforce_mgr.get_list_of_model_points_per_product(product_code, v_of_old_policies_c, product_config_old, scenario_config);
+				inforce_mgr.get_list_of_model_points_per_product(product_code + extension, v_of_old_policies_c, product_config_old, scenario_config);			
+			}
+			else if ( product_code == "AUS_SWB01N" || product_code == "AUS_AB01N" || product_code == "AUS_PI01N" 
+				|| product_code == "AUS_PG01N")
+			
+			{}
+			else
+			{
+
+				inforce_mgr.get_list_of_model_points_per_product(product_code, v_of_new_policies_c, product_config, scenario_config);
+				inforce_mgr.get_list_of_model_points_per_product(product_code, v_of_old_policies_c, product_config_old, scenario_config);			
+			}
+
+			//Montant Lapse
+			for (int j=0; j< v_of_old_policies_c.size(); j++)
+			{
+				bool check = false;
+
+				for( int i=0; i < v_of_new_policies_c.size() ; i++ )
+				{
+					if (v_of_old_policies_c[j]->policy_id == v_of_new_policies_c[i]->policy_id)
+					{
+						check = true;
+						break;
+					}
+				}
+
+				if (check == false) 					 
+				{
+					cout << "Old police ID " << v_of_old_policies_c[j]->policy_id << endl;
+					mp_lapse_amount = 0;
+					for (int k = 0; k < MAXIMUM_NUMBER_OF_INDEXES; k++)
+					{
+						mp_lapse_amount += v_of_old_policies_c[j]->av_if_array[k]; //sum=sum(col N to col W) 
+					}
+					//Total Lapse Amount
+					total_lapse_amount+=mp_lapse_amount;
+				}
+			}
+
+			//Reappeared Policy
+			for( int i=0; i < v_of_new_policies_c.size() ; i++ )
+			{
+				bool check = false;
+				for (int j=0; j< v_of_old_policies_c.size(); j++)
+				{
+					if (v_of_new_policies_c[i]->policy_id == v_of_old_policies_c[j]->policy_id)
+					{
+						check = true;
+						break;
+					}
+				}	
+
+				if (check == false) 					 
+				{
+					mp_reappeared_amount = 0;
+					for (int k = 0; k < MAXIMUM_NUMBER_OF_INDEXES; k++)
+					{
+						mp_reappeared_amount += v_of_new_policies_c[i]->av_if_array[k]; //sum=sum(col N to col W) 
+					}
+					//Total Reappeared Policy Montant
+					total_reappeared_amount+=mp_reappeared_amount;
+
+				}
+			}
+
+			//Fees and others
+			for( int i=0; i < v_of_new_policies_c.size() ; i++ )
+			{
+				for (int j=0; j< v_of_old_policies_c.size(); j++)
+				{
+					if (v_of_new_policies_c[i]->policy_id == v_of_old_policies_c[j]->policy_id)
+					{
+						av_new_inforce = 0.; /*if pol_id = then we initialize the av*/
+						av_ref_inforce = 0.;
+						fees_and_others_mp = 0.;
+						for (int k = 0; k < MAXIMUM_NUMBER_OF_INDEXES; k++)
+						{
+							av_new_inforce += v_of_new_policies_c[i]->av_if_array[k];
+							av_ref_inforce += v_of_old_policies_c[j]->av_if_array[k];
+						}
+						fees_and_others_mp = av_new_inforce - av_ref_inforce;
+						fees_and_others += fees_and_others_mp;
+					}
+				}
+			}
+			////Guaranted Payement 
+			for( int i=0; i < v_of_new_policies_c.size() ; i++ )
+			{
+				guaranted_payment_new += v_of_new_policies_c[i]->gmwb_wdl_cum_dyn_lapse;
+			}
+			for (int j=0; j< v_of_old_policies_c.size(); j++)
+			{
+				guaranted_payment_old += v_of_old_policies_c[j]->gmwb_wdl_cum_dyn_lapse;
+			}
+
+			guaranted_payment_prod = guaranted_payment_new - guaranted_payment_old;
+			guaranted_payment_total+=guaranted_payment_prod;
+
+			for (int j=0; j < v_of_old_policies_c.size(); j++)
+				delete v_of_old_policies_c[j];
+
+			for (int i=0;i< v_of_new_policies_c.size() ; i++ )
+				delete v_of_new_policies_c[i];
+		}
+	}
+
+
+};

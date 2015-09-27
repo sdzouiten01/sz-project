@@ -1,0 +1,40 @@
+#pragma once
+
+#include "Model point classes/Model_Point.h"
+#include "Model point classes/Country model point classes/model_point_head_BEL_WB.h"
+
+using namespace std;
+
+class Model_Point_BEL_WB : public Model_Point
+{
+	public :
+		string additional_premium;
+		int gmwb_wdl_freq;
+
+		Model_Point_BEL_WB(vector<string>& row, int rank, Product_configuration& product_config, Scenario_configuration& scenario_config) : 
+				Model_Point(row, rank, product_config, scenario_config)
+		{
+			this->additional_premium = row[ADDITIONAL_PREMIUM];
+			this->initialise_mp_variable();
+			this->gmwb_wdl_freq = atoi(row[GMWB_WDL_FREQ].c_str());
+		}
+
+private:
+
+	void initialise_mp_variable()
+	{
+
+		if (this->gmxb_deferral_period <= 1)
+		{
+				this->gmxb_deferral_period = 0;
+				this->age_election_ddf_calculated = this->age_exact_issue; 
+		}
+		else							
+		{
+				this->age_election_ddf_calculated = this->age_exact_issue + this->gmxb_deferral_period; 
+				this->gmxb_deferral_period = int(this->gmxb_deferral_period);
+				if (ceil(this->age_election_ddf_calculated) - (this->age_election_ddf_calculated) <= 0.005)
+					this->age_election_ddf_calculated = ceil(this->age_election_ddf_calculated);
+		}	
+	}
+};

@@ -1,0 +1,178 @@
+#pragma once
+#include <string>
+#include "stdafx.h"
+#include "Projection classes/Guarantee projection classes/Projection.h"
+#include "Projection classes/Guarantee projection classes/Projection_WB_DB.h"
+
+
+
+class Projection_MED_REGION_WB_DB : public Projection_WB_DB
+{
+public:
+	int med_lapse_ind;
+	bool charge_benefit_base;
+
+	Projection_MED_REGION_WB_DB(const vector<vector <int>>& i_s_a,const vector<vector <int>>& f_s_a,
+							const char* tables, bool generate_debug_files, 
+						   const string& debug_file_path,const int t_high_shorter, bool l_longevity_tables, int time_step):
+		Projection(i_s_a, f_s_a, tables,   generate_debug_files, debug_file_path,t_high_shorter, l_longevity_tables, time_step),
+		Projection_WB_DB(i_s_a, f_s_a, tables,  generate_debug_files, debug_file_path,t_high_shorter, l_longevity_tables, time_step)
+	{
+		//This field indicates if we apply the lapse the first year
+		//The parameter is equal to 1 for ESP and PRT and equal to 0 for ITA
+		med_lapse_ind = atoi(this->assump->search("med_lapse_ind").c_str());
+		charge_benefit_base = false;
+	}
+
+	// TO DO NA check this function is not consistent
+	// check Moses code 
+	void calculate_items_for_timing_annual(int t)
+	{
+		if (t == 0) 
+		{		
+			if(this->model_point->gmxb_deferral_period < SMALL_DOUBLE)
+			{
+				// sheng original - double pol_yr = this->model_point->elapsed_years+1;
+				double pol_yr = this->timing_items[t][POL_YEAR] + 1;
+				this->model_point->gmxb_deferral_period = max(5., pol_yr);
+				this->model_point->gmwb_ratchet_period = max(5., pol_yr);
+			}
+			else
+				this->model_point->gmwb_ratchet_period = this->model_point->gmxb_deferral_period;	
+		}
+
+		Projection::calculate_items_for_timing_annual(t);
+	}
+
+	int maturity_year_s() 
+	{
+		//Sheng: maximum (gmxb_deferral_period + gmwb_withdrawal_period) ans pour le produit WB de la med
+		if(this->model_point->gmxb_deferral_period < SMALL_DOUBLE)
+			{
+				double pol_yr = this->model_point->elapsed_years+1;
+				this->model_point->gmxb_deferral_period = max(5., pol_yr);
+				this->model_point->gmwb_ratchet_period = max(5., pol_yr);
+			}
+			else
+				this->model_point->gmwb_ratchet_period = this->model_point->gmxb_deferral_period;
+		
+		if (this->time_step == ANNUAL)
+			return min (min((int)t_high_shorter , (int)(this->term_to_omega+ 1)), this->model_point->gmxb_deferral_period + this->gmwb_withdrawal_period) ;
+		else
+			return min (min((int)t_high_shorter , (int)(this->term_to_omega)), this->model_point->gmxb_deferral_period + this->gmwb_withdrawal_period) ;
+	}
+
+	void calculate_items_for_timing_mth(int t)
+	{
+		if (t == 0) 
+		{		
+			if(this->model_point->gmxb_deferral_period < SMALL_DOUBLE)
+			{
+				double pol_yr = this->model_point->elapsed_years+1;
+				this->model_point->gmxb_deferral_period = max(5., pol_yr);
+				this->model_point->gmwb_ratchet_period = max(5., pol_yr);
+			}
+			else
+				this->model_point->gmwb_ratchet_period = this->model_point->gmxb_deferral_period;	
+		}
+
+		Projection::calculate_items_for_timing_mth(t);
+	}
+
+	bool find_string(std::string& s, std::string& s_toBeFind)
+	{
+		std::string::size_type loc = s.find( s_toBeFind, 0 );
+		if( loc != std::string::npos ) 
+			return true;
+		else 
+			return false;    
+	}
+
+
+	void set_current_model_point(Model_Point *mp)
+	{
+		Projection_WB::set_current_model_point(mp);
+
+		std::string s_toFind("BASE");
+		this->charge_benefit_base = find_string(mp->gmxb_type2, s_toFind);
+	} 
+
+	
+    void gmxbCharge(int t)
+	{
+		if (!this->charge_benefit_base)
+			Projection::gmxbCharge(t);
+		else
+		{
+			if ((this->timing_items[t][POL_YEAR] <= this->product_charging_duration)&& 
+				((this->payment_fees_frequency == EACH_BEG_YEAR) && 
+				((int)this->timing_items[t][POL_MONTH] % 12 ==0)||this->payment_fees_frequency == EACH_T))		
+			{
+				double gmxb_g_c;
+				
+				if (this->payment_fees_frequency == EACH_BEG_YEAR)
+					gmxb_g_c = model_point->gmxb_g_c / 100.0;
+				else
+					gmxb_g_c = adjusted_rate((model_point->gmxb_g_c / 100.0),time_step,-1);
+				
+				if (t==1)
+				{
+					main_proj_array[t][GMXB_CHARGE] = min(this->timing_items[t][PRORATA] * gmxb_g_c * max(this->model_point->gmwb_rollup_valn,this->model_point->gmwb_ratchet_valn),
+												main_proj_array[t][AV_B_BEF_BIS] - main_proj_array[t][ADMIN_FEE] - main_proj_array[t][M_AND_E_FEE]);
+				}
+				else
+				{
+					main_proj_array[t][GMXB_CHARGE] = min(this->timing_items[t][PRORATA] * gmxb_g_c  * main_proj_array[t-1][GMWB_IF],
+														main_proj_array[t][AV_B_BEF_BIS] - main_proj_array[t][ADMIN_FEE] - main_proj_array[t][M_AND_E_FEE] ); 
+				}			
+			}
+			else
+			{
+				main_proj_array[t][GMXB_CHARGE] = 0.0;
+			}
+		}
+
+	}
+		void write_main_proj()
+	{
+		if (this->time_step == ANNUAL)
+		{
+			for(int tt =0; tt <= this->maturity_yr; tt++)
+			{
+				this->display_debug_info(tt);
+			}
+			this->close_debug_file();
+		}
+		else
+		{
+			char debug_file_name_local[MAX_LENGTH_FILE_NAME];
+			char debug_file_name_remote[MAX_LENGTH_FILE_NAME];
+			sprintf(debug_file_name_remote, "%smain_array_mp%d_scn%d.csv" ,this->debug_file_path.c_str(),this->model_point->mp_position_in_file,this->current_scenario_number);
+			sprintf(debug_file_name_local, "main_array_mp%d_scn%d.csv" ,this->model_point->mp_position_in_file,this->current_scenario_number);
+			this->debug_file.open(debug_file_name_local, ios_base::out);
+			this->set_debug_file_header();
+
+			for(int tt =0; (this->timing_items[tt][POL_YEAR] <= this->maturity_yr && tt <= this->subacct_max_period); tt++)
+				{
+					this->display_debug_info(tt);
+				}
+			this->debug_file.close();
+		
+			CopyFile(debug_file_name_local, debug_file_name_remote, false);
+
+
+			ifstream file_op(debug_file_name_remote , ios::in);
+
+			if (!file_op)
+			{
+				char message[MAX_LENGTH_MESSAGE_EXCEPTION];
+				sprintf(message, "The  file %s is not found", debug_file_name_remote);
+				throw new GMXBException(message);				
+			}
+
+			file_op.close();
+
+			remove(debug_file_name_local);
+		}
+	}
+};

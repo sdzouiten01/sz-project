@@ -1,0 +1,219 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{4BAA6115-A2DF-4EC3-9177-CAC2C1916CC6}</ProjectGuid>
+    <RootNamespace>PRICER_GMXB_DLL</RootNamespace>
+    <Keyword>Win32Proj</Keyword>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <PlatformToolset>v110</PlatformToolset>
+    <UseOfMfc>Static</UseOfMfc>
+    <CharacterSet>NotSet</CharacterSet>
+    <CLRSupport>false</CLRSupport>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <PlatformToolset>v110</PlatformToolset>
+    <UseOfMfc>Static</UseOfMfc>
+    <CharacterSet>NotSet</CharacterSet>
+    <CLRSupport>false</CLRSupport>
+    <WholeProgramOptimization>false</WholeProgramOptimization>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup>
+    <_ProjectFileVersion>11.0.60610.1</_ProjectFileVersion>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <OutDir>$(SolutionDir)$(Configuration)\</OutDir>
+    <IntDir>$(Configuration)\</IntDir>
+    <LinkIncremental>true</LinkIncremental>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <OutDir>$(SolutionDir)$(Configuration)\</OutDir>
+    <IntDir>$(Configuration)\</IntDir>
+    <LinkIncremental>false</LinkIncremental>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ClCompile>
+      <Optimization>Disabled</Optimization>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <WholeProgramOptimization>true</WholeProgramOptimization>
+      <AdditionalIncludeDirectories>$(SolutionDir)AHS_PARSER;$(SolutionDir)ScenarioGenerator(v2);$(SolutionDir)Calibration;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;_USRDLL;PRICER_GMXB_DLL_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <MinimalRebuild>false</MinimalRebuild>
+      <BasicRuntimeChecks>Default</BasicRuntimeChecks>
+      <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <PrecompiledHeader />
+      <WarningLevel>Level4</WarningLevel>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+    </ClCompile>
+    <Link>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AssemblyDebug>true</AssemblyDebug>
+      <SubSystem>Windows</SubSystem>
+      <TargetMachine>MachineX86</TargetMachine>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ClCompile>
+      <Optimization>Full</Optimization>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <AdditionalIncludeDirectories>$(SolutionDir)AHS_PARSER;$(SolutionDir)ScenarioGenerator(v2);$(SolutionDir)Calibration;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;_USRDLL;PRICER_GMXB_DLL_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <ExceptionHandling>Sync</ExceptionHandling>
+      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <PrecompiledHeader />
+      <WarningLevel>Level4</WarningLevel>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+      <DisableSpecificWarnings>4996;4250;4503;%(DisableSpecificWarnings)</DisableSpecificWarnings>
+    </ClCompile>
+    <Link>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <SubSystem>Windows</SubSystem>
+      <OptimizeReferences>true</OptimizeReferences>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <TargetMachine>MachineX86</TargetMachine>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClCompile Include="Interface_dll.cpp" />
+    <ClCompile Include="stdafx.cpp" />
+    <ClCompile Include="Utility classes\Fund_Manager.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Model point classes\Country model point classes\model_point_BL_RST_DEIT_LIE_01.h" />
+    <ClInclude Include="Model point classes\Country model point classes\model_point_BL_RS_CH_LIE_01.h" />
+    <ClInclude Include="Model point classes\Country model point classes\model_point_BL_RS_DE_LIE_01.h" />
+    <ClInclude Include="Model point classes\Country model point classes\model_point_head_BL_RST_DEIT_LIE_01.h" />
+    <ClInclude Include="Model point classes\Country model point classes\model_point_head_BL_RS_CH_LIE_01.h" />
+    <ClInclude Include="Model point classes\Country model point classes\model_point_head_BL_RS_DE_LIE_01.h" />
+    <ClInclude Include="Projection classes\Country projection classes\head_BL_LIE_RST_DEIT.h" />
+    <ClInclude Include="Projection classes\Country projection classes\head_BL_LIE_RS_CHF.h" />
+    <ClInclude Include="Projection classes\Country projection classes\head_BL_LIE_RS_DE.h" />
+    <ClInclude Include="Projection classes\Country projection classes\Projection_BL_LIE_CH_WBL_01.h" />
+    <ClInclude Include="Projection classes\Country projection classes\Projection_BL_LIE_DEIT_WBD_01.h" />
+    <ClInclude Include="Projection classes\Country projection classes\Projection_BL_LIE_DE_WBDL_01.h" />
+    <ClInclude Include="Utility classes\HE_Summary_File_Writer.h" />
+    <ClInclude Include="Interface_dll.h" />
+    <ClInclude Include="Percentile.h" />
+    <ClInclude Include="stdafx.h" />
+    <ClInclude Include="targetver.h" />
+    <ClInclude Include="Utility classes\usefule_function.h" />
+    <ClInclude Include="Model point classes\Model_Point.h" />
+    <ClInclude Include="Model point classes\model_point_head.h" />
+    <ClInclude Include="Model point classes\Country model point classes\model_point_BL_RST_SWISS_01.h" />
+    <ClInclude Include="Model point classes\Country model point classes\model_point_head_BL_RST_SWISS_01.h" />
+    <ClInclude Include="Model point classes\Country model point classes\model_point_BL_LUX_01.h" />
+    <ClInclude Include="Model point classes\Country model point classes\model_point_head_BL_LUX_01.h" />
+    <ClInclude Include="Model point classes\Country model point classes\model_point_BL_RST_CH_LIE_01.h" />
+    <ClInclude Include="Model point classes\Country model point classes\model_point_head_BL_RST_CH_LIE_01.h" />
+    <ClInclude Include="Projection classes\Country projection classes\head_BL.h" />
+    <ClInclude Include="Projection classes\Country projection classes\head_BL_LUX.h" />
+    <ClInclude Include="Projection classes\Country projection classes\Projection_BL_LUX_WBD_01.h" />
+    <ClInclude Include="Projection classes\Country projection classes\Projection_BL_LUX_WBLD_01.h" />
+    <ClInclude Include="Projection classes\Country projection classes\head_BL_CH.h" />
+    <ClInclude Include="Projection classes\Country projection classes\Projection_BL_CH_WB_01.h" />
+    <ClInclude Include="Projection classes\Country projection classes\head_BL_LIE.h" />
+    <ClInclude Include="Projection classes\Country projection classes\Projection_BL_LIE_CH_WB_01.h" />
+    <ClInclude Include="Projection classes\Guarantee projection classes\Projection.h" />
+    <ClInclude Include="Projection classes\Guarantee projection classes\Projection_AB.h" />
+    <ClInclude Include="Projection classes\Guarantee projection classes\Projection_AB_DB.h" />
+    <ClInclude Include="Projection classes\Guarantee projection classes\Projection_AB_DB_SB.h" />
+    <ClInclude Include="Projection classes\Guarantee projection classes\Projection_DB.h" />
+    <ClInclude Include="Projection classes\Guarantee projection classes\Projection_IB.h" />
+    <ClInclude Include="Projection classes\Guarantee projection classes\Projection_SB.h" />
+    <ClInclude Include="Projection classes\Guarantee projection classes\Projection_WB.h" />
+    <ClInclude Include="Projection classes\Guarantee projection classes\Projection_WB_DB.h" />
+    <ClInclude Include="Projection classes\Guarantee projection classes\Projection_WB_IB.h" />
+    <ClInclude Include="Utility classes\back_ground_final.h" />
+    <ClInclude Include="Utility classes\Builder.h" />
+    <ClInclude Include="Utility classes\HE_Writter.h" />
+    <ClInclude Include="Utility classes\head.h" />
+    <ClInclude Include="Utility classes\head_summary_MSO.h" />
+    <ClInclude Include="Utility classes\Fund.h" />
+    <ClInclude Include="Utility classes\Fund_Manager.h" />
+    <ClInclude Include="Utility classes\Product_configuration.h" />
+    <ClInclude Include="Utility classes\Scenario_configuration.h" />
+    <ClInclude Include="Utility classes\Stat_Inforce_Configuration.h" />
+    <ClInclude Include="Utility classes\Summary_configuration.h" />
+    <ClInclude Include="Utility classes\Wildcards_manager.h" />
+    <ClInclude Include="Utility classes\Inforce_Manager.h" />
+    <ClInclude Include="Utility classes\Stat_Inforce_Builder.h" />
+    <ClInclude Include="Utility classes\Stat_Inforce_Manager.h" />
+    <ClInclude Include="Utility classes\Fra_Stat_Inforce_Manager.h" />
+    <ClInclude Include="Utility classes\German_IADB05_Stat_Inforce_Manager.h" />
+    <ClInclude Include="Utility classes\German_Stat_Inforce_Manager.h" />
+    <ClInclude Include="Utility classes\Stat_Inforce_Manager_AUS.h" />
+    <ClInclude Include="Utility classes\Scenario_manager.h" />
+    <ClInclude Include="Utility classes\File_Manager.h" />
+    <ClInclude Include="Utility classes\GMXBException.h" />
+    <ClInclude Include="Utility classes\GMXBLogger.h" />
+    <ClInclude Include="Utility classes\Interpolation.h" />
+    <ClInclude Include="Utility classes\Normal.h" />
+    <ClInclude Include="Utility classes\Launcher.h" />
+    <ClInclude Include="Utility classes\bucket_list.h" />
+    <ClInclude Include="Utility classes\Dispatch_Manager.h" />
+    <ClInclude Include="Utility classes\Scenario_list.h" />
+    <ClInclude Include="Axagen\InterfaceAxaGen.h" />
+    <ClInclude Include="Utility classes\Summary_Builder.h" />
+    <ClInclude Include="Summary classes\Summary_File_Writer.h" />
+    <ClInclude Include="Utility classes\Aging_Policies_configuration.h" />
+    <ClInclude Include="Utility classes\fund_for_aging_policies.h" />
+    <ClInclude Include="Utility classes\inforces_AP.h" />
+    <ClInclude Include="Utility classes\MP_AP_BOM.h" />
+    <ClInclude Include="Utility classes\MP_AP_BOM_no_LD.h" />
+    <ClInclude Include="Utility classes\MP_AP_EOM.h" />
+    <ClInclude Include="Utility classes\MP_AP_EOM_no_NB.h" />
+    <ClInclude Include="LSM\ITM_for_LS_Boundary.h" />
+    <ClInclude Include="LSM\Longstaff_Boundary.h" />
+    <ClInclude Include="LSM\Regression.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="VTune\PRICER_GMXB_DLL.vpj" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\AHS_PARSER\AHS_PARSER.vcxproj">
+      <Project>{dc7ee7ce-c01a-46e0-839a-1feafe4f4033}</Project>
+      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+    </ProjectReference>
+    <ProjectReference Include="..\Calibration\Calibration.vcxproj">
+      <Project>{50f7e939-5552-4bb4-8949-8dc57acd1219}</Project>
+      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+    </ProjectReference>
+    <ProjectReference Include="..\HE_Asset\HE_Asset.vcxproj">
+      <Project>{06ee23d9-784a-4147-992d-8bae2b0b1ff3}</Project>
+      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+    </ProjectReference>
+    <ProjectReference Include="..\ScenarioGenerator(v2)\ScenarioGenerator(v2).vcxproj">
+      <Project>{b747199a-5312-4739-8d55-f2bce35c6f03}</Project>
+      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+    </ProjectReference>
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>

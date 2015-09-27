@@ -1,0 +1,144 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hpp;hxx;hm;inl;inc;xsd</Extensions>
+    </Filter>
+    <Filter Include="Resource Files">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+    <Filter Include="Header Files\UniformGen">
+      <UniqueIdentifier>{83bbc6c4-bcae-4347-b638-cb7e82420f8a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\GaussianGen">
+      <UniqueIdentifier>{7f20f7e3-e750-4b4a-a916-1eee6ece3c34}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\UniformGen">
+      <UniqueIdentifier>{03884ebc-2f52-4125-8a97-971c7d487b88}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\GaussianGen">
+      <UniqueIdentifier>{a189b793-6c56-4f23-8199-5af579533f10}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Instruments">
+      <UniqueIdentifier>{b8b7cfa9-e7a8-49b5-af3c-682dec667c0a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Instruments">
+      <UniqueIdentifier>{f6e54817-6b74-4856-8b55-d1246473ef59}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Models">
+      <UniqueIdentifier>{aeb7a3c2-2a7d-4a43-b3b3-6d28b9e88242}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Models">
+      <UniqueIdentifier>{46d0fac9-0c4e-4b1c-a009-c55f8b2471b9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Scenario">
+      <UniqueIdentifier>{e53dbade-87db-4bf5-b5ce-52914b9a0837}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Scenario">
+      <UniqueIdentifier>{b5d74139-94ee-4bc6-a361-8709abbc2645}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Calibration">
+      <UniqueIdentifier>{5cbc7606-25c4-469f-af9c-480f520365d7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Calibration">
+      <UniqueIdentifier>{af298d31-40cf-45cc-8765-434349468bc9}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="UniformGen\Mersenne_Twister.h">
+      <Filter>Header Files\UniformGen</Filter>
+    </ClInclude>
+    <ClInclude Include="UniformGen\UniformGen.h">
+      <Filter>Header Files\UniformGen</Filter>
+    </ClInclude>
+    <ClInclude Include="GaussianGen\GaussianGen.h">
+      <Filter>Header Files\GaussianGen</Filter>
+    </ClInclude>
+    <ClInclude Include="GaussianGen\VarianceReduction.h">
+      <Filter>Header Files\GaussianGen</Filter>
+    </ClInclude>
+    <ClInclude Include="Instruments\YieldCurve.h">
+      <Filter>Header Files\Instruments</Filter>
+    </ClInclude>
+    <ClInclude Include="Instruments\Matrice.h">
+      <Filter>Header Files\Instruments</Filter>
+    </ClInclude>
+    <ClInclude Include="Instruments\Interpolation.h">
+      <Filter>Header Files\Instruments</Filter>
+    </ClInclude>
+    <ClInclude Include="Models\BS_HW1F.h">
+      <Filter>Header Files\Models</Filter>
+    </ClInclude>
+    <ClInclude Include="Models\Diffusion_Model0.h">
+      <Filter>Header Files\Models</Filter>
+    </ClInclude>
+    <ClInclude Include="Scenario\ScenarioGen.h">
+      <Filter>Header Files\Scenario</Filter>
+    </ClInclude>
+    <ClInclude Include="Instruments\Minimisation.h">
+      <Filter>Header Files\Instruments</Filter>
+    </ClInclude>
+    <ClInclude Include="Calibration\HW1FCalibrator.h">
+      <Filter>Header Files\Calibration</Filter>
+    </ClInclude>
+    <ClInclude Include="Instruments\1DRootFinder.h">
+      <Filter>Header Files\Instruments</Filter>
+    </ClInclude>
+    <ClInclude Include="Instruments\Analytics.h">
+      <Filter>Header Files\Instruments</Filter>
+    </ClInclude>
+    <ClInclude Include="Instruments\InterfaceESG0.h">
+      <Filter>Header Files\Instruments</Filter>
+    </ClInclude>
+    <ClInclude Include="GaussianGen\GaussianGenModelParameters.h">
+      <Filter>Header Files\GaussianGen</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="UniformGen\Mersenne_Twister.cpp">
+      <Filter>Source Files\UniformGen</Filter>
+    </ClCompile>
+    <ClCompile Include="UniformGen\UniformGen.cpp">
+      <Filter>Source Files\UniformGen</Filter>
+    </ClCompile>
+    <ClCompile Include="GaussianGen\GaussianGen.cpp">
+      <Filter>Source Files\GaussianGen</Filter>
+    </ClCompile>
+    <ClCompile Include="GaussianGen\VarianceReduction.cpp">
+      <Filter>Source Files\GaussianGen</Filter>
+    </ClCompile>
+    <ClCompile Include="Instruments\YieldCurve.cpp">
+      <Filter>Source Files\Instruments</Filter>
+    </ClCompile>
+    <ClCompile Include="Instruments\Matrice.cpp">
+      <Filter>Source Files\Instruments</Filter>
+    </ClCompile>
+    <ClCompile Include="Instruments\Interpolation.cpp">
+      <Filter>Source Files\Instruments</Filter>
+    </ClCompile>
+    <ClCompile Include="Models\BS_HW1F.cpp">
+      <Filter>Source Files\Models</Filter>
+    </ClCompile>
+    <ClCompile Include="Scenario\ScenarioGen.cpp">
+      <Filter>Source Files\Scenario</Filter>
+    </ClCompile>
+    <ClCompile Include="Calibration\HW1FCalibrator.cpp">
+      <Filter>Source Files\Calibration</Filter>
+    </ClCompile>
+    <ClCompile Include="Instruments\Analytics.cpp">
+      <Filter>Source Files\Instruments</Filter>
+    </ClCompile>
+    <ClCompile Include="Instruments\InterfaceESG0.cpp">
+      <Filter>Source Files\Instruments</Filter>
+    </ClCompile>
+    <ClCompile Include="GaussianGen\GaussianGenModelParameters.cpp">
+      <Filter>Source Files\GaussianGen</Filter>
+    </ClCompile>
+  </ItemGroup>
+</Project>

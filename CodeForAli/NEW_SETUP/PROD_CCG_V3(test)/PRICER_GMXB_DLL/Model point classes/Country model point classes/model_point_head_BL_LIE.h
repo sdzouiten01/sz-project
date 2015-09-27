@@ -1,0 +1,160 @@
+#pragma once
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////model_point_head_BL_RS_CH_LIE_01///////////////////////////////////////////
+#define  PERSON_ID_1_LIE_RS_CHF	8
+#define  PERSON_ID_2_LIE_RS_CHF	9
+#define  Product_Code_LIE_RS_CHF	10	
+#define  INIT_CHARGE_LIE_RS_CHF	11
+#define  ONGOING_CHARGE_1_LIE_RS_CHF	12
+#define  ONGOING_CHARGE_2_LIE_RS_CHF	13
+#define  ACCOUNT_CODE_LIE_RS_CHF	14
+#define  CURRENCY_LIE_RS_CHF	15
+#define  GENDER_1_LIE_RS_CHF	16
+#define  DATE_BIRTH_1_LIE_RS_CHF	17
+#define  DATE_DEATH_1_LIE_RS_CHF	18
+#define  ISSUE_AGE_1_LIE_RS_CHF	19
+#define  GENDER_2_LIE_RS_CHF	20
+#define  DATE_BIRTH_2_LIE_RS_CHF	21
+#define  DATE_DEATH_2_LIE_RS_CHF	22
+#define  ISSUE_AGE_2_LIE_RS_CHF	23
+#define  ISSUE_DATE_LIE_RS_CHF	24
+#define  INV_DATE_LIE_RS_CHF	25
+#define  DEF_PERIOD_LIE_RS_CHF	26
+#define  ANNUITY_BEGIN_DATE_LIE_RS_CHF	27
+#define  PREMIUM_PAYMENT_MODE_LIE_RS_CHF	28
+#define  INSURANCE_PREMIUM_LIE_RS_CHF	29
+#define  AMOUNT_INVESTED_LIE_RS_CHF	30
+#define  WITHDRAWAL_MODE_LIE_RS_CHF	31
+#define  CONVERSION_RATE_LIE_RS_CHF	32
+#define  DEF_GUAR_LIE_RS_CHF	33
+#define  BENEFIT_INCREASE_FACTOR_LIE_RS_CHF	34
+#define  WITHDRAWAL_MODE_DISCOUNT_LIE_RS_CHF	35
+#define  CURR_GMWB_LIE_RS_CHF	36
+#define  ACCUM_WITHDRAWAL_AMOUNT_LIE_RS_CHF	37
+#define  PERF_BONUS_AMOUNT_LIE_RS_CHF	38
+#define  ACC_VAL_BEF_BEF_LIE_RS_CHF	39
+#define  ACC_VAL_AFT_BEF_LIE_RS_CHF	40
+#define  ACC_VAL_AFT_AFT_LIE_RS_CHF	41
+#define  BASE_CAPITAL_LIE_RS_CHF	42
+#define  FUND_UNITS_BEF_BEF_LIE_RS_CHF	43
+#define  FUND_UNITS_AFT_BEF_LIE_RS_CHF	44
+#define  FUND_UNITS_AFT_AFT_LIE_RS_CHF	45
+#define  UNIT_PRICE_LIE_RS_CHF	46
+
+#define MAX_INFORCE_COLS_LIE_RS_CHF_01	47
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////model_point_head_BL_RS_DE_LIE_01///////////////////////////////////////////
+#define  PERSON_ID_1_LIE_RS_DE	8
+#define  PERSON_ID_2_LIE_RS_DE	9
+#define  Product_Code_LIE_RS_DE	10
+#define  INIT_CHARGE_LIE_RS_DE	11
+#define  ACCOUNT_CODE_LIE_RS_DE	12
+#define  CURRENCY_LIE_RS_DE	13
+#define  GENDER_1_LIE_RS_DE	14
+#define  DATE_BIRTH_1_LIE_RS_DE	15
+#define  DATE_DEATH_1_LIE_RS_DE	16
+#define  ISSUE_AGE_1_LIE_RS_DE	17
+#define  GENDER_2_LIE_RS_DE	18
+#define  DATE_BIRTH_2_LIE_RS_DE	19
+#define  DATE_DEATH_2_LIE_RS_DE	20
+#define  ISSUE_AGE_2_LIE_RS_DE	21
+#define  ISSUE_DATE_LIE_RS_DE	22
+#define  NB_DATE_LIE_RS_DE	23
+#define  INV_DATE_LIE_RS_DE	24
+#define  DEF_PERIOD_LIE_RS_DE	25
+#define  ANNUITY_BEGIN_DATE_LIE_RS_DE	26
+#define  PREMIUM_PAYMENT_MODE_LIE_RS_DE	27
+#define  INSURANCE_PREMIUM_LIE_RS_DE	28
+#define  AMOUNT_INVESTED_LIE_RS_DE	29
+#define  WITHDRAWAL_MODE_LIE_RS_DE	30
+#define  CONVERSION_RATE_LIE_RS_DE	31
+#define  DEF_GUAR_LIE_RS_DE	32
+#define  BENEFIT_INCREASE_FACTOR_LIE_RS_DE	33
+#define  WITHDRAWAL_MODE_DISCOUNT_LIE_RS_DE	34
+#define  GMDB_LIE_RS_DE	35
+#define  CURR_GMWB_LIE_RS_DE	36
+#define  ACCUM_WITHDRAWAL_AMOUNT_LIE_RS_DE	37
+#define  ADD_ACCUM_WITHDRAWAL_AMOUNT_LIE_RS_DE	38
+#define  ACC_VAL_BEF_BEF_LIE_RS_DE	39
+#define  ACC_VAL_AFT_BEF_LIE_RS_DE	40
+#define  ACC_VAL_AFT_AFT_LIE_RS_DE	41
+#define  BASE_CAPITAL_LIE_RS_DE	42
+#define  FUND_UNITS_BEF_BEF_LIE_RS_DE	43
+#define  FUND_UNITS_AFT_BEF_LIE_RS_DE	44
+#define  FUND_UNITS_AFT_AFT_LIE_RS_DE	45
+#define  UNIT_PRICE_LIE_RS_DE	46
+
+#define MAX_INFORCE_COLS_LIE_RS_DE_01	47
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////model_point_head_BL_RST_CH_LIE_01//////////////////////////////////////////
+#define PROD_NAME_BL_LIE_RST_CH	8
+#define INIT_CHARGE_BL_LIE_RST_CH	9
+#define FUND_NAME_BL_LIE_RST_CH	10
+#define CURRENCY_BL_LIE_RST_CH	11
+#define ISSUE_DATE_BL_LIE_RST_CH	12
+#define NB_DATE_BL_LIE_RST_CH	13
+#define INV_DATE_BL_LIE_RST_CH	14
+#define DEF_PERIOD_BL_LIE_RST_CH	15
+#define DURATION_BL_LIE_RST_CH	16
+#define ANNUITY_BEGIN_BL_LIE_RST_CH	17
+#define PROD_PREM_TYPE_BL_LIE_RST_CH	18
+#define PREMIUM_BL_LIE_RST_CH	19
+#define AMOUNT_INV_BL_LIE_RST_CH	20
+#define FREQ_MODE_BL_LIE_RST_CH	21
+#define WITHDRAWAL_RATE_BL_LIE_RST_CH	22
+#define INV_PROTECTION_BL_LIE_RST_CH	23
+#define BENEFIT_INCREASE_FACTOR_BL_LIE_RST_CH	24
+#define WITHDRAWAL_MODE_DISCOUNT_BL_LIE_RST_CH	25
+#define GUARANTEE_BL_LIE_RST_CH	26
+#define ACCUM_WITHDRAWAL_AMOUNT_BL_LIE_RST_CH	27
+#define PERF_BONUS_AMOUNT_BL_LIE_RST_CH	28
+#define AV_BEF_BEF_BL_LIE_RST_CH	29
+#define AV_AFTER_BEF_BL_LIE_RST_CH	30
+#define AV_AFTER_AFTER_BL_LIE_RST_CH	31
+#define BASE_CAPITAL_BL_LIE_RST_CH	32
+#define FUND_UNIT_BEF_BEF_BL_LIE_RST_CH	33
+#define FUND_UNIT_AFTER_BEF_BL_LIE_RST_CH	34
+#define FUND_UNIT_AFTER_AFTER_BL_LIE_RST_CH	35
+	
+#define MAX_INFORCE_COLS_BL_RST_LIE_CH_01	36
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////model_point_head_BL_RST_DEIT_LIE_01////////////////////////////////////////
+#define  PERSON_ID_1_LIE_RST_DE	8
+#define  Product_Code_LIE_RST_DE	9	
+#define  INIT_CHARGE_LIE_RST_DE	10
+#define  ACCOUNT_CODE_LIE_RST_DE	11
+#define  CURRENCY_LIE_RST_DE	12
+#define  GENDER_1_LIE_RST_DE	13
+#define  DATE_BIRTH_1_LIE_RST_DE	14
+#define  ISSUE_AGE_1_LIE_RST_DE	15
+#define  ISSUE_DATE_LIE_RST_DE	16
+#define  NB_DATE_LIE_RST_DE	17
+#define  INV_DATE_LIE_RST_DE	18
+#define  DEF_PERIOD_LIE_RST_DE	19
+#define  DURATION_LIE_RST_DE	20
+#define  ANNUITY_BEGIN_DATE_LIE_RST_DE	21
+#define  PREMIUM_PAYMENT_MODE_LIE_RST_DE	22
+#define  INSURANCE_PREMIUM_LIE_RST_DE	23
+#define  AMOUNT_INVESTED_LIE_RST_DE	24
+#define  WITHDRAWAL_MODE_LIE_RST_DE	25
+#define  CONVERSION_RATE_LIE_RST_DE	26
+#define  DEF_GUAR_LIE_RST_DE	27
+#define  BENEFIT_INCREASE_FACTOR_LIE_RST_DE	28
+#define  GMDB_LIE_RST_DE	29
+#define  CURR_GMWB_LIE_RST_DE	30
+#define  ACCUM_WITHDRAWAL_AMOUNT_LIE_RST_DE	31
+#define  PERF_BONUS_AMOUNT_LIE_RST_DE	32
+#define  ACC_VAL_BEF_BEF_LIE_RST_DE	33
+#define  ACC_VAL_AFT_BEF_LIE_RST_DE	34
+#define  ACC_VAL_AFT_AFT_LIE_RST_DE	35
+#define  BASE_CAPITAL_LIE_RST_DE	36
+#define  FUND_UNITS_BEF_BEF_LIE_RST_DE	37
+#define  FUND_UNITS_AFT_BEF_LIE_RST_DE	38
+#define  FUND_UNITS_AFT_AFT_LIE_RST_DE	39
+#define  UNIT_PRICE_LIE_RST_DE	40
+
+#define MAX_INFORCE_COLS_LIE_RST_DE_01	41

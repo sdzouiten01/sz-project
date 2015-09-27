@@ -1,0 +1,523 @@
+#pragma once
+
+class HE_Writter
+{
+
+
+public:
+
+	HE_Writter()
+	{
+	
+	}
+
+	~HE_Writter()
+	{
+	
+	}
+
+
+	virtual void write_inner_inforce_files(const char* output_path, 
+		const char* output_file_name,
+		int nb_scenario_outer, 
+		map<string, Inforce_Manager*>& map_inforce_manager,
+		map<string, map<int, vector<Model_Point*> > >& map_model_point_inner_per_product_out)
+	{
+		//Loop on all products
+	
+		map<string, map<int, vector<Model_Point*>>>::iterator it_map_model_point_inner_per_product_out;
+		
+		for (it_map_model_point_inner_per_product_out = map_model_point_inner_per_product_out.begin(); 
+			it_map_model_point_inner_per_product_out != map_model_point_inner_per_product_out.end();
+			++it_map_model_point_inner_per_product_out)
+		{	
+			string product_name = it_map_model_point_inner_per_product_out->first;
+			map<int, vector<Model_Point*>> map_model_point_inner = it_map_model_point_inner_per_product_out->second;
+			map<int, vector<Model_Point*>>::iterator it_map_model_point_inner;
+			
+			//Get the inforce_outer
+			Inforce_Manager* p_inforce_mgr_outer = map_inforce_manager[product_name];
+			string** inforce_outer	=	p_inforce_mgr_outer->get_inforce();
+			int number_of_columns	=	p_inforce_mgr_outer->number_of_columns;
+			
+			//Loop on all outer model points
+			for (it_map_model_point_inner = map_model_point_inner.begin();
+				it_map_model_point_inner != map_model_point_inner.end();
+				++it_map_model_point_inner)
+			{
+				int nb_mp_outer = it_map_model_point_inner->first;
+				vector<Model_Point*> vector_of_model_point_inner = it_map_model_point_inner->second;
+				
+				//Create inforce_in
+				string* inforce_inner = new string[number_of_columns];
+				for (int ii=0; ii<number_of_columns; ii++)
+				{
+					inforce_inner[ii] = inforce_outer[nb_mp_outer][ii];
+				}
+				
+				//Open the file to write inner inforces
+				char address_local[1000];
+				char address_remote[1000];
+
+				sprintf(address_local, "%s_%s_scen%d_mp%d.csv", output_file_name, 
+						product_name.c_str(), nb_scenario_outer+1, nb_mp_outer+1);
+
+
+				sprintf(address_remote, "%s\\%s_%s_scen%d_mp%d.csv", output_path, output_file_name, 
+						product_name.c_str(), nb_scenario_outer+1, nb_mp_outer+1);
+
+				remove(address_local);
+
+				//sprintf(address, "C:\\VAHE\\output\\Outer_Loop\\output_inforce.csv");
+
+				ofstream inforce_file;
+				inforce_file.open(address_local);
+				
+				//Loop on all inner model points
+				for (unsigned int nb_mp_inner = 0; 
+					nb_mp_inner < vector_of_model_point_inner.size();
+					nb_mp_inner++)
+				{
+					Model_Point* p_mp = vector_of_model_point_inner[nb_mp_inner];
+
+					// Modification timing		
+					inforce_inner[AGE_AT_VALN]=nb_to_string(p_mp->age_valn );
+					inforce_inner[DURATION_VALN]=nb_to_string(p_mp->duration) ;
+					// Modif Base
+					inforce_inner[PREM_PAID]=nb_to_string(p_mp->prem_paid) ;
+					inforce_inner[GMAB_ROLLUP_VALN]=nb_to_string(p_mp->gmab_rollup_valn);
+					inforce_inner[GMAB_RATCHET_VALN]=nb_to_string(p_mp->gmab_ratchet_valn);
+					inforce_inner[GMDB_RATCHET_VALN]=nb_to_string(p_mp->gmdb_ratchet_valn);
+					inforce_inner[GMDB_ROLLUP_VALN]=nb_to_string(p_mp->gmdb_rollup_valn);
+					inforce_inner[GMWB_RATCHET_VALN]=nb_to_string(p_mp->gmwb_ratchet_valn);
+					inforce_inner[GMWB_ROLLUP_VALN]=nb_to_string(p_mp->gmwb_rollup_valn);
+					// Modif AV
+					for (int i=0; i< MAXIMUM_NUMBER_OF_INDEXES; i++)
+					{
+						inforce_inner[TARGET_AV_SPLIT_VALN_INDEX0 + i]=nb_to_string(p_mp->av_split_prop_array[i]);
+						inforce_inner[AV_VALN_INDEX0+i]=nb_to_string(p_mp->av_if_array[i]);
+					}
+
+					//Write in the inforce_file
+					for (int j=0; j < number_of_columns; j++)
+					{
+						inforce_file << inforce_inner[j] << ",";
+					}
+					inforce_file << endl;
+				}
+				
+				//close the file
+				inforce_file.close();
+				delete [] inforce_inner;
+					CopyFile(address_local, address_remote, false);
+
+				ifstream file_op(address_remote , ios::in);
+
+				if (!file_op)
+				{
+					char message[MAX_LENGTH_MESSAGE_EXCEPTION];
+					sprintf(message, "The  file %s is not found", address_remote);
+					throw new GMXBException(message);				
+				}
+
+				file_op.close();
+				remove(address_local);
+			}
+		}
+		
+
+	}
+	
+
+
+	virtual void write_output_calibration_parameters(
+						const char* output_path, const char* output_file_name, int nb_scenario_outer, 
+						map<int, map<int, double>> map_of_a, 
+						map<int, map<int, double>> map_of_sigma, 
+						map<int, map<int, double*>> map_of_ZC, 
+						int ZC_length,double *date_Curve)
+	{
+		map<int, map<int, double>> map_of_a_local; 
+		map<int, map<int, double>> map_of_sigma_local; 
+		map<int, map<int, double*>> map_of_ZC_local;
+
+		map<int, map<int, double>>::iterator it_map_of_a;
+		map<int, map<int, double>>::iterator it_map_of_sigma;
+		map<int, map<int, double*>>::iterator it_map_of_ZC;
+
+		for (it_map_of_a = map_of_a.begin();it_map_of_a != map_of_a.end();++it_map_of_a)
+		{
+			int time_step_inner = it_map_of_a->first;
+			map<int, double>::iterator it_map_of_a_par_time_step;
+			for (it_map_of_a_par_time_step = map_of_a[time_step_inner].begin();
+				it_map_of_a_par_time_step != map_of_a[time_step_inner].end();++it_map_of_a_par_time_step)
+			{
+				int bucket_inner=it_map_of_a_par_time_step->first;
+				map_of_a_local[bucket_inner][time_step_inner]=it_map_of_a_par_time_step->second;
+			}
+		}
+
+		for (it_map_of_sigma = map_of_sigma.begin();it_map_of_sigma != map_of_sigma.end();++it_map_of_sigma)
+		{
+			int time_step_inner = it_map_of_sigma->first;
+			map<int, double>::iterator it_map_of_sigma_par_time_step;
+			for (it_map_of_sigma_par_time_step = map_of_sigma[time_step_inner].begin();
+				it_map_of_sigma_par_time_step != map_of_sigma[time_step_inner].end();++it_map_of_sigma_par_time_step)
+			{
+				int bucket_inner=it_map_of_sigma_par_time_step->first;
+				map_of_sigma_local[bucket_inner][time_step_inner]=it_map_of_sigma_par_time_step->second;
+			}
+		}
+
+		for (it_map_of_ZC = map_of_ZC.begin();it_map_of_ZC != map_of_ZC.end();++it_map_of_ZC)
+		{
+			int time_step_inner = it_map_of_ZC->first;
+			map<int, double*>::iterator it_map_of_ZC_par_time_step;
+			for (it_map_of_ZC_par_time_step = map_of_ZC[time_step_inner].begin();
+				it_map_of_ZC_par_time_step != map_of_ZC[time_step_inner].end();++it_map_of_ZC_par_time_step)
+			{
+				int bucket_inner=it_map_of_ZC_par_time_step->first;
+				map_of_ZC_local[bucket_inner][time_step_inner]=it_map_of_ZC_par_time_step->second;
+			}
+		}
+
+
+		for (it_map_of_ZC = map_of_ZC_local.begin();it_map_of_ZC != map_of_ZC_local.end();++it_map_of_ZC)
+		{
+			int bucket = it_map_of_ZC->first;
+			map<int, double> map_of_a_par_bucket		= map_of_a_local[bucket];
+			map<int, double> map_of_sigma_par_bucket	= map_of_sigma_local[bucket];
+			map<int, double*> map_of_ZC_par_bucket		= map_of_ZC_local[bucket];
+			
+			char address_locale[1000];
+			char address_remote[1000];
+
+			sprintf(address_locale, "%s_scen%d_b%d.csv",output_file_name, 
+							nb_scenario_outer+1, 
+							bucket);
+
+			sprintf(address_remote, "%s\%s_scen%d_b%d.csv", output_path, output_file_name, 
+							nb_scenario_outer+1, 
+							bucket);
+
+			remove(address_locale);
+
+			//sprintf(address, "C:\\VAHE\\output\\Outer_Loop\\output_calib.csv");
+			ofstream calibration_file;
+			calibration_file.open(address_locale);
+				
+			//Write a, sigma and the rate curve
+			calibration_file << "time_step"		<< "," ;
+			calibration_file << "a"		<< "," ;
+			calibration_file << "sigma"	<< "," ;
+			for (int i=0; i<ZC_length; i++)
+				calibration_file << date_Curve[i] <<"," ; 
+			calibration_file << endl;
+			map<int, double*>::iterator it_map_of_ZC_bucket;
+			for (it_map_of_ZC_bucket = map_of_ZC_par_bucket.begin();
+				it_map_of_ZC_bucket != map_of_ZC_par_bucket.end();++it_map_of_ZC_bucket)
+			{
+				int i = it_map_of_ZC_bucket->first;
+				calibration_file << i	<< "," ;
+				calibration_file <<setprecision(15)<<map_of_a_par_bucket[i] << "," ;
+				calibration_file <<setprecision(15)<< map_of_sigma_par_bucket[i]	<< "," ;
+				for (int k=0; k<ZC_length; k++)
+					calibration_file << setprecision(15)<<map_of_ZC_par_bucket[i][k] <<"," ; 
+				calibration_file << endl;	
+			}
+			calibration_file.close();
+
+			CopyFile(address_locale, address_remote, false);
+
+			ifstream file_op(address_remote , ios::in);
+
+			if (!file_op)
+			{
+				char message[MAX_LENGTH_MESSAGE_EXCEPTION];
+				sprintf(message, "The  file %s is not found", address_remote);
+				throw new GMXBException(message);				
+			}
+			
+			file_op.close();
+
+
+
+			remove(address_locale);
+		}
+	}
+
+
+	string nb_to_string(int i)
+	{
+		string s;
+		stringstream sstr;
+		sstr <<  setprecision(10) <<i;
+		sstr >> setprecision(10)  >> s;
+		return s;
+	}
+
+	string nb_to_string(double d){
+		string s;
+		stringstream sstr;
+		sstr << setprecision(10) <<d;
+		sstr >> setprecision(10)>> s;
+		return s;
+	}
+
+
+
+
+	virtual void write_model_point_inner_pvs(const char* output_path, const char* output_file_name,
+		int nb_scenario_outer, int nb_bucket, int nb_scen_inner,
+		map<string, map<int, vector<Model_Point*>>>& map_model_point_inner_per_product_out,
+		vector<Scenario_configuration>& v_scen_config
+		)
+	{
+
+		/*vector<vector <int>> shock_array;
+		for (int i = 0 ; i < v_scen_config.size(); i++)
+		{
+			Scenario_configuration scn = v_scen_config[i];
+
+			if (scn.get_bucket_id() == nb_bucket)
+			{
+				shock_array = scn.get_index_shock_array();
+			
+			}
+		
+		}*/
+
+		//Loop on all products
+		map<string, map<int, vector<Model_Point*>>>::iterator it_map_model_point_inner_per_product_out;
+		
+		for (it_map_model_point_inner_per_product_out = map_model_point_inner_per_product_out.begin(); 
+			it_map_model_point_inner_per_product_out != map_model_point_inner_per_product_out.end();
+			++it_map_model_point_inner_per_product_out)
+		{	
+			string product_name = it_map_model_point_inner_per_product_out->first;
+			map<int, vector<Model_Point*>> map_model_point_inner = it_map_model_point_inner_per_product_out->second;
+			
+			map<int, vector<Model_Point*>>::iterator it_map_model_point_inner;			
+			//Loop on all outer model points
+			for (it_map_model_point_inner = map_model_point_inner.begin();
+				it_map_model_point_inner != map_model_point_inner.end();
+				++it_map_model_point_inner)
+			{
+				int nb_mp_outer = it_map_model_point_inner->first;
+				vector<Model_Point*> vector_of_model_point_inner = it_map_model_point_inner->second;
+				
+				//Get the shock size
+				int shock_size = 0;
+				if (vector_of_model_point_inner.size() != 0)
+				{
+					shock_size = vector_of_model_point_inner[0]->index_shock_size;
+				}
+				
+				//Loop on all shocks
+				for (int shock_number = 0; shock_number < shock_size; shock_number++)
+				{
+					//Open the file to output
+					char address_local[1000];
+					char address_remote[1000];
+
+					sprintf(address_remote, "%s\\%s_%s_scen%d_b%d_mpout%d_s%d_.csv", output_path, output_file_name, 
+						product_name.c_str(), nb_scenario_outer+1, nb_bucket+1, nb_mp_outer+1, shock_number+1);
+
+					sprintf(address_local, "%s_%s_scen%d_b%d_mpout%d_s%d_.csv", output_file_name, 
+						product_name.c_str(), nb_scenario_outer+1, nb_bucket+1, nb_mp_outer+1, shock_number+1);
+					
+					remove(address_local);
+
+					ofstream inner_pvs_file;
+					inner_pvs_file.open(address_local, ios_base::out);
+
+					//Loop on inner model points
+					for (unsigned int nb_mp_inner =0; nb_mp_inner < vector_of_model_point_inner.size(); nb_mp_inner++)
+					{
+						Model_Point* pMP = vector_of_model_point_inner[nb_mp_inner];
+						inner_pvs_file << pMP->mp_position_in_file << ",";
+						inner_pvs_file << nb_scen_inner << ",";
+						
+						//Output pvs
+						for(int j =0; j< pMP->get_total_pv_columns_number(); j++)
+						{
+							inner_pvs_file << setprecision(15)<<pMP->index_shock_pvs[shock_number][j] << ",";
+						}
+						inner_pvs_file << endl;
+					}
+					inner_pvs_file.close();
+
+					CopyFile(address_local, address_remote, false);
+
+					ifstream file_op(address_remote , ios::in);
+
+					if (!file_op)
+					{
+						char message[MAX_LENGTH_MESSAGE_EXCEPTION];
+						sprintf(message, "The  file %s is not found", address_remote);
+						throw new GMXBException(message);				
+					}
+
+					file_op.close();
+
+					remove(address_local);
+
+
+				}
+			}
+		}
+	}
+
+
+	virtual void write_inner_inforce_for_aging_policies(const char* output_path, 
+		const char* output_file_name,
+		int nb_scenario_outer, 
+		map<string, Inforce_Manager*>& map_inforce_manager,
+		map<string, map<int, vector<Model_Point*> > >& map_model_point_inner_per_product_out,
+		string& current_w_path,
+		string& target_w_path)
+	{
+		map<string, map<int, vector<Model_Point*>>>::iterator it_map_model_point_inner_per_product_out;
+
+		//Loop on all products
+		for (it_map_model_point_inner_per_product_out = map_model_point_inner_per_product_out.begin(); 
+			it_map_model_point_inner_per_product_out != map_model_point_inner_per_product_out.end();
+			++it_map_model_point_inner_per_product_out)
+		{
+			string product_name = it_map_model_point_inner_per_product_out->first;
+			map<int, vector<Model_Point*>> map_model_point_outer = it_map_model_point_inner_per_product_out->second;
+			map<int, vector<Model_Point*>>::iterator it_map_model_point_outer;
+
+			//modif loic
+			//char address[1000];
+			/*sprintf(address, "%s\%s_%s.csv", output_path, output_file_name,product_name.c_str());*/
+			//sprintf(address, "%s\%s", output_path, output_file_name);
+			ofstream inforce_file;
+			cout << "adress of inner file " << output_file_name << endl;
+			inforce_file.open(output_file_name);
+			
+			//Get the inforce_outer
+			Inforce_Manager* p_inforce_mgr_outer = map_inforce_manager[product_name];
+			vector<vector<string>> inforce_outer_ap = p_inforce_mgr_outer->get_inforce_ap();
+
+
+			int number_of_columns	=	p_inforce_mgr_outer->number_of_columns;
+
+			int current_weights_size = map_model_point_outer.size();
+			int target_weights_size = map_model_point_outer.size();
+
+			double ** current_weights = new double* [current_weights_size];
+			for (int i = 0; i < current_weights_size; i++)
+				current_weights[i] = new double[MAXIMUM_NUMBER_OF_INDEXES];
+
+			double ** target_weights = new double* [target_weights_size];
+			for (int i = 0; i < target_weights_size; i++)
+				target_weights[i] = new double[MAXIMUM_NUMBER_OF_INDEXES];
+
+			read_weights_for_aging_policies(current_w_path, 1, current_weights, current_weights_size);
+			read_weights_for_aging_policies(target_w_path, 1, target_weights, target_weights_size);
+			
+			//AP - variable used as an iterator to count the number of policies - the map's iterator is a pointer
+			int pol_cpt = -1;
+
+			// AP - loop on the model points outer for the current product 
+			vector<string> inforce_inner_ap;
+			for (it_map_model_point_outer = map_model_point_outer.begin(); it_map_model_point_outer != map_model_point_outer.end(); ++it_map_model_point_outer)
+			{
+				pol_cpt ++;
+				int nb_mp_outer = it_map_model_point_outer->first;
+				vector<Model_Point*> vector_of_model_point_inner = it_map_model_point_outer->second;
+
+				//Create inforce_in
+				
+
+				for (int col = 0; col <number_of_columns; col++)
+				{
+					inforce_inner_ap.push_back(inforce_outer_ap[nb_mp_outer][col]);
+				}
+
+				// AP - one time step for projection. Each model point outer creates one model point inner
+				int vector_of_model_point_inner_size = 1;
+				
+				for (int nb_mp_inner = 0; nb_mp_inner < vector_of_model_point_inner_size; nb_mp_inner++)
+				{
+					Model_Point* p_mp = vector_of_model_point_inner[nb_mp_inner];
+
+					inforce_inner_ap[AGE_AT_VALN] = nb_to_string(p_mp->age_valn );
+					inforce_inner_ap[DURATION_VALN] = nb_to_string(p_mp->duration) ;
+					inforce_inner_ap[PREM_PAID] = nb_to_string(p_mp->prem_paid) ;
+					inforce_inner_ap[GMAB_ROLLUP_VALN] = nb_to_string(p_mp->gmab_rollup_valn);
+					inforce_inner_ap[GMAB_RATCHET_VALN] = nb_to_string(p_mp->gmab_ratchet_valn);
+					inforce_inner_ap[GMDB_RATCHET_VALN] = nb_to_string(p_mp->gmdb_ratchet_valn);
+					inforce_inner_ap[GMDB_ROLLUP_VALN] = nb_to_string(p_mp->gmdb_rollup_valn);
+					inforce_inner_ap[GMWB_RATCHET_VALN] = nb_to_string(p_mp->gmwb_ratchet_valn);
+					inforce_inner_ap[GMWB_ROLLUP_VALN] = nb_to_string(p_mp->gmwb_rollup_valn);
+
+					// AP - The weights written in the output inforce are calculated by multiplicating
+					// weigths read in the current_weights_file by the global sum of account value
+					double sum_of_av_i = 0.0;
+					for (int i=0; i< MAXIMUM_NUMBER_OF_INDEXES; i++)
+						sum_of_av_i += p_mp->av_if_array[i];
+
+					for (int i=0; i< MAXIMUM_NUMBER_OF_INDEXES; i++)
+					{
+						inforce_inner_ap[TARGET_AV_SPLIT_VALN_INDEX0 + i]= nb_to_string(target_weights[pol_cpt][i]);
+						inforce_inner_ap[AV_VALN_INDEX0 + i] = nb_to_string(sum_of_av_i * current_weights[pol_cpt][i]);
+					}
+
+					//Write in the inforce_file
+					for (int j=0; j < number_of_columns; j++)
+					{
+						inforce_file << inforce_inner_ap[j] << ",";
+					}
+					inforce_file << endl;
+				}
+				inforce_inner_ap.clear();
+			}
+			for (int i = 0; i < current_weights_size; i++)
+				delete[] current_weights[i];
+			delete[] current_weights;
+			inforce_file.close();
+		}
+		
+	}
+
+	/*
+	* AP - Function for reading the current weights given as inputs for aging policies
+	* These inputs are used to recalculate the fund weights written in the output inforce
+	*/
+	void read_weights_for_aging_policies(const string& file_name, int reset_value, 
+		double ** weights_by_mp, int nb_of_mp_outers)
+	{
+		string row;
+		char *wPtr;
+		ifstream file_op(file_name.c_str() , ios::in);
+
+		int i = 0;
+		int line = 0;
+
+		while(!file_op.eof() && line < nb_of_mp_outers)
+		{
+			getline(file_op,row);
+			if (row.length() > 0)
+			{
+				int j = 0;
+				wPtr = new char[row.length() + 1];
+				strcpy(wPtr, row.c_str());
+				wPtr[row.length()] = '\0';
+				weights_by_mp[line][j] = atof(strtok(wPtr, ","));
+				for (j=1; j <= 11; j++)
+						weights_by_mp[line][j] = atof(strtok(NULL, ","));
+				line++;
+				delete [] wPtr;
+			}
+			i++;
+		}
+	}
+
+
+
+};
+
+
+                                            

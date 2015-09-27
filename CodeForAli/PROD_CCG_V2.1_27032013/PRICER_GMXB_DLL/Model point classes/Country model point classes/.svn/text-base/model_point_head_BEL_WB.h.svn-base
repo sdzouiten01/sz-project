@@ -1,0 +1,4 @@
+#pragma once
+
+#define ADDITIONAL_PREMIUM 100
+#define GMWB_WDL_FREQ 55

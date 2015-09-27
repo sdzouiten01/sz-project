@@ -1,0 +1,175 @@
+#pragma once
+#include <string>
+#include "stdafx.h"
+#include "Projection classes/Guarantee projection classes/Projection.h"
+#include "Projection classes/Guarantee projection classes/Projection_AB_DB.h"
+
+using namespace std;
+
+class Projection_MED_REGION_AB_DB : public Projection_AB_DB
+{
+public:
+	int med_lapse_ind;
+	bool charge_benefit_base;
+	double intercept;
+	double length;
+	double slope;
+	double lapse_max_pa_perc_claim;
+
+	Projection_MED_REGION_AB_DB(const vector<vector <int>>& i_s_a,const vector<vector <int>>& f_s_a,
+								const char* tables, bool generate_dbg_files, const string& dbg_file_path,
+								const int t_high_shorter,  bool l_longevity_tables, int time_step):
+		Projection(i_s_a, f_s_a, tables, generate_dbg_files, dbg_file_path,t_high_shorter, l_longevity_tables, time_step),
+		Projection_AB_DB(i_s_a, f_s_a, tables, generate_dbg_files, dbg_file_path, t_high_shorter, l_longevity_tables, time_step)
+	{
+		//This field indicates if we apply the lapse the first year
+		//The parameter is equal to 1 for ESP and PRT and equal to 0 for ITA
+		med_lapse_ind = atoi(this->assump->search("med_lapse_ind").c_str());
+		intercept = atof(this->assump->search("intercept").c_str());
+		length = atof(this->assump->search("length").c_str());
+		slope = atof(this->assump->search("slope").c_str());
+		lapse_max_pa_perc_claim = atof(this->assump->search("lapse_max_pa_perc_claim").c_str());
+	}
+
+
+	double dynamic_lapse_rate_axa(int t) 
+	{
+		double mat_for_ITM = ((int) (65-timing_items[t][POL_YEAR])) % 5;
+		if(this->time_step == MONTHLY)
+			mat_for_ITM = (double)(((int) (780 - timing_items[t][POL_MONTH])) % 60)/12;
+
+		//double short_rate_factor = this->afmr[this->model_point->elapsed_mths_in_valn_yr + 1] [t] [MAXIMUM_NUMBER_OF_INDEXES] * 0.01;
+		double short_rate_factor = get_rate(this->model_point->elapsed_mths_in_valn_yr + 1, t, MAXIMUM_NUMBER_OF_INDEXES) * 0.01;
+
+		main_proj_array[t][BOND_RATE_FOR_LAPSES] = short_rate_factor;
+		double growth = exp(mat_for_ITM*short_rate_factor);
+		double av = main_proj_array[t][AV_B_BEF] - main_proj_array[t][GMXB_CHARGE] + main_proj_array[t][AV_GROWTH];
+		double base = 0;
+		if(t==1){
+			base = this->model_point->gmab_rollup_valn;
+		}
+		else{
+			base = main_proj_array[t-1][GMAB_IF];
+		}
+		double itm = 0;
+		if(base>0){
+			itm = (av/base)*growth;
+		}
+
+		double correction_factor = 0;
+		if(abs(itm-intercept)<length){
+			correction_factor = 0;
+		}
+		else if(itm<intercept){
+			correction_factor = slope*(itm-intercept+length);
+		}
+		else if(itm>intercept){
+			correction_factor = slope*(itm-intercept-length);
+		}
+		
+		double lapse_rate_base = this->lapse_rates->search((int)this->timing_items[t][POL_YEAR], 1); 
+		
+		//double lapse_max = lapse_max_pa_perc;
+
+		double lapse_max = adjusted_rate(lapse_max_pa_perc*0.01, this->time_step, -1);
+		double lapse_min = adjusted_rate(lapse_min_pa_perc*0.01, this->time_step, -1);
+
+		if(mat_for_ITM>=4 && timing_items[t][POL_YEAR]>2){
+			lapse_max = adjusted_rate(lapse_max_pa_perc_claim*0.01, this->time_step, -1);
+		}
+
+		double corrected_base_lapse = adjusted_rate(correction_factor + lapse_rate_base*0.01, this->time_step, -1);
+
+		return min (max(lapse_min, corrected_base_lapse) , lapse_max);
+	}
+
+	
+	bool find_string(std::string& s, std::string& s_toBeFind)
+	{
+		std::string::size_type loc = s.find( s_toBeFind, 0 );
+		if( loc != std::string::npos ) 
+			return true;
+		else 
+			return false;    
+	}
+
+	void set_current_model_point(Model_Point *mp)
+	{
+		Projection::set_current_model_point(mp);
+
+		std::string s_toFind("BASE");
+		this->charge_benefit_base = find_string(mp->gmxb_type2, s_toFind);
+	} 
+
+    void gmxbCharge(int t)
+	{
+		if (!this->charge_benefit_base)
+			Projection::gmxbCharge(t);
+		else
+		{
+			if (this->timing_items[t][POL_YEAR] <= this->product_charging_duration)
+			{
+				if (t==1)
+				{
+					main_proj_array[t][GMXB_CHARGE] = min(this->timing_items[t][PRORATA]* this->adjusted_rate((model_point->gmxb_g_c / 100.0), time_step, -1)* max(model_point->gmab_rollup_valn,model_point->gmab_ratchet_valn),
+						                                 main_proj_array[t][AV_B_BEF_BIS]- main_proj_array[t][ADMIN_FEE] - main_proj_array[t][M_AND_E_FEE]);
+                }
+				else
+				{
+					main_proj_array[t][GMXB_CHARGE] = min(this->timing_items[t][PRORATA]* this->adjusted_rate((model_point->gmxb_g_c / 100.0), time_step, -1)* main_proj_array[t-1][GMAB_IF],
+                                                         main_proj_array[t][AV_B_BEF_BIS] - main_proj_array[t][ADMIN_FEE] - main_proj_array[t][M_AND_E_FEE]);
+                }			
+			}
+			else
+			{
+				main_proj_array[t][GMXB_CHARGE] = 0.0;
+			}
+		}
+	}
+	
+	
+	void write_main_proj()
+	{
+		if (this->time_step == ANNUAL)
+		{
+			for(int tt =0; tt <= this->maturity_yr; tt++)
+			{
+				this->display_debug_info(tt);
+			}
+			this->close_debug_file();
+		}
+		else
+		{
+			char debug_file_name_local[MAX_LENGTH_FILE_NAME];
+			char debug_file_name_remote[MAX_LENGTH_FILE_NAME];
+			sprintf(debug_file_name_remote, "%smain_array_mp%d_scn%d.csv" ,this->debug_file_path.c_str(),this->model_point->mp_position_in_file,this->current_scenario_number);
+			sprintf(debug_file_name_local, "main_array_mp%d_scn%d.csv" ,this->model_point->mp_position_in_file,this->current_scenario_number);
+			this->debug_file.open(debug_file_name_local, ios_base::out);
+			this->set_debug_file_header();
+
+			for(int tt =0; (this->timing_items[tt][POL_YEAR] <= this->maturity_yr && tt <= this->subacct_max_period); tt++)
+				{
+					this->display_debug_info(tt);
+				}
+			this->debug_file.close();
+		
+			CopyFile(debug_file_name_local, debug_file_name_remote, false);
+
+
+			ifstream file_op(debug_file_name_remote , ios::in);
+
+			if (!file_op)
+			{
+				char message[MAX_LENGTH_MESSAGE_EXCEPTION];
+				sprintf(message, "The  file %s is not found", debug_file_name_remote);
+				throw new GMXBException(message);				
+			}
+
+			file_op.close();
+
+			remove(debug_file_name_local);
+		}
+	}
+};
+	
+

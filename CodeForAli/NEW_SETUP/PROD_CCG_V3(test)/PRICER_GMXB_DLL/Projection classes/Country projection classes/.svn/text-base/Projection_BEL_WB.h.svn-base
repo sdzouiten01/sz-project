@@ -1,0 +1,298 @@
+#pragma once
+#include "stdafx.h"
+#include "Projection classes/Guarantee projection classes/Projection.h"
+#include "Projection classes/Guarantee projection classes/Projection_WB.h"
+#include "Model point classes/Country model point classes/Model_Point_BEL_WB.h"
+
+using namespace std;
+
+class Projection_BEL_WB : public Projection_WB
+{
+	public:
+
+	double taxes_new_contract; 
+	GMXB_Assumption_Table *surr_chg_perc;
+	GMXB_Assumption_Table  *gmwb_max_annual_wdl_pct_table;
+	double irrational_lapse_threshold;
+	double rational_lapse_threshold;
+	double irrational_lapse_slope;
+	double rational_lapse_slope;
+	double irrational_lapse_intercept;
+	double rational_lapse_intercept;
+	double rational_lapse_dyn_profile_split;
+	double irrational_lapse_dyn_profile_split;
+	double l_min_pa_perc;
+	double l_max_pa_perc;
+	double irrational_index[SUBACCT_MAX_PERIOD + 1];
+	double rational_index[SUBACCT_MAX_PERIOD + 1];
+
+	string date_additionnal_premium;
+	string add_prem;
+	double additionnal_premium;
+
+
+
+	Projection_BEL_WB(int shock_size, int ** shock_array, const char* tables, bool generate_dbg_files, 
+						   const string& dbg_file_path):
+	Projection(shock_size, shock_array, tables, generate_dbg_files, dbg_file_path),
+	Projection_WB(shock_size, shock_array, tables, generate_dbg_files, dbg_file_path)
+	{
+		taxes_new_contract = atof(this->assump_WB->search("taxes_new_contract").c_str());
+		surr_chg_perc = new GMXB_Assumption_Table(tables , "surr_chg_perc");
+		gmwb_max_annual_wdl_pct_table = new GMXB_Assumption_Table(tables ,"gmwb_max_annual_wdl_pct_table");
+		
+		l_min_pa_perc = atof(this->assump->search("lapse_min_pa_perc").c_str());
+		l_max_pa_perc = atof(this->assump->search("lapse_max_pa_perc").c_str());
+
+		irrational_lapse_threshold = atof(this->assump_WB->search("irrational_lapse_threshold").c_str());
+		rational_lapse_threshold = atof(this->assump_WB->search("rational_lapse_threshold").c_str());
+
+		irrational_lapse_slope = atof(this->assump_WB->search("irrational_lapse_slope").c_str());
+		rational_lapse_slope = atof(this->assump_WB->search("rational_lapse_slope").c_str());
+
+		irrational_lapse_intercept = atof(this->assump_WB->search("irrational_lapse_intercept").c_str());
+		rational_lapse_intercept = atof(this->assump_WB->search("rational_lapse_intercept").c_str());
+
+		irrational_lapse_dyn_profile_split = atof(this->assump_WB->search("irrational_lapse_dyn_profile_split").c_str());
+		rational_lapse_dyn_profile_split = atof(this->assump_WB->search("rational_lapse_dyn_profile_split").c_str());
+
+	}
+
+	~Projection_BEL_WB()
+	{
+		delete this->surr_chg_perc;
+		delete this->gmwb_max_annual_wdl_pct_table;
+	}
+
+	void set_current_model_point(Model_Point *mp)
+	{
+		Projection_WB::set_current_model_point(mp);
+		// Set additionnal premium date as well as 
+		// additional premium
+		Model_Point_BEL_WB *bel_model_point = dynamic_cast<Model_Point_BEL_WB *> (mp);
+		if (bel_model_point->additional_premium.length() > 0)
+		{
+			istringstream additional_premium_streamed;
+			additional_premium_streamed.str(bel_model_point->additional_premium);
+			getline(additional_premium_streamed, this->date_additionnal_premium, ';');
+			getline(additional_premium_streamed, this->add_prem, ';');
+			this->additionnal_premium = atof(this->add_prem.c_str());
+		}
+		else
+		{
+			this->date_additionnal_premium = "";
+			this->add_prem = "";
+		
+		}
+
+	}
+
+	double dynamic_lapse_rate_axa(int t) 
+	{	
+
+		int pol_yr = int(this->timing_items[POL_YEAR][t]);
+		double surr_chg_pct = 0.0;
+		double tax_pct = 0.0;
+		double govt_rate = 0.0;
+	
+		if (t==1)
+			this->main_proj_array[GMWB_IF][t] = max(this->model_point->gmwb_rollup_valn, this->model_point->gmwb_ratchet_valn);
+
+		else
+		//	//YA - corrections on GMWB_IF * adjustment between t and t+1
+			this->main_proj_array[GMWB_IF][t] = this->main_proj_array[GMWB_IF][t-1];
+
+			
+		pol_yr = min(int(this->timing_items[POL_YEAR][t]), 0);
+
+		surr_chg_pct = surr_chg_perc->search(int(this->timing_items[POL_YEAR][t]), 1) /100.;
+		
+		tax_pct = this->taxes_new_contract / 100.;
+		
+		govt_rate = this->afmr[this->model_point->elapsed_mths_in_valn_yr + 1][t][MAXIMUM_NUMBER_OF_INDEXES]/100.0;
+		
+		this->main_proj_array[BOND_RATE_FOR_LAPSES][t]= govt_rate;
+	
+		double deferred_benefit_base = 0.0;
+		double deferred_av_bef_8yr = 0.0;
+		double deferred_av_aft_8yr = 0.0;
+		double immediate_benefit_base = 0.0;
+		double immediate_av = 0.0;
+			
+		double wdwl_rate = 0.0;
+
+		if (main_proj_array[AV_E_BEF][t] > SMALL_DOUBLE)
+			wdwl_rate = min(1.0,this->gmwb_max_annual_wdl_pct_table->search((int)this->model_point->age_election_ddf_calculated, 1)/100.0);
+		else
+			wdwl_rate = 0.0;
+
+		int wdwl_stage = 0;
+		if (int(timing_items[POL_YEAR][t])> int(this->model_point->gmxb_deferral_period))
+			wdwl_stage = 1;
+	
+		double av_aft_wdwl = (this->main_proj_array[AV_E_BEF][t] - wdwl_stage 
+												* this->main_proj_array[GMWB_IF][t] * wdwl_rate);
+	
+		double surv_prem_paid = 0.0;
+	
+		if (t == 1)
+			surv_prem_paid = this->model_point->prem_paid;
+		else 
+			surv_prem_paid = this->model_point->prem_paid * this->surv_cumul[t-1];  
+	
+		deferred_av_aft_8yr	= max(av_aft_wdwl , 0) ;
+				  		 			   		
+		deferred_av_bef_8yr = deferred_av_aft_8yr * (1. - surr_chg_pct)
+						- tax_pct * max( deferred_av_aft_8yr * (1. - surr_chg_pct) - surv_prem_paid,0);
+	
+		int ratchet_indicator = 0;
+		if( (gmwb_ratchet_area =="Payout_period")&&(int(this->timing_items[POL_YEAR][t])>= int(this->model_point->gmxb_deferral_period)) )
+		ratchet_indicator = 1;
+
+		if ((ratchet_indicator == 1)&&(((int)this->timing_items[POL_YEAR][t] - (int)this->model_point->gmxb_deferral_period)%(int)this->model_point->gmwb_ratchet_period == 0))
+			deferred_benefit_base = max(this->main_proj_array[GMWB_IF][t], this->main_proj_array[AV_E_BEF][t] - wdwl_stage * this->main_proj_array[GMWB_IF][t]* wdwl_rate);
+		else	
+			deferred_benefit_base = this->main_proj_array[GMWB_IF][t] ;
+	
+		if(int(this->model_point->gmxb_deferral_period) == 0)
+			immediate_benefit_base = deferred_benefit_base - tax_pct * (deferred_benefit_base - surv_prem_paid) ;
+		else 
+			immediate_benefit_base = deferred_benefit_base;
+	
+		pol_yr = int(timing_items[POL_YEAR][t]);
+		immediate_av 	= av_aft_wdwl * (1. - surr_chg_pct)
+					- tax_pct * max(av_aft_wdwl * (1. - surr_chg_pct)- surv_prem_paid * (1 - pol_yr * wdwl_rate),0);
+		
+		double itm = 0.0;
+		if( this->model_point->gmxb_deferral_period < SMALL_DOUBLE)
+		{
+			if(immediate_benefit_base > SMALL_DOUBLE)
+				itm = (immediate_av * (1 - tax_pct) * govt_rate) / (immediate_benefit_base * wdwl_rate);
+			else 
+				itm = 1.0;	
+		}
+		
+		else if(deferred_benefit_base > SMALL_DOUBLE)
+		{	
+			if (int(timing_items[POL_YEAR][t]) >= 8) 
+				itm = (deferred_av_aft_8yr * (1. - tax_pct) * govt_rate) / (deferred_benefit_base * wdwl_rate);
+			else
+				itm = (deferred_av_bef_8yr * (1. - tax_pct) * govt_rate) / (deferred_benefit_base * wdwl_rate);
+		}
+		else
+			itm = 1.0;
+	
+		double rat_rate = 0.0;
+		double irr_rate = 0.0;
+		double lapse_rate = 0.0;
+	
+		if (itm < this->rational_lapse_threshold / 100.)
+			rat_rate = this->l_min_pa_perc / 100.;
+		else	
+		{	
+			rat_rate = this->rational_lapse_slope/100. * itm + this->rational_lapse_intercept/100.;
+			rat_rate = max(this->l_min_pa_perc / 100., min(this->l_max_pa_perc / 100.,rat_rate));
+		}
+	
+		if (itm < this->irrational_lapse_threshold/ 100.)
+			rat_rate = this->l_min_pa_perc / 100.;
+		else	
+		{	
+			irr_rate = this->irrational_lapse_slope/100. * itm + this->irrational_lapse_intercept/100.;
+			irr_rate = max(this->l_min_pa_perc / 100., min(this->l_max_pa_perc / 100.,irr_rate));
+		}
+	
+		if (t == 1)
+		{
+			irrational_index[0] = this->irrational_lapse_dyn_profile_split;
+			rational_index[0] = this->rational_lapse_dyn_profile_split;
+
+			for (int i = 2; i <= SUBACCT_MAX_PERIOD; i++)
+			{
+				rational_index[i] = 0.0;
+				irrational_index[i] = 0.0;
+			}		
+		}		
+
+		double denom = rational_index[t-1] * (1 - rat_rate) + irrational_index[t-1] * (1- irr_rate);
+		if (denom > SMALL_DOUBLE)
+		{	
+			rational_index[t] = rational_index[t-1] * (1 - rat_rate) / denom;
+			irrational_index[t] = irrational_index[t-1] * (1 - irr_rate) / denom;
+		}
+		else
+		{
+			rational_index[t] = 0.0;
+			irrational_index[t] = 0.0;
+		}
+		lapse_rate = rat_rate * rational_index[t-1] + irr_rate * irrational_index[t-1];
+
+		return max(this->l_min_pa_perc/100., min (this->l_max_pa_perc/100.,lapse_rate));
+	}
+
+	// YA - function is polymorphic because of using the gmwb_max_annual_pct_table
+	void gmwb_specific_end_claims_calculation(int t)
+	{
+
+		this->main_proj_array[GMWB_PAYMENT][t] = this->gmwb_max_annual_wdl_pct_table->search((int)this->model_point->age_election_ddf_calculated, 1)/ 100. 
+																* this->main_proj_array[GMWB_IF][t];
+		this->main_proj_array[GMWB_CLAIMS][t] = max(0.0, this->main_proj_array[GMWB_PAYMENT][t] - 
+																	this->main_proj_array[AV_E_BEF_CLAIMS][t]);		
+	}
+
+
+	void calculate_ratchet_base_end_period(int t)
+	{
+		double surv_month = this->surv_mth_calc(t);
+
+		if (ratchet_period_indicator == DEF_RATCHET_YR)	   
+			main_proj_array[GMWB_AV_IF][t] = max(main_proj_array[AV_E_BEF_CLAIMS][t], main_proj_array[GMWB_AV_IF][t]);		   
+		else if (ratchet_period_indicator == PAYOUT_RATCHET_YR)
+		{
+
+			if ((this->timing_items[POL_YEAR][t] == 5) && (this->model_point->gmxb_deferral_period == 0) 
+									&& this->add_prem.length() > 0)
+			{
+
+	   	    	main_proj_array[GMWB_AV_IF][t] = max(main_proj_array[AV_E_BEF_CLAIMS][t] - this->timing_items[PRORATA][t] 
+												* this->main_proj_array[GMWB_PAYMENT][t] , 
+													main_proj_array[GMWB_AV_IF][t]  + this->additionnal_premium * this->surv_cumul[t]);
+			}
+			else
+			{
+				if (this->withdrawal_prorata == 1)
+				{
+					main_proj_array[GMWB_AV_IF][t] = max(main_proj_array[AV_E_BEF_CLAIMS][t] - this->timing_items[PRORATA][t]
+						* this->main_proj_array[GMWB_PAYMENT][t],main_proj_array[GMWB_AV_IF][t]);
+				}
+				else
+				{
+					main_proj_array[GMWB_AV_IF][t] = max(main_proj_array[AV_E_BEF_CLAIMS][t] -  this->main_proj_array[GMWB_PAYMENT][t],
+								main_proj_array[GMWB_AV_IF][t]);
+				}
+			}
+		}
+
+		this->main_proj_array[GMWB_IF][t] = max(main_proj_array[GMWB_AV_IF][t], main_proj_array[GMWB_PREM_IF][t]);
+
+	}
+
+
+	void project_t(int t)
+	{
+		this->avBBef(t);
+		if(t==1)
+			this->delta_shock(t);
+		this->project_gmwb_payments_claims_beg(t);
+		this->avBBefBis(t);
+		this->avB(t);
+		this->avEBef(t);
+		this->init_rates(t);
+		this->avEBefClaims(t);
+		this->project_gmwb_bases_payments_claims(t);
+		this->avE(t);
+		this->finish_t(t);
+		this->populate_pvs(t);
+	}
+
+};

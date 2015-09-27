@@ -1,0 +1,33 @@
+#pragma once
+
+
+#define AU_GMWB_VESTING_PERC 0
+#define AU_ADVISORY_CHARGE_TOTAL 1
+#define AU_VESTED_AMOUNT 2
+#define AU_CUM_BP 3
+#define AU_ADMIN_FEE_AV 4
+#define AU_FPW_RATE 5
+#define AU_POL_WDWL_RATE 6
+#define AU_TOT_WDWL_RATE 7
+#define AU_FPW_AMT 8
+
+
+#define AU_MAIN_PROJ_NUM_COLS 9
+
+//ML ajout output AUSTRALIE
+//PVs constants
+// Begining PVs constants
+#define BEGINING_ACCOUNT_VALUE 0
+#define PV_GMDB 1
+#define PV_GMWB 2
+#define PV_GMAB 3
+#define PV_GMIB 4
+#define PV_GMSB 5
+#define PV_GMXB_REAL_CHG 6
+#define PV_GMXB_EHC_CHG 7
+#define DISCOUNT_FACTOR_VALUE 8
+#define PV_DEP_FEE 9
+#define PV_INCOME_AUS_WB 10 //ML ajout output AUSTRALIE
+#define TOTAL_OUTPUT_COLUMNS_AUS 11 //ML ajout output AUSTRALIE
+
+#define ADJ_AUS_ADMIN_TBL 10000

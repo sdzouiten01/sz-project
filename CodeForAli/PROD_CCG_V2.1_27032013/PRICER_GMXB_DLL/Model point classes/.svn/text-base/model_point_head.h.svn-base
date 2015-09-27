@@ -1,0 +1,97 @@
+#ifndef __MODEL_POINT_HEAD_H_
+#define __MODEL_POINT_HEAD_H_
+
+#define PRODUCT 0
+#define GROUP 1
+#define AGE_AT_VALN 2
+#define DURATION_VALN 3
+#define POLICY_DURATION 3
+#define PROD_CODE 4
+#define GMXB_TYPE2 5
+#define POLICY_ID 6
+#define POLICIES 7
+
+#define SEX 8
+#define M_SEX_PERC 9
+#define PREM_CURR 10
+#define PREM_PAID 11
+#define FPW_ACCUM_TOTAL 12
+#define AV_VALN_INDEX0 13
+#define AV_VALN_INDEX1 14
+#define AV_VALN_INDEX2 15
+#define AV_VALN_INDEX3 16
+#define AV_VALN_INDEX4 17
+#define AV_VALN_INDEX5 18
+#define AV_VALN_INDEX6 19
+#define AV_VALN_INDEX7 20
+#define AV_VALN_INDEX8 21
+#define AV_VALN_INDEX9  22
+#define AV_VALN_INDEX10 23
+#define AV_VALN_INDEX11 24
+#define TARGET_AV_SPLIT_VALN_INDEX0 25
+#define TARGET_AV_SPLIT_VALN_INDEX1 26
+#define TARGET_AV_SPLIT_VALN_INDEX2 27
+#define TARGET_AV_SPLIT_VALN_INDEX3 28
+#define TARGET_AV_SPLIT_VALN_INDEX4 29
+#define TARGET_AV_SPLIT_VALN_INDEX5 30
+#define TARGET_AV_SPLIT_VALN_INDEX6 31
+#define TARGET_AV_SPLIT_VALN_INDEX7 32
+#define TARGET_AV_SPLIT_VALN_INDEX8 33
+#define TARGET_AV_SPLIT_VALN_INDEX9 34
+#define TARGET_AV_SPLIT_VALN_INDEX10 35
+#define TARGET_AV_SPLIT_VALN_INDEX11 36
+#define GMAB_RATCHET_VALN  37
+#define GMAB_ROLLUP_VALN  38
+#define GMDB_RATCHET_VALN 39
+#define GMDB_ROLLUP_VALN 40
+#define GMIB_RATCHET_VALN 41
+#define GMIB_ROLLUP_VALN 42
+#define GMWB_RATCHET_VALN 43
+#define GMWB_ROLLUP_VALN 44
+#define GMXB_WAIT_PERIOD 45
+#define GMXB_AV_PERIOD 46
+#define GMXB_G_C 47
+#define GMXB_M_C 48
+#define GMXB_EHC_CHG 49
+#define GMXB_A_C 50
+#define AV_REBAL_IND 51
+#define GMAB_ROLLUP_RATE 52
+#define GMWB_WDL_RATE 54
+#define WB_PAYT_YR 58
+#define WB_WDL_CUM 56
+#define PREM_DURR 62
+#define FEE_RP 63
+// axa status not linked
+// uk1, uk2, uk3 ..... not linked
+#define COMMISSION_ACCT 64
+#define TAX_LAYER 65
+#define PAYT_FREQ 66
+#define GER_PREM_FIXED_FEE 67
+#define GER_GMIB_FIXED_FEE 68
+#define ADMIN_FEE_DOLLAR 68
+// gr_symbol not linked
+#define GR_SYMBOL 75
+#define LAST_YEAR_BONUS 69
+#define STEP_2008_IND 70
+#define LAST_PREMIUM_IND 71
+#define YEAR_PREM 72
+#define RIESTER_TYPE 73
+#define ABRUFPHASE_IND 74
+#define PREMIUM_TYPE_IND 75
+#define GER_MONTH_BEF_2008 76
+// NA - calculated fields
+#define AGE_EXACT_ISSUE 77
+#define ELAPSED_MONTH 78
+#define PREM_TYPE 79
+//#define PREM_CURR 80
+#define VALN_MONTH 81
+#define VALN_YEAR 82
+#define GMXB_BIRTHDAY_DATE 117
+#define EXTRACTION_DATE 118
+
+/*stat inforce*/
+#define RRC_REALIZED 121 
+#define ADMIN_CHARGES 122
+#define UP_FRONT_G_C 123
+
+#endif

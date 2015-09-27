@@ -1,0 +1,183 @@
+#pragma once
+#include "Projection classes/Country projection classes/Projection_JPN_WB_DB.h"
+
+class Projection_JPN_WB_DB_02 : public Projection_JPN_WB_DB
+{
+	protected:
+		double gmwb_cum_annuity_paid_av;
+		GMXB_Assumption_Table *lapse_min_pa_perc_table;
+
+	public:
+		Projection_JPN_WB_DB_02(const vector<vector <int>>& i_s_a,const vector<vector <int>>& f_s_a,
+								const char* tables, bool generate_dbg_files, const string& dbg_file_path,
+								const int t_high_shorter, bool l_longevity_tables, int time_step):
+		Projection(i_s_a, f_s_a, tables, generate_dbg_files, dbg_file_path, t_high_shorter, l_longevity_tables, time_step),
+		Projection_JPN_WB_DB(i_s_a, f_s_a, tables,  generate_dbg_files, dbg_file_path, t_high_shorter, l_longevity_tables, time_step)
+		{	
+			lapse_min_pa_perc_table = new GMXB_Assumption_Table(tables , "lapse_min_pa_perc_table");
+			gmwb_cum_annuity_paid_av = 0.;
+		}
+
+		~Projection_JPN_WB_DB_02()
+		{
+			delete lapse_min_pa_perc_table;
+		}
+
+		virtual void init_projection()
+		{
+			Projection::init_projection();
+			gmwb_cum_annuity_paid_av = 0.;
+		}
+
+		void calculate_gmwb_cum_annuity_paid(int t)
+		{
+			if(model_point->gmxb_type2 == "WD3" || model_point->gmxb_type2 == "TD3" || model_point->gmxb_type2 == "TB3")
+			{
+				if( t == 1 )
+					gmwb_cum_annuity_paid_av = model_point->gmwb_rollup_valn - model_point->gmdb_rollup_valn;
+			
+				if(surv_cumul[t-1] < SMALL_DOUBLE)
+					gmwb_cum_annuity_paid_av += 0.;
+				else
+					gmwb_cum_annuity_paid_av += main_proj_array[t][GMWB_PAYMENT_FROM_AV] / surv_cumul[t-1];
+			}
+			else
+				gmwb_cum_annuity_paid_av = 0.;
+		}
+
+		int set_for_life_indicator(Model_Point *mp)
+		{
+			if(mp->gmxb_type2 == "WD3" || mp->gmxb_type2 == "WD2")
+				return 1;
+			else
+				return 0;
+		}
+		int set_col_withdrawal_table(Model_Point *mp)
+		{
+			if (mp->gmxb_type2 == "TB3")
+				return 1;
+			else if (mp->gmxb_type2 == "TD3")
+				return 2;
+			else if (mp->gmxb_type2 == "WD2")
+				return 3;
+			else if (mp->gmxb_type2 == "WD3")
+				return 4;
+			else if (mp->gmxb_type2 == "TB2")
+				return 5;
+			else if (mp->gmxb_type2 == "TD2")
+				return 6;
+			else 
+			{
+				char message[MAX_LENGTH_MESSAGE_EXCEPTION];
+				sprintf_s(message, "gmxb_type2 unknown");
+				throw new GMXBException(message);		
+			}
+		}
+
+		int check_gmxb_type2(Model_Point *mp)
+		{
+			if (mp->gmxb_type2 == "WD2" || mp->gmxb_type2 == "TD2" || mp->gmxb_type2 == "TB2")
+				return 1;
+			else if (mp->gmxb_type2 == "WD3" || mp->gmxb_type2 == "TD3" || mp->gmxb_type2 == "TB3")
+				return 2;
+			else
+				return 0;
+		}
+
+		double calculate_atm_for_lapses(int t)
+		{
+			int gmxb_type2_ind = check_gmxb_type2(this->model_point); //
+			double gmdb_rollup_amt = 0.0;
+			int pol_yr = int(timing_items[t][POL_YEAR]);
+			int wdwl_col_ind = this->set_col_withdrawal_table(this->model_point);
+
+			if ( t == 1 )
+			{
+				main_proj_array[t-1][GMDB_PREM_IF] = model_point->gmdb_rollup_valn;	
+				main_proj_array[t-1][GMDB_AV_IF] = model_point->gmdb_ratchet_valn;
+				main_proj_array[t-1][GMWB_AV_IF] = model_point->gmwb_ratchet_valn;
+				main_proj_array[t][GMDB_IF_BEF] = max(model_point->gmdb_ratchet_valn, model_point->gmdb_rollup_valn);
+			}
+
+			if ((pol_yr <= model_point->gmxb_deferral_period) && (pol_yr <= this->gmwb_max_bonus_term))
+				gmdb_rollup_amt = model_point->prem_paid * surv_cumul[t - 1] * (model_point->gmwb_rollup_rate / 100.);
+			else
+				gmdb_rollup_amt = 0.0;
+
+			this->calculate_gmwb_cum_annuity_paid(t);
+
+			double gmdb_bb = max(main_proj_array[t-1][GMDB_PREM_IF] + gmdb_rollup_amt  - main_proj_array[t][GMWB_PAYMENT], 
+								 main_proj_array[t-1][GMDB_AV_IF] 
+							            + max(main_proj_array[t][AV_E_BEF] + gmwb_cum_annuity_paid_av * surv_cumul[t - 1] 
+										- main_proj_array[t][GMWB_RATCHET_PREV], 0.0)  
+									- main_proj_array[t][GMWB_PAYMENT]);
+
+			if(model_point->gmxb_type2 == "WD3" || model_point->gmxb_type2 == "TD3" || model_point->gmxb_type2 == "TB3")
+			{
+				if( t == 1 )
+				{
+					if (pol_yr <= model_point->gmxb_deferral_period  && pol_yr <= this->gmwb_max_bonus_term)
+						gmdb_rollup_amt = model_point->gmdb_rollup_valn * (model_point->gmwb_rollup_rate  / 100.);
+					else
+						gmdb_rollup_amt = 0.0;
+						
+					gmdb_bb = max(model_point->gmdb_ratchet_valn 
+									+ max(0.0, main_proj_array[t][AV_E_BEF] - main_proj_array[t-1][GMDB_AV_IF]) - /*2 **/ main_proj_array[t][GMWB_PAYMENT_FROM_AV]/* + gmwb_cum_annuity_paid_av*/,
+									model_point->gmdb_rollup_valn + gmdb_rollup_amt - main_proj_array[t][GMWB_PAYMENT_FROM_AV]);
+								
+					//gmdb_bb = max(gmdb_bb, main_proj_array_2[GMDB_AV_IF_BEF][t] + gmwb_cum_annuity_paid_av + main_proj_array_2[GMWB_PAYMENT_FROM_AV][t]);	
+				}
+					
+				gmdb_bb = max(gmdb_bb,
+							  main_proj_array[t][GMWB_RATCHET_PREV] + gmwb_cum_annuity_paid_av * surv_cumul[t - 1]);
+			}
+
+			double pv_annuity = 0.;
+
+			if(pol_yr > model_point->gmxb_deferral_period)
+				pv_annuity = japan_annuity((int)(timing_items[t][AGE_LAST]),t);
+
+			pv_annuity = pv_annuity * (this->gmwb_max_annual_wdl_pct_table->search((int)model_point->gmxb_deferral_period, wdwl_col_ind)/100.0) 
+									* max(max(main_proj_array[t][AV_E_BEF] + gmwb_cum_annuity_paid_av * surv_cumul[t - 1], 
+											  main_proj_array[t-1][GMWB_AV_IF] //+ main_proj_array_2[GMWB_PAYMENT][t])
+										  ),
+										   main_proj_array[t-1][GMWB_PREM_IF] + gmdb_rollup_amt
+									);
+
+			if (fabs(gmdb_bb) > SMALL_DOUBLE)
+				return  1. - main_proj_array[t][AV_E_BEF] / gmdb_bb; 
+			else
+				return  1.0;
+		}
+
+		double calculate_lapse_rate_min(int t)
+		{	
+			int pol_yr = int(this->timing_items[t][POL_YEAR]);
+			int gmxb_type2_ind = check_gmxb_type2(this->model_point);
+			int wdwl_col_ind = this->set_col_withdrawal_table(this->model_point);
+			if (gmxb_type2_ind == 1)
+				return this->lapse_min_pa_perc_table->search(pol_yr, 1)/100.0;
+			else
+			{
+				if (pol_yr < (model_point->gmxb_deferral_period + this->gmwb_withdrawal_period_table->search((int)model_point->gmxb_deferral_period, wdwl_col_ind)))
+					return lapse_min_pa_perc_table->search(pol_yr, 1)/100.0;
+				else
+					return 1.0;
+			}
+		}		
+		void calculate_ratchet_base_begining_period(int t)
+		{
+			double surv_month = this->surv_mth_calc(t);
+
+			if (ratchet_period_indicator == DEF_RATCHET_YR || ratchet_period_indicator == PAYOUT_RATCHET_YR)
+				main_proj_array[t][GMWB_AV_IF_BEF] = max(main_proj_array[t][AV_E_BEF], main_proj_array[t][GMWB_RATCHET_PREV] + main_proj_array[t][PREMIUM]);
+			else 
+				main_proj_array[t][GMWB_AV_IF_BEF] = main_proj_array[t][GMWB_RATCHET_PREV] + main_proj_array[t][PREMIUM];
+
+			if (model_point->gmxb_type2 == "WD3" || model_point->gmxb_type2 == "TD3" || model_point->gmxb_type2 == "TB3" )
+				main_proj_array[t][GMWB_AV_IF_BEF]  = max(main_proj_array[t][GMWB_AV_IF_BEF], main_proj_array[t][AV_E_BEF] + this->gmwb_cum_annuity_paid_av* surv_cumul[t-1]);
+		}
+		
+};
+
+

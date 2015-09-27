@@ -1,0 +1,17 @@
+﻿Build started 07.01.2015 09:59:18.
+     1>Project "C:\Users\b029735\NoBackupData\12_MONTHLY_PROCESS\PROD_CCG_V2.1_27032013\Calibration\Calibration.vcxproj" on node 2 (Build target(s)).
+     1>Lib:
+         C:\Program Files\Microsoft Visual Studio 11.0\VC\bin\Lib.exe /OUT:"C:\Users\b029735\NoBackupData\12_MONTHLY_PROCESS\PROD_CCG_V2.1_27032013\Release\Calibration(dll).lib" /NOLOGO /LTCG Release\Calibration.obj
+         Release\CalibSwapMarket.obj
+         Release\G1analytics.obj
+         Release\InterfaceCalibration.obj
+         Release\Interpolation.obj
+         Release\LMnumerics.obj
+         Release\Matrice.obj
+         Release\ProbaUtilities.obj
+         Calibration.vcxproj -> C:\Users\b029735\NoBackupData\12_MONTHLY_PROCESS\PROD_CCG_V2.1_27032013\Release\Calibration(dll).lib
+     1>Done Building Project "C:\Users\b029735\NoBackupData\12_MONTHLY_PROCESS\PROD_CCG_V2.1_27032013\Calibration\Calibration.vcxproj" (Build target(s)).
+
+Build succeeded.
+
+Time Elapsed 00:00:00.89

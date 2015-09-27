@@ -1,0 +1,999 @@
+#pragma once
+#include "stdafx.h"
+#include "Projection classes/Guarantee projection classes/Projection.h"
+#include "Projection classes/Guarantee projection classes/Projection_WB_DB.h"
+#include "Projection classes/Guarantee projection classes/Projection_WB.h"
+#include "Model point classes/Country model point classes/Model_Point_AGD_UK_WB.h"
+#include "Projection classes/Country projection classes/head_AGD_UK.h"
+
+
+//Macros for lapse_dyn_medregion table
+#define SLOPE 1
+#define THRESHOLD1 2
+#define THRESHOLD2 3
+
+//Macros for lapse_dyn_profile_split table
+#define IRRATIONAL 1
+#define RATIONAL 2
+
+//Macros for lapse_rate table
+#define ACC 1
+#define DIST 2
+
+
+#define MORT_CONST_AGD_UK 1919
+
+
+
+class Projection_AGD_UK_WB_DB : public Projection_WB_DB
+{
+public:
+    int pol_initial_issue_date;
+	bool charge_benefit_base;
+	
+	//Specific variables for FRANCE declaration
+	double rational_index[SUBACCT_MAX_PERIOD + 1];
+	double irrational_index[SUBACCT_MAX_PERIOD + 1];
+	GMXB_Assumption_Table * lapse_dyn_medregion;
+	GMXB_Assumption_Table * lapse_dyn_profile_split;
+	GMXB_Assumption_Table * gmwb_max_annual_wdl_pct_table;
+    GMXB_Assumption_Table * surr_chg_perc;
+	GMXB_Assumption_Table * equity_indicator;
+	GMXB_Assumption_Table * tax_wrapper_table;
+	double tax_deferral;
+	GMXB_Assumption_Table * mort_table_2;
+	double mort_mult_2;
+	double mort_adj_2;
+	double surv_12;
+	double surv_1;
+	double surv_2;
+	string gmwb_wdl_rate_source;
+
+	double lapse_function;
+	int index_column;
+	
+	string joint_life_ind;
+	double age_valn_2;
+	string sex_2;
+	double age_exact_issue_2;
+	double wb_wdl_rate;
+	double tax_bond;
+	double tax_dividend;
+	double tax_capital;
+	double dividend_rate;
+	double RPI;
+	double equity_exposure;
+	double add_fees;
+	int add_fees_period;
+	string db_indicator;
+	string tax_wrapper;
+
+	GMXBParameters *assump_DB3;
+	int gmdb_rollup_rate_source3;
+	int gmdb_duration3 ; 
+	double gmdb_rollup_rate3 ;
+	int gmdb_av_type3 ;
+	int gmdb_rollup_type3;
+	double gmdb_max_bonus_term3 ;
+	int gmdb_ratchet_wb_adj3 ;
+	int gmdb_impact_of_gmwb3 ;
+	bool gmdb_ind3;
+
+	GMXBParameters *assump_DB_bis;
+	int gmdb_rollup_rate_source_bis;
+	int gmdb_duration_bis ; 
+	double gmdb_rollup_rate_bis ;
+	int gmdb_av_type_bis ;
+	int gmdb_rollup_type_bis;
+	double gmdb_max_bonus_term_bis ;
+	int gmdb_ratchet_wb_adj_bis ;
+	int gmdb_impact_of_gmwb_bis ;
+	bool gmdb_ind_bis;
+	double agd_uk_wb_main_proj_array[SUBACCT_MAX_PERIOD +1][AGD_UK_MAIN_PROJ_NUM_COLS];
+	int birthday2;
+	int year2;
+
+	double prop_equity;
+	double equity_fees;
+	double bond_fees;
+	int* fund_is_equity;
+
+	Projection_AGD_UK_WB_DB(const vector<vector <int>>& i_s_a,const vector<vector <int>>& f_s_a,
+							const char* tables, bool generate_debug_files, 
+						   const string& debug_file_path, const int t_shorter, bool l_longevity_tables, int time_step):
+		Projection(i_s_a, f_s_a, tables,   generate_debug_files, debug_file_path, t_shorter, l_longevity_tables, time_step),
+		Projection_WB_DB(i_s_a, f_s_a, tables,  generate_debug_files, debug_file_path, t_shorter, l_longevity_tables, time_step)
+	{
+        this->surr_chg_perc = new GMXB_Assumption_Table(tables , "surr_chg_perc");
+		lapse_dyn_medregion = new GMXB_Assumption_Table (tables, "lapse_dyn_medregion");
+		lapse_dyn_profile_split = new GMXB_Assumption_Table (tables, "lapse_dyn_profile_split");
+		tax_deferral = atof(this->assump->search("tax_deferral").c_str());
+		gmwb_max_annual_wdl_pct_table = new GMXB_Assumption_Table(tables, "gmwb_max_annual_wdl_pct_table");
+		this->equity_indicator = new GMXB_Assumption_Table (tables, "equity_indicator");
+		this->tax_wrapper_table = new GMXB_Assumption_Table (tables, "tax_wrapper");
+		this->gmwb_wdl_rate_source = this->assump_WB->search("gmwb_wdl_rate_source");		
+
+		//for the different DB
+		assump_DB3 = new GMXBParameters(tables, "assump_DB3");
+		gmdb_duration3 = atoi(this->assump_DB3->search("gmdb_duration").c_str());
+		gmdb_rollup_rate3 = atof(this->assump_DB3->search("gmdb_rollup_rate").c_str());
+		
+		//gmdb_av_type for DB3
+		if (this->assump_DB3->search("gmdb_av_type") == "RATCHET")
+			this->gmdb_av_type3 = DB_RATCHET;
+		else 
+			this->gmdb_av_type3 = 0;
+
+		//gmdb_rollup_type for DB3
+		if (this->assump_DB3->search("gmdb_rollup_type") == "LINEAR")
+				this->gmdb_rollup_type3 = DB_ROLLUP_LINEAR;
+		else if (this->assump_DB3->search("gmdb_rollup_type") == "COMPOUND")
+				this->gmdb_rollup_type3 = DB_ROLLUP_COMPOUND;
+		else
+				this->gmdb_rollup_type3 = 0;
+
+		gmdb_max_bonus_term3 = atof(this->assump_DB3->search("gmdb_max_bonus_term").c_str());
+		
+		//gmdb_ratchet_wb_adj for DB3
+		if (this->assump_DB3->search("gmdb_ratchet_wb_adj") == "ADJUST")
+				this->gmdb_ratchet_wb_adj3 = ADJUST;
+		else if (this->assump_DB3->search("gmdb_ratchet_wb_adj") == "EXIT")
+				this->gmdb_ratchet_wb_adj3 = EXIT;
+		else
+				this->gmdb_ratchet_wb_adj3 = 0;
+
+		//gmdb_impact_of_gmwb for DB3
+		if (this->assump_DB3->search("gmdb_impact_of_gmwb") == "DOLLAR")
+			this->gmdb_impact_of_gmwb3 = IMPACT_DOLLAR;
+		else if (this->assump_DB3->search("gmdb_impact_of_gmwb") == "PRORATA")
+			this->gmdb_impact_of_gmwb3 = IMPACT_PRORATA;
+		else
+			this->gmdb_impact_of_gmwb3 = 0;
+
+		//gmdb_ind for DB3
+		if (this->assump_DB3->search("gmdb_ind") == "Y")
+			this->gmdb_ind3 = true;
+		else
+			this->gmdb_ind3 = false;
+		
+		//gmdb_rollup_rate_source for DB3
+		if (this->assump_DB3->search("gmdb_rollup_rate_source") == "DATA_FILE")
+			this->gmdb_rollup_rate_source3 = DATA_FILE;
+		else
+			this->gmdb_rollup_rate_source3 = 0;
+
+		assump_DB_bis = new GMXBParameters(tables, "assump_DB");
+		gmdb_duration_bis = atoi(this->assump_DB_bis->search("gmdb_duration").c_str());
+		gmdb_rollup_rate_bis = atof(this->assump_DB_bis->search("gmdb_rollup_rate").c_str());
+		
+
+		//gmdb_av_type for DB_bis
+		if (this->assump_DB_bis->search("gmdb_av_type") == "RATCHET")
+			this->gmdb_av_type_bis = DB_RATCHET;
+		else 
+			this->gmdb_av_type_bis = 0;
+		
+		//gmdb_rollup_type for DB_bis
+		if (this->assump_DB_bis->search("gmdb_rollup_type") == "LINEAR")
+				this->gmdb_rollup_type_bis = DB_ROLLUP_LINEAR;
+		else if (this->assump_DB_bis->search("gmdb_rollup_type") == "COMPOUND")
+				this->gmdb_rollup_type_bis = DB_ROLLUP_COMPOUND;
+		else
+				this->gmdb_rollup_type_bis = 0;
+
+		gmdb_max_bonus_term_bis = atof(this->assump_DB_bis->search("gmdb_max_bonus_term").c_str());
+		
+		//gmdb_ratchet_wb_adj for DB_bis
+		if (this->assump_DB_bis->search("gmdb_ratchet_wb_adj") == "ADJUST")
+				this->gmdb_ratchet_wb_adj_bis = ADJUST;
+		else if (this->assump_DB_bis->search("gmdb_ratchet_wb_adj") == "EXIT")
+				this->gmdb_ratchet_wb_adj_bis = EXIT;
+		else
+				this->gmdb_ratchet_wb_adj_bis = 0;
+	
+		//gmdb_impact_of_gmwb for DB_bis
+		if (this->assump_DB_bis->search("gmdb_impact_of_gmwb") == "DOLLAR")
+			this->gmdb_impact_of_gmwb_bis = IMPACT_DOLLAR;
+		else if (this->assump_DB_bis->search("gmdb_impact_of_gmwb") == "PRORATA")
+			this->gmdb_impact_of_gmwb_bis = IMPACT_PRORATA;
+		else
+			this->gmdb_impact_of_gmwb_bis = 0;
+
+		//gmdb_ind for DB_bis
+		if (this->assump_DB_bis->search("gmdb_ind") == "Y")
+			this->gmdb_ind_bis = true;
+		else
+			this->gmdb_ind_bis = false;
+
+		//gmdb_rollup_rate_source for DB_bis
+		if (this->assump_DB_bis->search("gmdb_rollup_rate_source") == "DATA_FILE")
+			this->gmdb_rollup_rate_source_bis = DATA_FILE;
+		else
+			this->gmdb_rollup_rate_source_bis = 0;
+
+		fund_is_equity = new int[N_MAX];
+		prop_equity = atof(this->assump->search("prop_equity").c_str());
+		equity_fees = atof(this->assump->search("equity_fees").c_str())/100.0;
+		bond_fees = atof(this->assump->search("bond_fees").c_str())/100.0;
+
+	}
+
+   ~Projection_AGD_UK_WB_DB()
+	{	
+		delete this->surr_chg_perc;
+		delete this->gmwb_max_annual_wdl_pct_table;
+		delete this->lapse_dyn_medregion;
+		delete this->lapse_dyn_profile_split;
+		delete this->equity_indicator;
+		delete this->assump_DB3;
+		delete this->assump_DB_bis;
+		delete this->tax_wrapper_table;
+		delete[] fund_is_equity;
+	
+	}
+
+   void set_agd_uk_wb_main_proj_arrays_to_zero()
+	{
+		memset(this->agd_uk_wb_main_proj_array, 0, sizeof(this->agd_uk_wb_main_proj_array));
+	}
+
+	void init_projection()
+	{
+		Projection::init_projection();
+		this->set_agd_uk_wb_main_proj_arrays_to_zero();
+	}
+
+	void set_current_model_point(Model_Point *mp)
+	{
+		Model_Point_AGD_UK_WB *agd_uk_wb_mp = dynamic_cast<Model_Point_AGD_UK_WB *> (mp);
+		this->joint_life_ind = agd_uk_wb_mp->joint_life_ind;
+		this->sex_2 = agd_uk_wb_mp->sex_2;
+		this->age_valn_2 = agd_uk_wb_mp->age_valn_2;
+		this->age_exact_issue_2 = agd_uk_wb_mp->age_exact_issue_2;
+		this->wb_wdl_rate= agd_uk_wb_mp->wb_wdl_rate;
+		this->tax_wrapper = agd_uk_wb_mp->tax_wrapper;
+		this->db_indicator = agd_uk_wb_mp->db_indicator;
+		this->add_fees = agd_uk_wb_mp->add_fees;
+		this->add_fees_period = agd_uk_wb_mp->add_fees_period;
+		this->birthday2 = agd_uk_wb_mp->birthday2;
+		this->year2 = agd_uk_wb_mp->year2;
+		Projection_WB::set_current_model_point(mp);
+		
+		std::string s_toFind("BASE");
+		this->charge_benefit_base = find_string(mp->gmxb_type2, s_toFind);
+
+		for (unsigned int i = 0; i < this->model_point->list_of_funds.size(); i++){
+			double equity_perc = 0.0;
+			for (int j = 0; j < this->model_point->list_of_funds[i].fund.nb_indexes ; j++){
+				int index_num_split = this->model_point->list_of_funds[i].fund.position_in_beta_array[j];
+				if (this->equity_indicator->quick_search(this->model_point->list_of_funds[i].fund.position_in_beta_array[j], 1) == 1){
+					equity_perc += this->model_point->list_of_funds[i].fund.target_beta[index_num_split];
+				}
+			}
+			if(equity_perc >= prop_equity){
+				fund_is_equity[i] = 1;
+			}
+			else{
+				fund_is_equity[i] = 0;
+			}
+		}
+	}
+
+	void load_tables()
+	{
+		Projection::load_tables();
+		if(this->joint_life_ind=="LS")
+		{
+			if(this->sex_2=="F")
+			{
+				this->mort_table_2 = this->mort_table_f;
+				this->mort_mult_2 = this->mort_mult_f;
+				this->mort_adj_2 = this->mort_adj_f;
+			}
+			else if(this->sex_2=="M")
+			{
+				this->mort_table_2 = this->mort_table_m;
+				this->mort_mult_2 = this->mort_mult_m;
+				this->mort_adj_2 = this->mort_adj_m;
+			}
+			else 
+			{
+				char message[MAX_LENGTH_MESSAGE_EXCEPTION];
+				sprintf_s(message, "Only F or M are allowed for model_point->sex_2 variable");
+				throw new GMXBException(message);		
+			}
+		}
+
+		//tax wrapper
+		if (this->tax_wrapper ==  "pension")
+		{
+			this->tax_dividend = this->tax_wrapper_table->quick_search(0,1);
+			this->tax_capital = this->tax_wrapper_table->quick_search(1,1);
+			this->tax_bond = this->tax_wrapper_table->quick_search(2,1);
+			this->dividend_rate = this->tax_wrapper_table->quick_search(3,1);
+			this->RPI = this->tax_wrapper_table->quick_search(4,1);
+		}
+		else if (this->tax_wrapper == "offshore_bond")
+		{
+			this->tax_dividend = this->tax_wrapper_table->quick_search(0,2);
+			this->tax_capital = this->tax_wrapper_table->quick_search(1,2);
+			this->tax_bond = this->tax_wrapper_table->quick_search(2,2);
+			this->dividend_rate = this->tax_wrapper_table->quick_search(3,2);
+			this->RPI = this->tax_wrapper_table->quick_search(4,2);
+		}
+		else if (this->tax_wrapper == "TIP")
+		{
+			this->tax_dividend = this->tax_wrapper_table->quick_search(0,3);
+			this->tax_capital = this->tax_wrapper_table->quick_search(1,3);
+			this->tax_bond = this->tax_wrapper_table->quick_search(2,3);
+			this->dividend_rate = this->tax_wrapper_table->quick_search(3,3);
+			this->RPI = this->tax_wrapper_table->quick_search(4,3);
+		}
+		else
+		{
+			this->tax_dividend = this->tax_wrapper_table->quick_search(0,4);
+			this->tax_capital = this->tax_wrapper_table->quick_search(1,4);
+			this->tax_bond = this->tax_wrapper_table->quick_search(2,4);
+			this->dividend_rate = this->tax_wrapper_table->quick_search(3,4);
+			this->RPI = this->tax_wrapper_table->quick_search(4,4);
+		}
+
+		//loading of the good DB assump
+		if ((this->db_indicator=="enh_life"))
+		{
+			this->gmdb_av_type = this->gmdb_av_type3;
+			this->gmdb_duration = this->gmdb_duration3;
+			this->gmdb_impact_of_gmwb = this->gmdb_impact_of_gmwb3;
+			this->gmdb_ind = this->gmdb_ind3;
+			this->gmdb_max_bonus_term = this->gmdb_max_bonus_term3;
+			this->gmdb_ratchet_wb_adj = this->gmdb_ratchet_wb_adj3;
+			this->gmdb_rollup_type = this->gmdb_rollup_type3;
+			this->gmdb_rollup_rate_source = this->gmdb_rollup_rate_source3;
+			if (model_point->gmwb_rollup_rate == 0.)
+				this->gmdb_rollup_rate = 0.;
+			else
+				this->gmdb_rollup_rate = this->gmdb_rollup_rate3;
+		}
+		else if (this->db_indicator=="enh_75")
+		{
+			this->gmdb_av_type = this->gmdb_av_type3;
+			this->gmdb_impact_of_gmwb = this->gmdb_impact_of_gmwb3;
+			this->gmdb_ind = this->gmdb_ind3;
+			this->gmdb_max_bonus_term = this->gmdb_max_bonus_term3;
+			this->gmdb_ratchet_wb_adj = this->gmdb_ratchet_wb_adj3;
+			this->gmdb_rollup_type = this->gmdb_rollup_type3;
+			this->gmdb_rollup_rate_source = this->gmdb_rollup_rate_source3;
+			if (model_point->gmwb_rollup_rate == 0.)
+				this->gmdb_rollup_rate = 0.;
+			else
+				this->gmdb_rollup_rate = this->gmdb_rollup_rate3;
+			
+			if (this->joint_life_ind=="LS")
+			{
+				//this->gmdb_duration = max(75-min(this->age_valn_2,this->model_point->age_valn) , 0);
+				int age1 = (int)(this->model_point->age_valn - this->model_point->duration);
+				int age2 = (int)(this->age_valn_2 - this->model_point->duration);
+				this->gmdb_duration = max(75-min(age2,age1) , 0);
+			}
+			else
+			{
+
+				//this->gmdb_duration = max(75-this->model_point->age_valn , 0);
+				this->gmdb_duration = max(75- (int)(this->model_point->age_valn - this->model_point->duration), 0);
+			}
+		}
+		else
+		{
+			this->gmdb_av_type = this->gmdb_av_type_bis;
+			this->gmdb_duration = this->gmdb_duration_bis;
+			this->gmdb_impact_of_gmwb = this->gmdb_impact_of_gmwb_bis;
+			this->gmdb_ind = this->gmdb_ind_bis;
+			this->gmdb_max_bonus_term = this->gmdb_max_bonus_term_bis;
+			this->gmdb_ratchet_wb_adj = this->gmdb_ratchet_wb_adj_bis;
+			this->gmdb_rollup_type = this->gmdb_rollup_type_bis;
+			this->gmdb_rollup_rate_source = this->gmdb_rollup_rate_source_bis;
+			this->gmdb_rollup_rate = this->gmdb_rollup_rate_bis;
+		}
+		
+		
+	}
+
+
+	double mortality_rate_calculation(int t) 
+	{
+		double table_age = (int)(timing_items[t][AGE_LAST]) + this->mort_age_adj;
+		
+		double table_age_2 = 0.0;
+
+		if (this->joint_life_ind=="LS")
+		{
+			table_age_2 = (int)(this->age_exact_issue_2) + this->timing_items[t][POL_YEAR] - 1.0 + this->mort_age_adj;
+			double q1 = min(1.0, this->mort_table->search(int(table_age), this->model_point->year - MORT_CONST_AGD_UK)* this->mort_mult);	
+			double q2 = min(1.0, this->mort_table_2->search(int(table_age_2), this->year2 - MORT_CONST_AGD_UK)* this->mort_mult_2);	
+
+			if (t == 1)
+			{
+				surv_12 = 10000.;
+				surv_1 = 0.;
+				surv_2 = 0.;
+			}
+			else
+			{
+				double q1_last_year = min(1.0, this->mort_table->search(int(table_age) - 1, this->model_point->year - MORT_CONST_AGD_UK)* this->mort_mult);	
+				double q2_last_year = min(1.0, this->mort_table_2->search(int(table_age_2) - 1, this->year2 - MORT_CONST_AGD_UK)* this->mort_mult_2);
+				surv_1 = surv_12 * (1 - q1_last_year) * q2_last_year + surv_1 * (1 - q1_last_year);
+				surv_2 = surv_12 * (1 - q2_last_year) * q1_last_year + surv_2 * (1 - q2_last_year);
+				surv_12 = surv_12 * (1 - q1_last_year) * (1 - q2_last_year);
+			}
+			double surv = surv_12 + surv_1 + surv_2;
+			
+			if(surv < SMALL_DOUBLE)
+				return 0.0;
+			else	
+				return min(1.0, (surv_12 * q1 * q2 + surv_1 * q1 + surv_2 * q2) / surv );
+	
+		}
+		else 
+			return min(1.0, this->mort_table->search(int(table_age), this->model_point->year - MORT_CONST_AGD_UK)* this->mort_mult);					
+	}
+
+	double specific_fees_by_product(int t) 
+	{
+		if (timing_items[t][POL_YEAR]<= this->add_fees_period )
+			return ((model_point->gmxb_a_c + this->add_fees ) / 100.0) * main_proj_array[t][AV_B_BEF_BIS];
+		else
+			return (model_point->gmxb_a_c / 100.0) * main_proj_array[t][AV_B_BEF_BIS];
+	}
+
+	void avGrowth_equity(int t)
+	{
+		this->equity_exposure= 0.0;
+		if (!this->model_point->load_model_point_funds)
+		{
+			int index_num;
+			agd_uk_wb_main_proj_array[t][AV_GROWTH_RATE_EQ]= 0.0;
+			for(int i = 0; i<12; i++)
+			{
+				double a=this->equity_indicator->quick_search( i, 1);
+				this->equity_exposure+= a * this->index_weigths[t][i]/100.0; 
+			}
+			if (this->model_point->av_rebal_ind == Model_Point::REBALANCE)
+			{
+				double av_growth_t = 0.;
+				for(int i = 0; i<index_map_size; i++)
+				{
+					index_num = index_map_2[i];
+					av_growth_t += (
+									this->afmr[this->model_point->elapsed_mths_in_valn_yr + 1][t][index_num-1]   
+									- this->timing_items[t][PRORATA] 
+									* (1.5 / 100. ))
+									* this->equity_indicator->quick_search(index_num - 1, 1)
+									* this->index_weigths[t][index_num-1]/100.0;
+				}
+				this->agd_uk_wb_main_proj_array[t][AV_GROWTH_RATE_EQ] = av_growth_t;
+			}
+			else if (this->model_point->av_rebal_ind == Model_Point::DRIFT)
+			{
+				double sum_growth = 0.;
+				for(int i = 0; i<index_map_size; i++)
+				{
+					index_num = index_map_2[i];	
+					this->index_weigths[t][index_num-1] = (1.0 +  (this->afmr[this->model_point->elapsed_mths_in_valn_yr + 1][t][index_num-1]   
+															- this->timing_items[t][PRORATA] 
+																* (1.5 / 100. ))
+																* this->equity_indicator->quick_search(index_num - 1, 1))																	
+																* this->index_weigths[t-1][index_num-1];
+					sum_growth += this->index_weigths[t][index_num-1] * (1 - this->equity_indicator->quick_search(index_num - 1, 1));
+				}
+				for(int i = 0; i<index_map_size; i++)
+				{
+					index_num = index_map_2[i];
+					this->index_weigths[t][index_num-1] = 100 * this->index_weigths[t][index_num-1]/sum_growth;
+				}
+				this->agd_uk_wb_main_proj_array[t][AV_GROWTH_RATE_EQ] = sum_growth/100. - 1.;
+			}
+			else
+			{
+				char message[MAX_LENGTH_MESSAGE_EXCEPTION];
+				sprintf_s(message, "The rebalancing indicator should be either REBALANCE or DRIFT");
+				throw new GMXBException(message);
+			}
+
+		}
+		else
+		{
+			for (unsigned int i = 0; i < this->model_point->list_of_funds.size(); i++)
+			{
+				// Compute the performance of the fund
+				for (int j = 0; j < this->model_point->list_of_funds[i].fund.nb_indexes ; j++)
+				{
+					int index_num_split = this->model_point->list_of_funds[i].fund.position_in_beta_array[j];
+					double beta_i_j = 0;
+					if (fund_is_equity[i] == 1)
+					{
+						if (t == 1)
+						{
+							beta_i_j = this->model_point->list_of_funds[i].fund.current_beta[index_num_split];
+						}
+						else
+						{
+							beta_i_j = this->model_point->list_of_funds[i].fund.target_beta[index_num_split];
+						}
+						this->model_point->list_of_funds[i].return_fund_t[t] += (
+									this->afmr[this->model_point->elapsed_mths_in_valn_yr + 1][t][index_num_split]   
+									- this->timing_items[t][PRORATA] 
+											* (this->model_point->list_of_funds[i].fund.get_percentage_fee_amount()/100.0)
+									)
+									* 
+									beta_i_j;
+					}
+				}
+				
+				if (t > 1)
+				{
+					// Compute the av fund weights
+					if (this->model_point->av_rebal_ind == Model_Point::DRIFT)
+					{
+						if (fund_is_equity[i] == 1)
+						{
+						// TO DO check if the denominator is nil
+						this->model_point->list_of_funds[i].alpha_t[t-1]= this->model_point->list_of_funds[i].alpha_t[t-2]
+									*( 1 + this->model_point->list_of_funds[i].return_fund_t[t-1]) / (1 + agd_uk_wb_main_proj_array[t-1][AV_GROWTH_RATE_EQ]);
+						}
+					}
+					else
+					{
+						this->model_point->list_of_funds[i].alpha_t[t-1] = this->model_point->list_of_funds[i].target_weight;
+					}
+				}
+				if (fund_is_equity[i] == 1)
+				{
+					this->equity_exposure += this->model_point->list_of_funds[i].alpha_t[t-1];
+					agd_uk_wb_main_proj_array[t][AV_GROWTH_RATE_EQ] += this->model_point->list_of_funds[i].return_fund_t[t] 
+											* this->model_point->list_of_funds[i].alpha_t[t-1] - this->model_point->fee_rp;
+				}
+			}
+		}
+	}
+	
+
+    void avGrowth_bond(int t)
+	{
+		if (this->equity_exposure == 1)
+		{
+			agd_uk_wb_main_proj_array[t][AV_GROWTH_RATE_BOND] = 0.;
+		}
+		else
+		{
+			if (!this->model_point->load_model_point_funds)
+			{
+				int index_num;
+				agd_uk_wb_main_proj_array[t][AV_GROWTH_RATE_BOND]= 0.0;
+		
+				if (this->model_point->av_rebal_ind == Model_Point::REBALANCE)
+				{
+					double av_growth_t = 0.;
+					for(int i = 0; i<index_map_size; i++)
+					{
+						index_num = index_map_2[i];
+						av_growth_t += (
+										this->afmr[this->model_point->elapsed_mths_in_valn_yr + 1][t][index_num-1]   
+										- this->timing_items[t][PRORATA] 
+										* (0.8 / 100.))
+										* (1 - this->equity_indicator->quick_search(index_num - 1, 1))
+										* this->index_weigths[t][index_num-1]/100.0;
+					}
+					this->agd_uk_wb_main_proj_array[t][AV_GROWTH_RATE_BOND] = av_growth_t;
+				}
+				else if (this->model_point->av_rebal_ind == Model_Point::DRIFT)
+				{
+					double sum_growth = 0.;
+					for(int i = 0; i<index_map_size; i++)
+					{
+						index_num = index_map_2[i];	
+						this->index_weigths[t][index_num-1] = (1.0 +  (this->afmr[this->model_point->elapsed_mths_in_valn_yr + 1][t][index_num-1]   
+																- this->timing_items[t][PRORATA] 
+																	* (model_point->gmxb_m_c / 100.))
+																	* (1 - this->equity_indicator->quick_search(index_num - 1, 1)))																	
+																	* this->index_weigths[t-1][index_num-1];
+						sum_growth += this->index_weigths[t][index_num-1] * (1 - this->equity_indicator->quick_search(index_num - 1, 1));
+					}
+					for(int i = 0; i<index_map_size; i++)
+					{
+						index_num = index_map_2[i];
+						this->index_weigths[t][index_num-1] = 100 * this->index_weigths[t][index_num-1]/sum_growth;
+					}
+					this->agd_uk_wb_main_proj_array[t][AV_GROWTH_RATE_BOND] = sum_growth/100. - 1.;
+				}
+				else
+				{
+					char message[MAX_LENGTH_MESSAGE_EXCEPTION];
+					sprintf_s(message, "The rebalancing indicator should be either REBALANCE or DRIFT");
+					throw new GMXBException(message);
+				}
+
+			}
+			else
+			{
+				for (unsigned int i = 0; i < this->model_point->list_of_funds.size(); i++)
+				{
+					// Compute the performance of the fund
+					for (int j = 0; j < this->model_point->list_of_funds[i].fund.nb_indexes ; j++)
+					{
+						int index_num_split = this->model_point->list_of_funds[i].fund.position_in_beta_array[j];
+						double beta_i_j = 0;
+						if (fund_is_equity[i] == 0)
+						{
+							if (t == 1)
+							{
+								beta_i_j = this->model_point->list_of_funds[i].fund.current_beta[index_num_split];
+							}
+							else
+							{
+								beta_i_j = this->model_point->list_of_funds[i].fund.target_beta[index_num_split];
+							}
+							
+							this->model_point->list_of_funds[i].return_fund_t[t] += (
+										this->afmr[this->model_point->elapsed_mths_in_valn_yr + 1][t][index_num_split]   
+										- this->timing_items[t][PRORATA] 
+												* (this->model_point->list_of_funds[i].fund.get_percentage_fee_amount()/100.0)
+										)
+										* 
+										beta_i_j;
+						}
+					}
+					
+					if (t > 1)
+					{
+						// Compute the av fund weights
+						if (this->model_point->av_rebal_ind == Model_Point::DRIFT)
+						{
+							if (fund_is_equity[i] == 0)
+							{
+							// TO DO check if the denominator is nil
+							this->model_point->list_of_funds[i].alpha_t[t-1]= this->model_point->list_of_funds[i].alpha_t[t-2]
+										*( 1 + this->model_point->list_of_funds[i].return_fund_t[t-1]) / (1 + agd_uk_wb_main_proj_array[t-1][AV_GROWTH_RATE_BOND]);
+							}
+						}
+						else
+						{
+							this->model_point->list_of_funds[i].alpha_t[t-1] = this->model_point->list_of_funds[i].target_weight;
+						}
+					}
+					if (fund_is_equity[i] == 0)
+					{
+						agd_uk_wb_main_proj_array[t][AV_GROWTH_RATE_BOND] += this->model_point->list_of_funds[i].return_fund_t[t] 
+												* this->model_point->list_of_funds[i].alpha_t[t-1] - this->model_point->fee_rp;
+					}
+				}
+			}
+		}
+	}
+
+	void bond_tax_calculation(int t)
+	{
+		this->agd_uk_wb_main_proj_array[t][TAX_BOND]= this->agd_uk_wb_main_proj_array[t][AV_GROWTH_RATE_BOND] * this->tax_bond;	
+		
+	}
+
+	void dividend_tax_calculation(int t)
+	{
+		this->agd_uk_wb_main_proj_array[t][TAX_DIVIDEND]=this->equity_exposure * this->dividend_rate * this->tax_dividend;
+	}
+
+	void capital_tax_calculation(int t)
+	{
+		this->agd_uk_wb_main_proj_array[t][TAX_CAPITAL] = 
+												max(0, this->agd_uk_wb_main_proj_array[t][AV_GROWTH_RATE_EQ]
+												- (this->dividend_rate + this->RPI) * this->equity_exposure) * this->tax_capital ;
+	}
+
+	void tax_credit_available(int t)
+	{
+		if (t==1 || t==0)
+			this->agd_uk_wb_main_proj_array[t][TAX_CREDIT_AVAILABLE]=0.0;
+		else
+			this->agd_uk_wb_main_proj_array[t][TAX_CREDIT_AVAILABLE]= this->agd_uk_wb_main_proj_array[t-1][TAX_CREDIT_AVAILABLE]
+														- this->agd_uk_wb_main_proj_array[t-1][TAX_CREDIT_USED]
+													+ max(0, -(this->agd_uk_wb_main_proj_array[t-1][AV_GROWTH_RATE_EQ]
+													-this->dividend_rate * this->equity_exposure)
+														* this->tax_capital);
+	}
+
+	void tax_credit_used(int t)
+	{
+		if (t==0)
+			this->agd_uk_wb_main_proj_array[t][TAX_CREDIT_USED]=0.0;
+		else
+			this->agd_uk_wb_main_proj_array[t][TAX_CREDIT_USED] = min (this->agd_uk_wb_main_proj_array[t][TAX_CREDIT_AVAILABLE], this->agd_uk_wb_main_proj_array[t][TAX_CAPITAL]);
+	}
+
+	void tax_paid_calculation(int t)
+	{
+		this->bond_tax_calculation(t);
+		this->dividend_tax_calculation(t);
+		this->capital_tax_calculation(t);
+		this->tax_credit_available(t);
+		this->tax_credit_used(t);
+		this->agd_uk_wb_main_proj_array[t][TAX_PAID]= this->agd_uk_wb_main_proj_array[t][TAX_BOND] + this->agd_uk_wb_main_proj_array[t][TAX_DIVIDEND]
+				+ this->agd_uk_wb_main_proj_array[t][TAX_CAPITAL] - this->agd_uk_wb_main_proj_array[t][TAX_CREDIT_USED];
+	}
+
+	void avGrowth_annual(int t)
+	{
+		main_proj_array[t][AV_GROWTH]= 0.0;
+	
+		main_proj_array[t][AV_GROWTH_RATE] = this->agd_uk_wb_main_proj_array[t][AV_GROWTH_RATE_EQ] + this->agd_uk_wb_main_proj_array[t][AV_GROWTH_RATE_BOND] 
+												- this->agd_uk_wb_main_proj_array[t][TAX_PAID];							
+
+		main_proj_array[t][AV_GROWTH] = main_proj_array[t][AV_B] 
+									 * main_proj_array[t][AV_GROWTH_RATE];	
+	}
+
+	double dynamic_lapse_rate_axa(int t) 
+	{
+		int pol_yr = (int)this->timing_items[t][POL_YEAR] ; 
+		double itm;
+		 
+		double tenyr = this->afmr[this->model_point->elapsed_mths_in_valn_yr + 1][t][MAXIMUM_NUMBER_OF_INDEXES]/100.0;
+		
+		//calculation of the withdrawal rate
+		main_proj_array[t][BOND_RATE_FOR_LAPSES] = tenyr; 
+
+		double agd_irr_lapse_rate;
+		double agd_dynamic_rate;
+
+		//ITM Calculation
+		if (t == 1)
+		{ 
+		  main_proj_array[t][GMWB_IF]  = max(this->model_point->gmwb_rollup_valn, this->model_point->gmwb_ratchet_valn);
+		} 
+		else
+			main_proj_array[t][GMWB_IF] = main_proj_array[t-1][GMWB_IF]; 
+
+	    double av_e_bef_surr_chg = main_proj_array[t][AV_E_BEF]*(1.- surr_chg_perc->search(int(this->timing_items[t][POL_YEAR]), 1) /100.);
+
+		if(main_proj_array[t][AV_E_BEF] > SMALL_DOUBLE)
+				itm = tenyr - this->wb_wdl_rate/100. * max(av_e_bef_surr_chg, main_proj_array[t][GMWB_IF])/ av_e_bef_surr_chg  ;
+		else
+				itm = 0.0;	
+	
+		main_proj_array[t][ITM] = itm ;
+
+		//Dynamic rationnal rate calculation
+		double itm_threshold_inf = this->lapse_dyn_medregion->quick_search(THRESHOLD1, 1)/100;
+		double itm_threshold_sup = this->lapse_dyn_medregion->quick_search(THRESHOLD2, 1)/100;
+		double slope = lapse_dyn_medregion->quick_search(SLOPE, 1);
+			       
+
+		if	(pol_yr <= tax_deferral)
+		{
+			 agd_dynamic_rate = 0.0;
+		}
+		else
+		{
+			if (itm > itm_threshold_sup)
+				agd_dynamic_rate = this->lapse_max_pa_perc / 100.0;
+			else if (itm < itm_threshold_inf)	
+				agd_dynamic_rate = this->lapse_min_pa_perc / 100.0;
+			else		
+				agd_dynamic_rate = min(this->lapse_max_pa_perc/ 100.0 , max(slope * (itm - itm_threshold_inf), 0.0)) ;
+		}	
+
+        
+		//Irrational rate calculation
+		 if(pol_yr <= this->model_point->gmxb_deferral_period)
+			 agd_irr_lapse_rate = this->lapse_rates->search(pol_yr, ACC)/100; 
+		else
+			agd_irr_lapse_rate = this->lapse_rates->search(pol_yr, DIST)/100; 
+	     
+
+		//Rationnal - irationnal percentage rate calculation	   
+		if (t==1)
+		{
+			rational_index[0] = this->lapse_dyn_profile_split->quick_search(RATIONAL, 1);
+			irrational_index[0] =  this->lapse_dyn_profile_split->quick_search(IRRATIONAL, 1);
+
+			for (int i = 2; i != SUBACCT_MAX_PERIOD+1; i++)
+			{
+				rational_index[i] = 0.0;
+				irrational_index[i] = 0.0;
+			}
+		}
+			
+		 double denom = rational_index[t-1] * (1 - agd_dynamic_rate) + irrational_index[t-1] * (1- agd_irr_lapse_rate); 
+		 	
+		 if (denom > SMALL_DOUBLE)
+		 {
+			rational_index[t] = rational_index[t-1] * (1 - agd_dynamic_rate) / denom;
+			irrational_index[t] = irrational_index[t-1] * (1 - agd_irr_lapse_rate) / denom;
+		 }   
+		 else
+		 {
+			rational_index[t] = 0.0;
+			irrational_index[t] = 0.0;
+		 }
+		
+		//Effective lapse rate
+        return rational_index[t-1] * agd_dynamic_rate + irrational_index[t-1]* agd_irr_lapse_rate;
+	} 
+
+	bool find_string(std::string& s, std::string& s_toBeFind)
+	{
+		std::string::size_type loc = s.find( s_toBeFind, 0 );
+		if( loc != std::string::npos ) 
+			return true;
+		else 
+			return false;    
+	}
+
+    void gmxbCharge(int t)
+	{
+		if (!this->charge_benefit_base)
+			Projection::gmxbCharge(t);
+		else
+		{
+			if (this->timing_items[t][POL_YEAR] <= this->product_charging_duration)
+			{
+				if (t==1)
+				{
+					main_proj_array[t][GMXB_CHARGE] = min(this->timing_items[t][PRORATA]* (model_point->gmxb_g_c / 100.0)* max(model_point->gmwb_rollup_valn,model_point->gmwb_ratchet_valn),
+						                                 main_proj_array[t][AV_B_BEF_BIS]- main_proj_array[t][ADMIN_FEE] - main_proj_array[t][M_AND_E_FEE]);
+                }
+				else
+				{
+					main_proj_array[t][GMXB_CHARGE] = min(this->timing_items[t][PRORATA]* (model_point->gmxb_g_c / 100.0)* main_proj_array[t-1][GMWB_IF],
+                                                         main_proj_array[t][AV_B_BEF_BIS] - main_proj_array[t][ADMIN_FEE] - main_proj_array[t][M_AND_E_FEE]);
+                }			
+			}
+			else
+			{
+				main_proj_array[t][GMXB_CHARGE] = 0.0;
+			}
+		}
+	}
+
+
+	void project_gmwb_payments_claims_beg(int t)
+	{
+		if (this->gmwb_timing == "BEG")
+		{
+			if (t == 1) 
+			{
+				main_proj_array[t][GMWB_ROLLUP_PREV]= model_point->gmwb_rollup_valn;     
+				main_proj_array[t][GMWB_RATCHET_PREV] = model_point->gmwb_ratchet_valn;
+				main_proj_array[t][GMWB_IF] = max(model_point->gmwb_rollup_valn, model_point->gmwb_ratchet_valn);
+			}
+			else
+			{      
+				main_proj_array[t][GMWB_RATCHET_PREV] = main_proj_array[t-1][GMWB_AV_IF];
+
+				if (this->gmwb_ratchet_type == "RATCHET")
+					main_proj_array[t][GMWB_ROLLUP_PREV] = main_proj_array[t-1][GMWB_PREM_IF];
+				else
+				{
+					main_proj_array[t][GMWB_ROLLUP_PREV]  = main_proj_array[t-1][GMWB_IF] ; 	
+				}
+			}	
+
+			if ((this->timing_items[t][POL_YEAR]> model_point->gmxb_deferral_period)
+				&&(this->timing_items[t][POL_YEAR] <= model_point->gmxb_deferral_period + this->gmwb_withdrawal_period))
+			{
+
+              if (t==1)
+               
+				main_proj_array[t][GMWB_PAYMENT] = 
+										max(this->wb_wdl_rate/ 100. 
+									   * main_proj_array[t][GMWB_IF] - model_point->gmwb_payt_yr, 0.0) ;
+
+			  else
+			   main_proj_array[t][GMWB_PAYMENT] = 
+										(this->wb_wdl_rate)/ 100. 
+									   * main_proj_array[t-1][GMWB_IF];
+
+
+
+				main_proj_array[t][GMWB_CLAIMS] = 
+							max(0.0, main_proj_array[t][GMWB_PAYMENT]  - main_proj_array[t][AV_B_BEF]);
+			}
+			else
+			{
+				main_proj_array[t][GMWB_PAYMENT] =  0.0;
+				main_proj_array[t][GMWB_CLAIMS] = 0.0;
+			}
+		}
+	}
+
+	void gmwb_specific_end_claims_calculation(int t)
+	{
+		//calculation of the withdrawal rate
+		this->main_proj_array[t][GMWB_PAYMENT] = this->wb_wdl_rate/ 100. 
+																* this->main_proj_array[t][GMWB_IF];
+		this->main_proj_array[t][GMWB_CLAIMS] = max(0.0, this->main_proj_array[t][GMWB_PAYMENT] - 
+																	this->main_proj_array[t][AV_E_BEF_CLAIMS]);		
+	}
+
+
+	void set_debug_file_header()
+	{
+		this->debug_file <<  "ADMIN_FEE,ANN_CLAIMS_AV,AV_B,AV_B_BEF,AV_E,AV_E_BEF,AV_GROWTH,AV_GROWTH_AVE,AV_GROWTH_RATE,";
+		this->debug_file <<  "AV_REBAL,BOND_RATE_FOR_LAPSES,DISCOUNT_FACTOR,DEATH_CLAIMS_AV,GMXB_CHARGE,AV_E_BEF_CLAIMS,M_AND_E_FEE,";
+		this->debug_file <<  "MAT_CLAIMS_AV,PREMIUM_ALLOC,PREMIUM_BONUS,SURR_CLAIMS_AV,SURR_FPW,GMWB_ANN_PAID,";
+		this->debug_file <<  "PD_UP_SURR_CHG,AV_B_BEF_BIS,GMWB_PAYMENT_FROM_AV,ANN_CLAIMS_GMIB,ANN_RATE,ANN_RATE_BASE,";
+		this->debug_file <<  "GMDB_CLAIMS,DEATH_RATE,FPW_RATE_AV, GMAB_IF,GMAB_CLAIMS,GMAB_NAR,GMDB_AV_IF,";
+		this->debug_file <<  "GMDB_AV_IF_BEF,GMDB_IF,GMDB_IF_BEF,GMDB_PAYMENT,GMDB_NAR_BEF,GMDB_PREM_IF,";
+		this->debug_file <<  "GMDB_PREM_IF_BEF,GMDB_ROLLUP_CAP_IF,GMDB_ROLLUP_CAP_IF_BEF,GMIB_AX_CURR,GMIB_AX_GUAR,";
+		this->debug_file <<  "GMIB_CURR_DEATH_RATE,GMIB_GUAR_DEATH_RATE,GMIB_IF,GMIB_IF_BEF,GMIB_NAR,GMIB_NAR_BEF,";
+		this->debug_file <<  "GMIB_RATCHET_IF,GMIB_RATCHET_IF_BEF,GMIB_ROLLUP_CAP_IF,GMIB_ROLLUP_CAP_IF_BEF,";
+		this->debug_file <<  "GMIB_ROLLUP_IF,GMIB_ROLLUP_IF_BEF,LAPSE_RATE,SURV_CUM,PREMIUM,PREMIUM_ACCUM,";
+		this->debug_file <<  "PREMIUM_ACCUM_BEF,PREMIUM_ANN_IF_B,PREMIUM_ANN_IF_E,SURV_MTH,GMWB_CLAIMS,GMWB_AV_IF,";
+		this->debug_file <<  "GMWB_AV_IF_BEF,GMWB_IF,GMWB_IF_BEF,GMWB_PREM_IF,GMWB_PREM_IF_BEF,GMWB_ROLLUP_CAP_IF,";
+		this->debug_file <<  "GMWB_ROLLUP_CAP_IF_BEF,GMWB_MAX_WDL_AMT,GMWB_PAYMENT,ONG_PREM_SURR_CHG,HC_PREM,";
+		this->debug_file <<  "GMIB_DAX_GUAR,GMSB_PREM_IF,GMSB_GUAR_PAYMENT,GMSB_CLAIMS,GMAB_RATCHET_BASE,";
+		this->debug_file <<  "GMAB_ROLLUP_BASE,SURV_INDEX,GMWB_RATCHET_PREV,GMWB_ROLLUP_PREV,ITM,GMSB_IF, GMIB_CLAIMS, TECHNICAL_RATE,";
+		this->debug_file <<  "AV_GROWTH_RATE_EQ,AV_GROWTH_RATE_BOND,TAX_BOND,TAX_DIVIDEND,TAX_CAPITAL,TAX_CREDIT_AVAILABLE,";
+		this->debug_file <<  "TAX_CREDIT_USED,TAX_PAID, POL_MONTH, POL_YEAR, AGE_LAST, PRORATA,";
+		this->debug_file << endl;																												
+	}
+
+	void display_debug_info(int t)
+	{		
+		for(int col = 0; col < MAIN_PROJ_NUM_COLS ; col++)
+			this->debug_file << setprecision(15)<< this->main_proj_array[t][col] << ",";
+		for(int col = 0; col < AGD_UK_MAIN_PROJ_NUM_COLS ; col++)
+			this->debug_file << setprecision(15)<< this->agd_uk_wb_main_proj_array[t][col] << ",";
+		for(int item_col = 0; item_col < TOTAL_TIMING_ITEMS; item_col++)
+			this->debug_file << setprecision(15)<< this->timing_items[t][item_col] << ",";
+
+		this->debug_file << endl;
+	}
+
+	double * get_wdl_rate(int t){
+		double * wdl_rate = new double [t];
+		if (gmwb_wdl_rate_source == "DATA_FILE")
+		{
+			for (int j=0; j<t; j++){
+				wdl_rate[j] = model_point->gmwb_wdl_rate;
+			}
+		}
+		else if (gmwb_wdl_rate_source == "UDI")
+		{
+			for (int j=0; j<t; j++){
+				if (joint_life_ind == "LS")
+					wdl_rate[j] = this->gmwb_max_annual_wdl_pct_table->search(min(this->model_point->age_election_ddf_calculated, this->age_exact_issue_2 + this->model_point->gmxb_deferral_period), 1);
+				else
+					wdl_rate[j] = this->gmwb_max_annual_wdl_pct_table->search(this->model_point->age_election_ddf_calculated, 1);
+			}
+		}
+		return wdl_rate;
+	}
+
+
+	void project_t(int t, double **pvs, int curr_shock_nb, double lapse_mult, 
+							double mortality_mult, bool shock_av)
+	{
+		this->avBBef(t);
+		if (shock_av)
+		{
+			if(t==1)
+				this->delta_shock(t);
+		}
+		this->project_gmwb_payments_claims_beg(t);
+		this->avBBefBis(t);
+		this->avB(t);
+		this->avGrowth_equity(t);
+		this->avGrowth_bond(t);
+		this->tax_paid_calculation(t);
+		this->avEBef(t);
+		this->init_rates(t, lapse_mult, mortality_mult);
+		this->avEBefClaims(t);
+		this->project_gmwb_bases_payments_claims(t);
+		this->avE(t);
+		this->project_gmdb_bases_payments_claims(t);
+		this->finish_t(t);
+		this->populate_pvs(t, pvs, curr_shock_nb);
+	}
+
+
+
+};

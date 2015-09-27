@@ -1,0 +1,483 @@
+#pragma once
+#include "stdafx.h"
+#include "Projection classes/Guarantee projection classes/Projection.h"
+#include "Projection classes/Guarantee projection classes/Projection_WB.h"
+#include "Projection classes/Country projection classes/head_CHE_WB.h"
+#include "Model point classes/Country model point classes/Model_Point_CHE_WB.h"
+
+#include "Utility classes/Normal.h"
+
+#define NO_RATCHET 0
+#define DEF_RATCHET_YR 1
+#define PAYOUT_RATCHET_YR 2
+#define PAY_DEF_RATCHET_YR 3
+
+class Projection_CHE_WB : public Projection_WB
+{
+	public:
+	
+	double che_wb_main_proj_array[SUBACCT_MAX_PERIOD +1][CHE_WB_MAIN_PROJ_NUM_COLS];
+	double lapse_dyn_intercept;
+	double lapse_dyn_slope;
+	double lapse_dyn_threshold;
+	double WB_prorata[SUBACCT_MAX_PERIOD + 1];
+	double gmwb_rollup_Adjust_prorata;
+	double AV_Ratchet_Adjust_wb;
+	double AV_Ratchet_Adjust_wb_dynamic;
+	double cumul_av_ratchet;
+	string gmwb_rollup_prorata;
+	string base_wbadjust;
+	int gmxb_type2_ind;
+	double gmwb_wdl_rate;
+	double gmxb_deferral_period_inforce;
+	int gr_symbol;
+
+	Projection_CHE_WB(const vector<vector <int>>& i_s_a,const vector<vector <int>>& f_s_a, 
+					 const char* tables, bool generate_dbg_files, const string& dbg_file_path,
+					 const int t_high_shorter, bool l_longevity_tables, int time_step):
+	Projection(i_s_a, f_s_a, tables, generate_dbg_files, dbg_file_path, t_high_shorter, l_longevity_tables, time_step),
+	Projection_WB(i_s_a, f_s_a, tables, generate_dbg_files, dbg_file_path,  t_high_shorter, l_longevity_tables, time_step)
+	{
+		gmwb_rollup_prorata = this->assump_WB->search("gmwb_rollup_prorata");
+		base_wbadjust = this->assump_WB->search("base_wbadjust");
+		lapse_dyn_intercept = atof(this->assump->search("lapse_dyn_intercept").c_str());
+		lapse_dyn_slope = atof(this->assump->search("lapse_dyn_slope").c_str());
+		lapse_dyn_threshold = atof(this->assump->search("lapse_dyn_threshold").c_str());
+		gr_symbol = atoi(this->assump->search("gr_symbol").c_str());
+
+	};
+
+	~Projection_CHE_WB()
+	{
+	}
+
+	void set_che_wb_main_proj_arrays_to_zero()
+	{
+		memset(this->che_wb_main_proj_array, 0, sizeof(this->che_wb_main_proj_array));
+	}
+
+	void init_projection()
+	{
+		Projection::init_projection();
+		this->set_che_wb_main_proj_arrays_to_zero();
+	}
+
+	
+
+	//Function to set the value of gmxb_type2 to be called in gmwb_withdrawal_period_table
+	//and in gmwb_max_annual_pct_table
+	void set_gmxb_type(Model_Point *mp)
+	{
+		if (mp->gmxb_type2.length() != 0)
+		{
+			char * str = new char[mp->gmxb_type2.length() + 1];
+			strcpy(str, mp->gmxb_type2.c_str());
+			str[mp->gmxb_type2.length()] = '\0';
+			char * tkstr = strtok(str, "y");
+			this->gmxb_type2_ind = atoi(tkstr);
+			delete[] str;
+		}
+		else
+
+		{
+			char message[MAX_LENGTH_MESSAGE_EXCEPTION];
+			sprintf_s(message, "The GmxbType2 field is empty");
+			throw new GMXBException(message);
+		}
+
+	}
+
+
+	//Modification - To have the gmwb_ratchet_period == 0
+	void set_current_model_point(Model_Point *mp)
+	{
+		Model_Point_CHE_WB *che_model_point = dynamic_cast<Model_Point_CHE_WB *> (mp);
+		
+		this->gmxb_deferral_period_inforce = che_model_point->gmxb_deferral_period_inforce;
+
+		Projection_WB::set_current_model_point(mp);
+		this->set_gmxb_type(mp);
+		Projection::set_current_model_point(mp);
+
+		if (this->gmwb_ratchet_type == "RATCHET")
+			this->apply_ratchet = true;
+		else
+			this->apply_ratchet = false;
+
+		this->ratchet_period_indicator = NO_RATCHET;
+	}          
+
+	//Modification -  "ceil" function and the table
+	int product_charging_duration_s()
+	{
+		//return (int)((ceil(model_point->gmxb_deferral_period)) + this->gmwb_withdrawal_period_table->search(int(model_point->gmxb_deferral_period), this->gmxb_type2_ind));	
+		return (int)((ceil(this->gmxb_deferral_period_inforce)) + (this->gmxb_type2_ind - (int)(this->gmxb_deferral_period_inforce)));
+	}
+
+	// Modification - WB_prorata calculation for payments and recalculation of timings[PRORATA]
+	void calculate_items_for_timing_annual(int t)
+	{
+		Projection::calculate_items_for_timing_annual(t);
+		int pol_year = int(timing_items[t][POL_YEAR]);
+		
+		if (pol_year < int(this->model_point->gmxb_deferral_period) + 1.)
+			WB_prorata[pol_year] = 0.;
+		else if  (pol_year == int(this->model_point->gmxb_deferral_period) + 1.)
+			WB_prorata[pol_year] = 1. - (this->model_point->gmxb_deferral_period - int(this->model_point->gmxb_deferral_period));
+		else if  ((pol_year > int(this->model_point->gmxb_deferral_period) + 1.) && (pol_year < int(this->model_point->gmxb_deferral_period) + (this->gmxb_type2_ind - (int)(this->gmxb_deferral_period_inforce)) + 1.))
+			WB_prorata[pol_year] = 1. ;
+
+		else if (pol_year == 1. + (this->gmxb_type2_ind - (int)(this->gmxb_deferral_period_inforce)) + int(this->model_point->gmxb_deferral_period))
+
+
+			WB_prorata[pol_year] = (this->model_point->gmxb_deferral_period - int(this->model_point->gmxb_deferral_period));
+		
+		
+		if ((pol_year == int(model_point->gmxb_deferral_period) + (this->gmxb_type2_ind - (int)(this->gmxb_deferral_period_inforce)) + 1.)
+			&& (model_point->gmxb_deferral_period - (int)model_point->gmxb_deferral_period) > 0.)
+			timing_items[t][PRORATA] = WB_prorata[pol_year];
+		
+		this->che_wb_main_proj_array[t][PERCENTAGE_WHDL] = WB_prorata[pol_year];   
+	}
+
+	double dynamic_lapse_rate_axa(int t)
+	{
+		int pol_yr = int(timing_items[t][POL_YEAR]);
+		int years_to_maturity = (int)(this->model_point->gmxb_deferral_period + (this->gmxb_type2_ind - (int)(this->gmxb_deferral_period_inforce))- pol_yr) ;
+
+
+		int years_to_first_payt = (int)max (0 , this->model_point->gmxb_deferral_period - pol_yr );
+		int nbre_remaining_payt = (int)max(0 , (this->gmxb_type2_ind - this->model_point->gmxb_deferral_period) - max(0, pol_yr - this->model_point->gmxb_deferral_period)) ;
+
+		double gmwb_bb = 0.0;
+		double gmwb_rollup_amt = 0.0;
+		double sum_fees = (this->model_point->gmxb_m_c + this->model_point->gmxb_g_c)/100;
+		this->gmwb_rollup_Adjust_prorata = 1; 
+
+		if (gmwb_rollup_prorata == "YES")
+			this->gmwb_rollup_Adjust_prorata = timing_items[t][PRORATA];
+
+		if ((pol_yr <= this->model_point->gmxb_deferral_period) && (pol_yr <= gmwb_max_bonus_term))
+		{
+			if (t==1)
+			{
+				this->main_proj_array[t][GMWB_PREM_IF] = this->model_point->gmwb_rollup_valn;
+				//gmwb_rollup_amt = this->main_proj_array[t][GMWB_PREM_IF] * this->model_point->gmwb_rollup_rate / 100. * this->gmwb_rollup_Adjust_prorata;
+				gmwb_rollup_amt = this->main_proj_array[t][GMWB_PREM_IF] * (pow(  (1+this->model_point->gmwb_rollup_rate / 100.), this->gmwb_rollup_Adjust_prorata ) - 1.);
+			}
+			else
+				gmwb_rollup_amt = this->main_proj_array[t-1][GMWB_PREM_IF] * this->model_point->gmwb_rollup_rate / 100. *this->gmwb_rollup_Adjust_prorata;
+		}
+		else
+			gmwb_rollup_amt = 0.0;
+
+		double ratchet_indicator = 0.0;
+		if(	  (gmwb_ratchet_area =="Contract_duration")
+			||((gmwb_ratchet_area =="Deferral_period")&&(pol_yr<= this->model_point->gmxb_deferral_period))
+			||((gmwb_ratchet_area =="Payout_period")&&(this->gmxb_deferral_period_inforce == int(this->gmxb_deferral_period_inforce))&&(pol_yr >= this->model_point->gmxb_deferral_period))
+			||((gmwb_ratchet_area =="Payout_period")&&(this->gmxb_deferral_period_inforce != int(this->gmxb_deferral_period_inforce))&&(pol_yr > this->model_point->gmxb_deferral_period)))
+    			
+				if (((gmwb_ratchet_type == "RATCHET") && (this->model_point->gmwb_ratchet_period != 0))
+    			   && ((int(this->timing_items[t][POL_YEAR]) % int(this->model_point->gmwb_ratchet_period) == 0)))
+				 
+
+					ratchet_indicator = 1.0;
+		      
+		if (t == 1)
+			cumul_av_ratchet = model_point->gmwb_wdl_cum_dyn_lapse
+							   + min(this->main_proj_array[t][GMWB_PAYMENT], this->main_proj_array[t][AV_B_BEF])/surv_cumul[t-1];
+		else
+			cumul_av_ratchet = cumul_av_ratchet + min(this->main_proj_array[t][GMWB_PAYMENT], this->main_proj_array[t][AV_B_BEF])/surv_cumul[t-1];
+		 
+		AV_Ratchet_Adjust_wb_dynamic = 0.0; 
+		
+		if (base_wbadjust == "TRUE")
+		   AV_Ratchet_Adjust_wb_dynamic = cumul_av_ratchet; 
+
+
+		if (t == 1)//first year gmdb not calculated yet, use valuation date gmdb from data file
+			 gmwb_bb = max(this->model_point->gmwb_rollup_valn + gmwb_rollup_amt, this->model_point->gmwb_ratchet_valn 
+						  + ratchet_indicator * max(this->main_proj_array[t][AV_E_BEF]- this->model_point->gmwb_ratchet_valn + AV_Ratchet_Adjust_wb_dynamic*surv_cumul[t-1], 0.0));  
+		else
+    		gmwb_bb =  max(this->main_proj_array[t-1][GMWB_PREM_IF] + gmwb_rollup_amt,
+							this->main_proj_array[t-1][GMWB_AV_IF] + ratchet_indicator 
+							* max(this->main_proj_array[t][AV_E_BEF] - this->main_proj_array[t-1][GMWB_AV_IF] + AV_Ratchet_Adjust_wb_dynamic*surv_cumul[t-1], 0.0));
+		     
+
+		double short_rate = this->afmr[this->model_point->elapsed_mths_in_valn_yr + 1][t][MAXIMUM_NUMBER_OF_INDEXES] / 100.0;
+		
+		this->main_proj_array[t][BOND_RATE_FOR_LAPSES] = short_rate;
+		
+		this->che_wb_main_proj_array[t][ITM_BASE]= (model_point->gmwb_wdl_rate/100) * gmwb_bb;
+
+		double itm = 0.0;
+
+		if (pv(years_to_first_payt, short_rate , nbre_remaining_payt, this->che_wb_main_proj_array[t][ITM_BASE]) < SMALL_DOUBLE)
+			itm = 200.;
+		else
+		   itm = this->main_proj_array[t][AV_E_BEF] /(max((this->main_proj_array[t][AV_E_BEF] - pv(years_to_first_payt, short_rate , nbre_remaining_payt, this->che_wb_main_proj_array[t][ITM_BASE]))*exp(-sum_fees*years_to_maturity),0)+ pv(years_to_first_payt, short_rate , nbre_remaining_payt, this->che_wb_main_proj_array[t][ITM_BASE]));
+		
+		//Calcul dynamic lapse function 
+		double lapse_function = this->lapse_dyn_intercept
+  								+ this->lapse_dyn_slope*(itm - this->lapse_dyn_threshold/100.);
+
+		//calcul lapse rates
+		  double lapse_rate_base = this->lapse_rates->search((int)this->timing_items[t][POL_YEAR], 1);
+		   
+		this->main_proj_array[t][ITM] = itm;	
+		this->che_wb_main_proj_array[t][ITM_GUARANTEE] = pv(years_to_first_payt, short_rate , nbre_remaining_payt, this->che_wb_main_proj_array[t][ITM_BASE]);
+		this->che_wb_main_proj_array[t][ITM_GUARANTEE_DURATION] = nbre_remaining_payt;
+		this->che_wb_main_proj_array[t][ITM_LAPSE_RATE] = lapse_function;           
+		
+		double lapse_value = max(lapse_min_pa_perc/100., min (lapse_max_pa_perc /100.,(lapse_rate_base + lapse_function) /100.));
+
+		return lapse_value;
+	}
+
+	double pv(int time_to_first_payt, double rate, int payt_period_nbr, double annual_payt_amount)
+	{
+		double present_value = 0.0;
+	
+		for (int i = 1; i <= payt_period_nbr; i++) 
+			present_value += annual_payt_amount / pow(1. + rate , i + time_to_first_payt);
+
+		return present_value;		
+	}
+
+	//Modification - deferral period can be in decimal
+	int get_ratchet_indicator(int t)
+	{
+		if (this->model_point->gmwb_ratchet_period != 0.)
+		{
+			if (this->gmxb_deferral_period_inforce == int(this->gmxb_deferral_period_inforce))
+				return Projection_WB::get_ratchet_indicator(t);
+			else
+			{
+			
+			if(((this->gmwb_ratchet_area =="Contract_duration")
+					||( (this->gmwb_ratchet_area =="Deferral_period") 
+					&& (this->timing_items[t][POL_YEAR] <= int(model_point->gmxb_deferral_period))))
+					&& ((int)this->timing_items[t][POL_YEAR] % (int)model_point->gmwb_ratchet_period == 0))	
+						
+					return DEF_RATCHET_YR;
+					
+
+			else if((this->gmwb_ratchet_area =="Payout_period") 
+					&& (this->timing_items[t][POL_YEAR] > int(model_point->gmxb_deferral_period))
+					&& ((int(this->timing_items[t][POL_YEAR]) - int(model_point->gmxb_deferral_period)) % (int)model_point->gmwb_ratchet_period) == 0)
+						
+					
+					return PAYOUT_RATCHET_YR;
+			}
+		}
+		else
+		{
+			return NO_RATCHET;
+		
+		}
+	}
+
+	//Modification - ceil function
+	void calculate_rollup_base(int t)
+	{ 
+		double gmwb_vested_base = 0.0;  
+				
+		if (this->gmwb_rollup_type == "LINEAR") 
+			gmwb_vested_base = (model_point->prem_paid + main_proj_array[t][PREMIUM]) * surv_cumul[t-1];
+		else if (this->gmwb_rollup_type == "COMPOUND")
+			gmwb_vested_base = main_proj_array[t][GMWB_ROLLUP_PREV] + main_proj_array[t][PREMIUM] * surv_cumul[t-1];
+
+		if (this->timing_items[t][POL_YEAR] <= min(ceil(model_point->gmxb_deferral_period), this->gmwb_max_bonus_term)) 
+		{	//	main_proj_array[t][GMWB_PREM_IF_BEF] = main_proj_array[t][GMWB_ROLLUP_PREV] + main_proj_array[t][PREMIUM] + gmwb_vested_base * this->gmwb_rollup_Adjust_prorata * model_point->gmwb_rollup_rate / 100.;
+		        main_proj_array[t][GMWB_PREM_IF_BEF] = main_proj_array[t][GMWB_ROLLUP_PREV] + main_proj_array[t][PREMIUM] + gmwb_vested_base * (pow ( (1+model_point->gmwb_rollup_rate / 100.), this->gmwb_rollup_Adjust_prorata ) -1.) ;
+       	}
+		else
+			main_proj_array[t][GMWB_PREM_IF_BEF] = main_proj_array[t][GMWB_ROLLUP_PREV] + main_proj_array[t][PREMIUM];
+	}
+
+	void calculate_ratchet_base_begining_period(int t)
+	{
+		double surv_month = this->surv_mth_calc(t);
+
+		if (ratchet_period_indicator == DEF_RATCHET_YR || ratchet_period_indicator == PAYOUT_RATCHET_YR || ratchet_period_indicator ==PAY_DEF_RATCHET_YR)
+			main_proj_array[t][GMWB_AV_IF_BEF] = max(main_proj_array[t][AV_E_BEF] + AV_Ratchet_Adjust_wb * surv_cumul[t-1], main_proj_array[t][GMWB_RATCHET_PREV] + main_proj_array[t][PREMIUM]);
+		
+		else
+			main_proj_array[t][GMWB_AV_IF_BEF] = main_proj_array[t][GMWB_RATCHET_PREV] + main_proj_array[t][PREMIUM];
+		
+	}
+
+	void project_gmwb_payments_claims_beg(int t)
+	{
+		int pol_yr = int(timing_items[t][POL_YEAR]);
+
+		if (this->gmwb_timing == "BEG")
+		{
+			if (t == 1) 
+			{
+				main_proj_array[t][GMWB_ROLLUP_PREV] = model_point->gmwb_rollup_valn;     
+				main_proj_array[t][GMWB_RATCHET_PREV] = model_point->gmwb_ratchet_valn;
+				main_proj_array[t][GMWB_IF] = max(model_point->gmwb_rollup_valn, model_point->gmwb_ratchet_valn);
+			}
+			else
+			{      
+				main_proj_array[t][GMWB_RATCHET_PREV] = main_proj_array[t-1][GMWB_AV_IF];
+
+				if (this->gmwb_ratchet_type == "RATCHET")
+					main_proj_array[t][GMWB_ROLLUP_PREV] = main_proj_array[t-1][GMWB_PREM_IF];
+				else
+					main_proj_array[t][GMWB_ROLLUP_PREV]  = main_proj_array[t-1][GMWB_IF]; 
+			}	
+
+			if (this->timing_items[t][POL_YEAR] > model_point->gmxb_deferral_period  && this->timing_items[t][POL_YEAR] <= (int)ceil(model_point->gmxb_deferral_period) + (this->gmxb_type2_ind - (int)(this->gmxb_deferral_period_inforce)))
+			{
+				if (t==1)
+					main_proj_array[t][GMWB_PAYMENT] = max(model_point->gmwb_wdl_rate/100 * main_proj_array[t][GMWB_IF] * WB_prorata[pol_yr] - model_point->gmwb_payt_yr, 0.0);
+
+
+				else
+					main_proj_array[t][GMWB_PAYMENT] = model_point->gmwb_wdl_rate/100 * main_proj_array[t-1][GMWB_IF] * WB_prorata[pol_yr] ;
+        	
+				main_proj_array[t][GMWB_CLAIMS] = max(0.0, main_proj_array[t][GMWB_PAYMENT] - main_proj_array[t][AV_B_BEF]);
+			}
+			else
+			{
+				main_proj_array[t][GMWB_PAYMENT] =  0.0;
+				main_proj_array[t][GMWB_CLAIMS] = 0.0;
+			}
+		}
+	}
+
+
+
+void populate_pvs(int t, double **pvs, int curr_shock_number)
+	{
+
+		if (!this->project_aging_policies)
+		{
+			double discount_factor = 0.;
+			if (t == 0)
+				discount_factor = 1.0;
+			else	 
+				discount_factor = this->get_rate(this->model_point->elapsed_mths_in_valn_yr + 1,t,MAXIMUM_NUMBER_OF_INDEXES + 1);  
+
+			if (t==1)
+				pvs[curr_shock_number][BEGINING_ACCOUNT_VALUE] += 
+						main_proj_array[1][AV_B_BEF];
+			
+			pvs[curr_shock_number][PV_GMAB] += 
+									(main_proj_array[t][GMAB_CLAIMS] * discount_factor);
+
+			pvs[curr_shock_number][PV_GMDB] += 
+									(main_proj_array[t][GMDB_CLAIMS]* discount_factor);
+
+			pvs[curr_shock_number][PV_GMWB] += 
+									(main_proj_array[t][GMWB_CLAIMS] * discount_factor);
+
+			pvs[curr_shock_number][PV_GMSB] += 
+									(main_proj_array[t][GMSB_CLAIMS]* discount_factor);
+
+			pvs[curr_shock_number][PV_GMIB] += (main_proj_array[t][GMIB_CLAIMS]* discount_factor);
+
+
+			pvs[curr_shock_number][PV_GMXB_REAL_CHG] += 
+									(main_proj_array[t][GMXB_CHARGE]* discount_factor);
+			
+			
+			if (model_point->gmxb_g_c ==0)
+			{
+				pvs[curr_shock_number][PV_GMXB_EHC_CHG] = 0.;
+			}
+			else 
+				pvs[curr_shock_number][PV_GMXB_EHC_CHG] = 
+							(pvs[curr_shock_number][PV_GMXB_REAL_CHG] 
+								* adjusted_rate(model_point->gmxb_ehc_charge/100.0, this->time_step,-1) / adjusted_rate(model_point->gmxb_g_c /100.0, this->time_step,-1)
+							 );
+
+
+            if (t == 1)
+			{
+				double first_chg = 0.;
+				if (this->gr_symbol == 1) 
+					first_chg =this->model_point->up_front_g_c/ 100. * this->model_point->prem_paid;
+
+				pvs[curr_shock_number][PV_DEP_FEE]+= first_chg;
+									
+			//	pvs[curr_shock_number][PV_GMWB] -= first_chg;
+
+			}
+
+			/*pvs[curr_shock_number][PV_DEP_FEE] += 
+									(main_proj_array[t][HC_PREM]* discount_factor);*/
+
+			this->main_proj_array[t][DISCOUNT_FACTOR] = discount_factor;
+		}
+}
+
+
+
+
+
+	void project_gmwb_bases_payments_claims(int t)
+	{		
+		this->ratchet_period_indicator = this->get_ratchet_indicator(t);
+		//Initialization of rollup/ratchet bases
+		this->init_bases(t);
+
+		AV_Ratchet_Adjust_wb = 0.0;
+
+		if (t == 1)
+			this->che_wb_main_proj_array[t][GMWB_WDL_CUMM]   = model_point->gmwb_wdl_cum_dyn_lapse + min(main_proj_array[t][GMWB_PAYMENT] ,main_proj_array[t][AV_B_BEF])/surv_cumul[t-1];
+		else
+			this->che_wb_main_proj_array[t][GMWB_WDL_CUMM]  = this->che_wb_main_proj_array[t-1][GMWB_WDL_CUMM]+ min(main_proj_array[t][GMWB_PAYMENT] ,main_proj_array[t][AV_B_BEF])/surv_cumul[t-1];
+		
+		if (base_wbadjust == "TRUE")
+		  { 
+		   AV_Ratchet_Adjust_wb = this->che_wb_main_proj_array[t][GMWB_WDL_CUMM]; 
+		  }
+
+		if (this->timing_items[t][POL_YEAR] > ceil(model_point->gmxb_deferral_period) + (this->gmxb_type2_ind - (int)(this->gmxb_deferral_period_inforce)))
+
+
+			main_proj_array[t][GMWB_IF] = 0.0;
+		else 
+		{
+			this->calculate_rollup_base(t);
+			if (this->apply_ratchet)
+			{
+				this->calculate_ratchet_base_and_claims(t);
+			}
+			else
+			{
+				main_proj_array[t][GMWB_AV_IF_BEF] = main_proj_array[t][GMWB_RATCHET_PREV];
+				this->calculate_gmwb_payments(t);
+				if (this->gmwb_timing == "END")
+					project_gmwb_payments_claims_end(t);
+			}
+		}
+	}
+
+	void project_t(int t, double **pvs, int curr_shock_nb, double lapse_mult, 
+							double mortality_mult, bool shock_av)
+	{
+		this->avBBef(t);
+		if (shock_av)
+		{
+			if(t==1)
+				this->delta_shock(t);
+		}
+		this->project_gmwb_payments_claims_beg(t);
+		this->avBBefBis(t);
+		this->avB(t);
+		this->avEBef(t);
+		this->init_rates(t, lapse_mult, mortality_mult);
+		this->avEBefClaims(t);
+		this->project_gmwb_bases_payments_claims(t);
+		this->avE(t);
+		this->finish_t(t);
+		this->populate_pvs(t, pvs, curr_shock_nb);
+	}
+
+
+
+};

@@ -1,0 +1,18 @@
+﻿Build started 03.03.2015 12:27:26.
+     1>Project "C:\Users\b029735\NoBackupData\12_MONTHLY_PROCESS\PROD_CCG_V2.1_27032013\Calibration\Calibration.vcxproj" on node 2 (Build target(s)).
+     1>Lib:
+         C:\Program Files\Microsoft Visual Studio 11.0\VC\bin\Lib.exe /OUT:"C:\Users\b029735\NoBackupData\12_MONTHLY_PROCESS\PROD_CCG_V2.1_27032013\Debug\Calibration(dll).lib" /NOLOGO Debug\Calibration.obj
+         Debug\CalibSwapMarket.obj
+         Debug\G1analytics.obj
+         Debug\InterfaceCalibration.obj
+         Debug\Interpolation.obj
+         Debug\LMnumerics.obj
+         Debug\Matrice.obj
+         Debug\ProbaUtilities.obj
+         ProbaUtilities.obj : MSIL .netmodule or module compiled with /GL found; restarting link with /LTCG; add /LTCG to the link command line to improve linker performance
+         Calibration.vcxproj -> C:\Users\b029735\NoBackupData\12_MONTHLY_PROCESS\PROD_CCG_V2.1_27032013\Debug\Calibration(dll).lib
+     1>Done Building Project "C:\Users\b029735\NoBackupData\12_MONTHLY_PROCESS\PROD_CCG_V2.1_27032013\Calibration\Calibration.vcxproj" (Build target(s)).
+
+Build succeeded.
+
+Time Elapsed 00:00:00.60

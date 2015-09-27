@@ -1,0 +1,15 @@
+#pragma once
+#include "Model point classes/Model_point.h"
+
+
+class Model_Point_FRA : public Model_Point
+{
+
+public:
+
+	Model_Point_FRA (vector<string>& row, int rank, Product_configuration& product_config, Scenario_configuration& scenario_config) : 
+	  Model_Point (row, rank, product_config, scenario_config)
+	{
+
+	}				  
+};

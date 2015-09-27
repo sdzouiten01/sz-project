@@ -1,0 +1,11 @@
+#pragma once
+
+#define AV_GROWTH_RATE_EQ 0
+#define AV_GROWTH_RATE_BOND 1
+#define TAX_BOND 2
+#define TAX_DIVIDEND 3
+#define TAX_CAPITAL 4
+#define TAX_CREDIT_AVAILABLE 5
+#define TAX_CREDIT_USED 6
+#define TAX_PAID 7
+#define AGD_UK_MAIN_PROJ_NUM_COLS 8

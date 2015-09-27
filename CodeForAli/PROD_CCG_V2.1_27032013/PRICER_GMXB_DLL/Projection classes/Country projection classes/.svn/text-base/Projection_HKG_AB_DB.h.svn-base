@@ -1,0 +1,738 @@
+#pragma once
+#include "stdafx.h"
+#include "Projection classes/Guarantee projection classes/Projection.h"
+#include "Projection classes/Guarantee projection classes/Projection_AB_DB.h"
+#include "Model point classes/Country model point classes/Model_Point_HKG.h"
+
+#define ITM_TABLE_ADJ 0.001
+
+class Projection_HKG_AB_DB : public Projection_AB_DB
+{
+public:
+
+	GMXB_Assumption_Table *itm_factor_table;
+	GMXB_Assumption_Table *coi_rate;
+	Model_Point_HKG *hkg_mp;
+	double include_coi;
+	//double premium_accum_prev;
+	double pw[SUBACCT_MAX_PERIOD + 1];
+	double dynamic_lapse;
+	double paid_up_index_cumul;
+	double paid_up_index;
+	string premium_addition_type;
+	double prem_prorata;
+	string age_calculation_type;
+
+	Projection_HKG_AB_DB(const vector<vector <int>>& i_s_a,const vector<vector <int>>& f_s_a,
+						const char* tables, bool generate_dbg_files,const string& dbg_file_path,
+						const int t_high_shorter, bool l_longevity_tables, int time_step):
+	Projection(i_s_a, f_s_a, tables, generate_dbg_files, dbg_file_path, t_high_shorter, l_longevity_tables, time_step),
+	Projection_AB_DB(i_s_a, f_s_a, tables, generate_dbg_files, dbg_file_path,  t_high_shorter, l_longevity_tables, time_step)
+	{	
+		premium_addition_type = this->assump->search("premium_addition_type");
+		include_coi = atof(this->assump->search("include_coi").c_str());
+		this->age_calculation_type = this->assump->search("age_calculation_type");
+		this->itm_factor_table = new GMXB_Assumption_Table(tables, "itm_factor_table");
+		this->coi_rate = new GMXB_Assumption_Table(tables, "coi_rate");
+	
+	}
+
+	~Projection_HKG_AB_DB()
+	{
+		delete this->itm_factor_table;
+		delete this->coi_rate;
+	}
+
+	void set_current_model_point(Model_Point *mp)
+	{
+		hkg_mp = dynamic_cast<Model_Point_HKG *> (mp);
+		Projection::set_current_model_point(mp);
+	}
+
+	void avBBef(int t)
+	{
+		int index_num = 0;
+		this->regular_premium_calculation(t); 
+		main_proj_array[t][PREMIUM_ACCUM_BEF] = this->main_proj_array[t-1][PREMIUM_ACCUM] + this->main_proj_array[t][PREMIUM];
+		
+		if (t == 1)
+		{
+			paid_up_index=1.;
+			paid_up_index_cumul=1.;
+		}
+
+		main_proj_array[t][AV_B_BEF] = main_proj_array[t-1][AV_E] + this->main_proj_array[t][PREMIUM];
+
+		for(int i = 0; i<index_map_size; i++)
+		{
+			index_num = index_map_2[i];
+			if (main_proj_array[t][AV_B_BEF] > SMALL_DOUBLE)
+				this->index_weigths[t-1][index_num-1] = (this->index_weigths[t-1][index_num-1] * main_proj_array[t-1][AV_E] + this->main_proj_array[t][PREMIUM] * this->model_point->av_split_prop_array[index_num-1]) / (main_proj_array[t][AV_B_BEF]);
+		}
+
+	}
+
+	
+	void delta_shock(int t)
+	{
+		if(this->index_shock_array[this->index_shock_number][0]==(MAXIMUM_NUMBER_OF_INDEXES+1))
+		{
+			main_proj_array[t][AV_B_BEF] *= (this->index_shock_array[this->index_shock_number][1]/100.0+1);
+			main_proj_array[t][AV_B_BEF]= main_proj_array[t][AV_B_BEF]-(this->index_shock_array[this->index_shock_number][1]/100.0)*this->main_proj_array[t][PREMIUM];
+		}
+		else if(this->index_shock_array[this->index_shock_number][0]<=MAXIMUM_NUMBER_OF_INDEXES && this->index_shock_array[this->index_shock_number][0]>0)
+		{
+			int index_num = this->index_shock_array[this->index_shock_number][0];
+			double premium_alloc = 0.;
+			double step = 0.;
+			double shock_value = this->index_shock_array[this->index_shock_number][this->index_shock_array[this->index_shock_number][0]]/100.0;
+			
+			premium_alloc = this->main_proj_array[t][PREMIUM] * this->model_point->av_split_prop_array[index_num-1]/100.0;
+			step = (this->model_point->av_if_array[index_num - 1]) * shock_value;
+			main_proj_array[t][AV_B_BEF] += step;
+
+			// Recompute the index weight du to the indice shock
+			double AVE_prop_on_AV_B_BEF ;
+			
+			if (((this->model_point->av_if_array[index_num - 1])+ premium_alloc) > SMALL_DOUBLE)
+				AVE_prop_on_AV_B_BEF = (this->model_point->av_if_array[index_num - 1])/((this->model_point->av_if_array[index_num - 1])+ premium_alloc);
+			else
+				AVE_prop_on_AV_B_BEF = 0.0;
+
+			double weighted_shock = 1 + this->index_weigths[t-1][index_num-1]/100. * shock_value * AVE_prop_on_AV_B_BEF;
+		
+			for(int i = 0; i < index_map_size; i++)
+			{
+				int index_n = index_map_2[i];
+				if(index_n == index_num)
+				{
+						this->index_weigths[t][index_n-1] = this->index_weigths[t-1][index_n-1]*(1 + shock_value* AVE_prop_on_AV_B_BEF)/weighted_shock;
+				}
+				else
+				{
+						this->index_weigths[t][index_n-1] = this->index_weigths[t-1][index_n-1]/weighted_shock;
+				}
+
+				// if (this->model_point->av_rebal_ind == "DRIFT")
+				if (this->model_point->av_rebal_ind == Model_Point::DRIFT)
+				{
+						this->index_weigths[t - 1][index_n-1] = this->index_weigths[t][index_n-1];
+				}
+
+			}
+		}
+	}
+
+	double regular_premium_calculation(int t) 
+	{
+		double pol_yr = int(timing_items[t][POL_YEAR]);
+		//set up surv index - this must happen first
+		
+		if (t == 1)
+		{
+			main_proj_array[t][SURV_INDEX] = 1.0;
+			if (premium_addition_type == "Premium_Prorata")
+				this->main_proj_array[0][PREMIUM_ACCUM] = model_point->prem_paid;
+		}
+
+		//calculation of prem_prorata
+		if(premium_addition_type == "Premium_Prorata")
+		{
+			if (t == 1)
+			{
+				if (int(model_point->payt_freq) == 12)
+				{
+							
+					if (model_point->duration  < 2./12.)
+						prem_prorata = 10./12.;
+					else 
+						prem_prorata = (model_point->payt_freq - (model_point->elapsed_mths_in_valn_yr) - 1.) / model_point->payt_freq;
+				}
+				else if (int(model_point->payt_freq) == 2)
+				{
+					prem_prorata = (2 - int((model_point->elapsed_mths_in_valn_yr + 5.)/6.)) / model_point->payt_freq;
+					if (model_point->duration - int(model_point->duration) < 1./12.)
+						prem_prorata = 0.5;
+				}
+				else if(int(model_point->payt_freq) == 1)
+				{
+					prem_prorata = 0.;					
+				}
+				else
+					prem_prorata = 0.;			
+			}	
+			else
+				prem_prorata = 1.0;
+		}
+		else
+			prem_prorata = 1.0;
+
+		if (model_point->payt_freq != 0.)
+		{
+			if (pol_yr == this->product_charging_duration_s())
+			//if (t == maturity_year_s())
+			{
+				this->main_proj_array[t][PREMIUM] = 0;
+   				return 0.0;
+			}
+			else 
+			{
+				if ((pol_yr <= model_point->prem_durr) && (pol_yr > 0))
+				{
+					this->main_proj_array[t][PREMIUM] = this->model_point->prem_curr* surv_cumul[t-1] * prem_prorata;
+					return (model_point->prem_curr* surv_cumul[t-1] * prem_prorata);
+				}
+				else
+				{
+					this->main_proj_array[t][PREMIUM] = 0;
+					return 0.0;			
+				}
+			}
+		}	 
+		else
+		{
+			if (pol_yr == 1)
+			{
+				this->main_proj_array[t][PREMIUM] = model_point->prem_curr * surv_cumul[t-1] * prem_prorata;
+				return  (model_point->prem_curr * surv_cumul[t-1] * prem_prorata);
+			}
+			else
+			{
+				this->main_proj_array[t][PREMIUM] = 0;
+				return 0.0;
+			}
+		}
+	}
+
+	void calculate_items_for_timing_annual(int t) 
+	{
+		if (t == 0 && model_point->elapsed_months < 0)
+			throw new GMXBException("Either t = 0 or elapsed_months is negative");
+
+		else if (t == 0 && model_point->elapsed_months >= 0)
+		{
+			this->timing_items[t][POL_MONTH] = model_point->elapsed_months;
+		}
+		else 
+		{
+			this->timing_items[t][POL_MONTH] = model_point->elapsed_months + (t-1) * 12.;
+		}
+
+		if (t == 0)
+		{
+			if (model_point->elapsed_months <= 0)
+				timing_items[t][POL_YEAR] = 0.;
+			else
+				timing_items[t][POL_YEAR] = floor((model_point->elapsed_months ) / 12.) + 1;
+		}
+		else if (t == 1) 
+		{
+		
+				this->timing_items[t][POL_YEAR] = (int)(this->model_point->duration) + 1.0;
+		}
+		else 
+		{
+			this->timing_items[t][POL_YEAR] = this->timing_items[t-1][POL_YEAR] + 1.0;
+		}
+		
+		if (this->projection_type == "New_Bus" && t == 0)
+		{
+			if(this->age_calculation_type == "at_valn")
+				this->timing_items[t][AGE_LAST] = int(model_point->age_valn);
+			else
+				this->timing_items[t][AGE_LAST] = 0.;
+		}
+		
+		else if (this->age_calculation_type == "at_valn")
+		{
+			if (t == 1)
+				this->timing_items[t][AGE_LAST] = (int)(model_point->age_valn);
+			else
+				this->timing_items[t][AGE_LAST] = this->timing_items[t-1][AGE_LAST] + 1.0;
+		}
+		else
+			this->timing_items[t][AGE_LAST] = this->model_point->age_exact_issue + this->timing_items[t][POL_YEAR] - 1.0;
+
+		if (t==1)
+			this->timing_items[t][PRORATA] = (1. - this->model_point->elapsed_mths_in_valn_yr/12. ) ;
+		else
+			this->timing_items[t][PRORATA] = 1.;
+	}  
+
+	double calculate_admin_fee (int t)
+	{
+		if (main_proj_array[t][AV_B_BEF_BIS] < SMALL_DOUBLE)	
+			return 0.0;
+		else
+		{
+			double pol_yr = int(timing_items[t][POL_YEAR]);
+			double base_admin_fee;
+
+			if(pol_yr > 12 && pol_yr == 0)
+				base_admin_fee = 0.0;
+			else 
+			{
+				base_admin_fee = surv_cumul[t-1] * hkg_mp->hkg_pol_m_f * model_point->prem_curr /100.0;
+			}
+			return  min(base_admin_fee, main_proj_array[t][AV_B_BEF_BIS]); 
+		}
+	}
+
+	double calculate_coi (int t)
+	{
+		if (hkg_mp->hkg_gmdb_indic == 0)
+			return 0.0;
+		else
+		{
+			if (main_proj_array[t][AV_B_BEF_BIS] < SMALL_DOUBLE)
+				return 0.0;
+			else
+			{
+				double pol_yr = int(timing_items[t][POL_YEAR]);
+				double rate, premium_cumulated, coi;
+				
+				premium_cumulated = main_proj_array[t][PREMIUM_ACCUM_BEF] / surv_cumul[t-1] ;
+
+				int i;
+				
+				for(i=2 ; i<t+1 ; i++)  
+					premium_cumulated += (-1)* pw[i-1]/surv_cumul[i-1] ;
+
+				int sex_ind;
+				if (model_point->sex == "M")
+					sex_ind = 1;
+				else
+					sex_ind = 2;
+				rate = coi_rate->search(int(model_point->age_valn) + t-1, sex_ind);
+				coi = rate * 1.01 * max(premium_cumulated * surv_cumul[t-1]- main_proj_array[t][AV_B_BEF], 0.);
+
+				return coi;
+			}
+		}
+	}
+
+	double specific_fees_by_product(int t) 
+	{
+		if (t < 13)
+			return (calculate_coi(t) + calculate_admin_fee(t));
+		else
+			return (model_point->gmxb_a_c / 100.0);
+	}
+	
+	double prem_mult_s()
+	{
+		if (hkg_mp->hkg_policy_type == 1)
+			return 100.;
+		else if (hkg_mp->hkg_policy_type == 2)
+			return 105. ;
+		else
+			return 120.;
+	}
+
+	double dynamic_lapse_rate_axa(int t)
+	{
+		if (t == 0) 
+			return 0.0; 	
+			
+		// The calculations are based on an active policyholder. Therefore, the account
+		// value is divided by the survival probability to obtain the account value of 
+		// the active policyholder.
+
+		double pol_yr = int(timing_items[t][POL_YEAR]);
+		int yr_maturity = 1;				// Year till maturity at beginning of year
+		int yr_premium = 1;				// Premium paying years remaining at end of period
+		double ten_yr_rate = 1.0;			// 10-yr bond return.
+		double pv_av = 1.0;					// Present value of account value (inclusive of premiums)
+		double ax_factor = 1.0;				// Annuity factor (in advance) to calculate the PV of future premiums
+		double guar_amount = 1.0;			// Guaranteed payout at maturity based on current condition
+		double guar_ret = 1.0;				// Implied guaranteed return pa% until maturity based
+											// on current condition
+		double itm_perc = 1.0;				// The percentage of in-the-moneyness
+		double itm_factor = 1.0;			// Adjustment made to the base lapse rate
+		double premium_guar = 1.0;			// Guaranteed Premium Amount
+	
+
+		double hk_prem_prorata = this->prem_prorata;
+
+		double premium_cumul = main_proj_array[t][PREMIUM_ACCUM_BEF] / surv_cumul[t-1];
+		//double premium_cumul = premium_accum_bef / surv_cumul[t-1];
+	
+		yr_maturity = (int)max(model_point->gmab_period - pol_yr + 1, 0);			
+		yr_premium = (int)max(model_point->prem_durr - pol_yr, 0);
+		
+	 	if (t == 1)
+    		ten_yr_rate = this->afmr[1][t][MAXIMUM_NUMBER_OF_INDEXES]/100.0;
+	    else
+	    	ten_yr_rate = this->afmr[this->model_point->elapsed_mths_in_valn_yr + 1][t-1][MAXIMUM_NUMBER_OF_INDEXES]/100.0;
+		
+		//TEMPORARY FOR DEBUG
+		main_proj_array[t][TECHNICAL_RATE] = ten_yr_rate;
+
+		if (pol_yr <= model_point->prem_durr)
+		{
+			if ((1 + ten_yr_rate!=0.) && (ten_yr_rate!=0.) ) 
+				ax_factor = (1 - pow(1 + ten_yr_rate, - (yr_premium))) / ten_yr_rate  ;
+
+			if (model_point->payt_freq != 0)
+				premium_guar = (premium_cumul + model_point->prem_curr * yr_premium) ;			
+			else
+				premium_guar = premium_cumul ;
+		}
+		else
+		{
+			ax_factor = 0.0;
+			if (model_point->payt_freq != 0.) 
+				premium_guar = premium_cumul * paid_up_index_cumul;
+			else 
+				premium_guar = premium_cumul * paid_up_index_cumul;
+		}
+	
+		if (model_point->payt_freq != 0.)
+		{	
+			if (pol_yr <= model_point->prem_durr)
+				if (t <= 1)
+					pv_av = ax_factor * model_point->prem_curr  *(1 - hkg_mp->hkg_pol_m_f / 100.) + (main_proj_array[t][AV_B_BEF]/surv_cumul[t-1]);
+				else
+				{
+					pv_av = ax_factor * model_point->prem_curr * (1 - hkg_mp->hkg_pol_m_f/ 100.)  + (main_proj_array[t][AV_B_BEF]/surv_cumul[t-1]);
+					pv_av = pv_av - (model_point->prem_curr) * hkg_mp->hkg_pol_m_f / 100.;
+				}
+			else
+				pv_av = ax_factor * model_point->prem_curr +(main_proj_array[t][AV_B_BEF] / surv_cumul[t-1]);
+		 	}
+			else
+			{
+				if  (pol_yr <= model_point->prem_durr)
+				{	
+					if (t == 1)
+						pv_av = ax_factor * model_point->prem_curr *(1 - hkg_mp->hkg_pol_m_f/100.) + (main_proj_array[t][AV_B_BEF] / surv_cumul[t-1]);
+					else
+						pv_av = ax_factor * model_point->prem_curr * (1 - hkg_mp->hkg_pol_m_f/100.)  +  (main_proj_array[t][AV_B_BEF] / surv_cumul[t-1]);
+		 			
+					pv_av = pv_av - model_point->prem_curr * hkg_mp->hkg_pol_m_f / 100. ;
+		 		}
+		 		
+				if (pol_yr > model_point->prem_durr)
+					pv_av = (ax_factor) * model_point->prem_curr  + (main_proj_array[t][AV_B_BEF] / surv_cumul[t-1]);
+			}
+		
+		premium_guar = premium_guar* prem_mult_s()/100.;	
+	
+		if (pol_yr > model_point->gmab_period)
+			return 1.;
+		
+		double gmab_if_prev ;
+		
+		if( t == 1)
+			gmab_if_prev = max(main_proj_array[t][AV_B_BEF]/ surv_cumul[t-1], model_point->gmab_ratchet_valn);
+		else
+			gmab_if_prev =  max(main_proj_array[t][AV_B_BEF] / surv_cumul[t-1], main_proj_array[t-1][GMAB_IF]/surv_cumul[t-1]);
+		
+		// The GMAB at the beginning of the period is compared with the 
+		// account value at the beginning of the period to determine 
+		// the itm factor
+		
+		if (pol_yr == 1)
+			itm_factor = 1.0;
+		else  if (pv_av > 0.0)
+		{	
+
+			itm_perc = max(premium_guar, gmab_if_prev) / pv_av;
+			guar_ret = pow(itm_perc, 1.0 / yr_maturity) - 1.0;	
+			itm_factor = itm_factor_table->search((int)(guar_ret * 100 + ITM_TABLE_ADJ), 1);
+		}
+		
+		double lapse_rate_base = lapse_rates->search((int)pol_yr, 1) / 100.; 
+		dynamic_lapse = itm_factor;
+
+		return lapse_rate_base * itm_factor;
+	}
+
+	double calculate_partial_withdrawal (int t )
+	{
+		double pol_yr = int(timing_items[t][POL_YEAR]); 
+		double partial_withdrawal; 
+ 
+		if (pol_yr <= model_point->prem_durr)
+			return 0.;
+		else
+		{
+			if (model_point->payt_freq != 0.)
+				partial_withdrawal = max(0., 0.05 * dynamic_lapse * timing_items[t][PRORATA] *((main_proj_array[t][AV_E]/surv_cumul[t])- 2. * model_point->prem_curr)* surv_cumul[t]);
+
+ 			else partial_withdrawal = max(0., 0.05 * dynamic_lapse * timing_items[t][PRORATA] * main_proj_array[t][AV_E]);
+		}
+
+		return partial_withdrawal;
+	}
+
+	double surv_mth_calc(int t)
+	{
+		double surv_mth = (1.0 - main_proj_array[t][DEATH_RATE]) 
+					* (1.0 - main_proj_array[t][LAPSE_RATE]) 
+					* (1.0 - this->main_proj_array[t][ANN_RATE]);
+		
+		return surv_mth;
+	}
+	
+	void avEBefClaims(int t)
+	{
+		this->annClaimsAv(t);
+		this->deathClaimsAv(t);
+		this->surrClaimsAv(t);
+		this->pdUpSurrChg(t);
+		
+		surv_cumul[t] = surv_cumul[t-1] * this->surv_mth_calc(t);
+		
+		main_proj_array[t][AV_E_BEF_CLAIMS] = 
+								main_proj_array[t][AV_E_BEF]
+							  - main_proj_array[t][DEATH_CLAIMS_AV]
+							  - main_proj_array[t][SURR_CLAIMS_AV] 
+							  - main_proj_array[t][ANN_CLAIMS_AV] 
+							  - main_proj_array[t][PD_UP_SURR_CHG];
+	}
+
+	void avE (int t)
+	{
+		if ((this->gmab_is_recursive == 1) && 
+			(main_proj_array[t][AV_E_BEF_CLAIMS] >= SMALL_DOUBLE))
+		{			main_proj_array[t][AV_E] = 
+								max(0.0, main_proj_array[t][AV_E_BEF_CLAIMS] 
+							  + main_proj_array[t][GMAB_CLAIMS]);
+		}
+		else
+			Projection::avE(t);
+
+
+		pw[t] = calculate_partial_withdrawal(t);
+
+		if (timing_items[t][POL_YEAR] <= model_point->prem_durr) 
+		{
+			paid_up_index = 1.;	
+			paid_up_index_cumul = 1.;
+		}
+		else
+		{
+			if (main_proj_array[t][AV_E] > SMALL_DOUBLE) 
+			{
+				paid_up_index = 1. - (pw[t] / main_proj_array[t][AV_E]);
+				paid_up_index_cumul = paid_up_index_cumul * paid_up_index;
+			}
+			else 
+			{
+				paid_up_index = 1. ;
+			}
+		}
+		main_proj_array[t][AV_E] = max(main_proj_array[t][AV_E]- pw[t], 0);
+	}
+
+	void project_gmdb_bases_payments_claims(int t)
+	{
+		double gmdb_rollup_prev; 
+		double gmdb_ratchet_prev;
+		double premium = this->regular_premium_calculation(t);
+
+		if (this->gmdb_rollup_rate_source == Projection_DB::DATA_FILE)
+			this->gmdb_rollup_rate = model_point->axa_roll_r;	
+		if (t == 1) 
+		{
+			gmdb_rollup_prev = model_point->gmdb_rollup_valn;     
+			gmdb_ratchet_prev = model_point->gmdb_ratchet_valn;
+		}
+		else
+		{
+			gmdb_ratchet_prev = main_proj_array[t-1][GMDB_AV_IF];
+ 			if (this->gmdb_av_type == Projection_DB::DB_RATCHET)
+ 				gmdb_rollup_prev = main_proj_array[t-1][GMDB_PREM_IF];
+ 			else
+ 				gmdb_rollup_prev  = main_proj_array[t-1][GMDB_IF]; 
+
+		}
+		
+		//1.DB BASES ------------------------------------------------------------------------------------------------
+		if (this->timing_items[t][POL_YEAR] > 
+			min(this->gmdb_duration, this->product_charging_duration))
+		{
+			main_proj_array[t][GMDB_IF_BEF] = 0.0;
+			main_proj_array[t][GMDB_PREM_IF_BEF] = 0.0;
+			main_proj_array[t][GMDB_AV_IF] = 0.0;	
+			main_proj_array[t][GMDB_PREM_IF] = 0.0;
+			main_proj_array[t][GMDB_AV_IF] = 0.0;
+			main_proj_array[t][GMDB_IF] = 0.0;	
+		}
+		else 
+		{			
+			//1.1.ROLLUPBASE -------------------------------------------------------------------------------------------   
+			double gmdb_vested_base = 0.0;  
+
+			if (this->gmdb_rollup_type == Projection_DB::DB_ROLLUP_LINEAR) 
+				gmdb_vested_base = (model_point->prem_paid + premium) * surv_cumul[t-1];
+			else if (this->gmdb_rollup_type == Projection_DB::DB_ROLLUP_COMPOUND)
+				gmdb_vested_base = gmdb_rollup_prev + premium * surv_cumul[t-1];
+		    
+			if (this->timing_items[t][POL_YEAR]<= min(model_point->gmxb_deferral_period, this->gmdb_max_bonus_term)) 
+    			main_proj_array[t][GMDB_PREM_IF_BEF] = gmdb_rollup_prev + premium + gmdb_vested_base * this->gmdb_rollup_rate / 100.;
+			else
+    			main_proj_array[t][GMDB_PREM_IF_BEF] = gmdb_rollup_prev + premium;
+		    	
+			//1.2.RATCHET BASE, DB BASE BEFORE DECREMENTS----------------------------------------------------------------
+			if ((this->gmdb_av_type == Projection_DB::DB_RATCHET) && (model_point->gmdb_av_period != 0))
+				{
+					if (((int)(this->timing_items[t][POL_YEAR]) % model_point->gmdb_av_period) == 0)
+					{
+						 if(this->gmdb_ratchet_wb_adj == Projection_DB::ADJUST) 
+		   					main_proj_array[t][GMDB_AV_IF_BEF] = 
+								max(main_proj_array[t][AV_E], gmdb_ratchet_prev + premium);
+					}
+					else 
+  						main_proj_array[t][GMDB_AV_IF_BEF] = gmdb_ratchet_prev + premium;
+								
+				main_proj_array[t][GMDB_IF_BEF] = max(main_proj_array[t][GMDB_AV_IF_BEF] , main_proj_array[t][GMDB_PREM_IF_BEF]);
+				}
+			else 
+				main_proj_array[t][GMDB_IF_BEF] = main_proj_array[t][GMDB_PREM_IF_BEF];
+			
+			double surv_mth = this->surv_mth_calc(t);
+			 		
+			//1.3.BASES AFTER DECREMENTS---------------------------------------------------------------------------------
+			main_proj_array[t][GMDB_AV_IF] = main_proj_array[t][GMDB_AV_IF_BEF] * surv_mth - pw[t] ; 
+			main_proj_array[t][GMDB_PREM_IF] = main_proj_array[t][GMDB_PREM_IF_BEF] * surv_mth - pw[t];
+			main_proj_array[t][GMDB_IF]  = main_proj_array[t][GMDB_IF_BEF] * surv_mth - pw[t]; 
+
+		}//END DB BASE CALCS
+		
+		int sex_ind;
+		if (model_point->sex == "M")
+			sex_ind = 1;
+		else
+			sex_ind = 2;
+
+		//2.DB CLAIMS -----------------------------------------------------------------------------------------------
+		if ((int)(this->timing_items[t][POL_YEAR]) > min(this->gmdb_duration, this->product_charging_duration))
+		{			
+			main_proj_array[t][GMDB_CLAIMS] = 0.0;
+		}
+		else
+		{
+			if (include_coi <= SMALL_DOUBLE)
+			{
+				main_proj_array[t][GMDB_CLAIMS] = max(0.0,  main_proj_array[t][GMDB_IF_BEF]  - main_proj_array[t][AV_E_BEF])* main_proj_array[t][DEATH_RATE];
+				if (correct_med_db == "N")//to be deleted once correction is ok on prod
+					main_proj_array[t][GMDB_CLAIMS] = max(0.0, gmdb_rollup_prev - main_proj_array[t][AV_E_BEF])* main_proj_array[t][DEATH_RATE];
+			}	
+			else if (hkg_mp->hkg_gmdb_indic == 1.)
+	    	{
+	    		if(main_proj_array[t][AV_B] > 0.0)
+	     	 		main_proj_array[t][GMDB_CLAIMS]= - max((coi_rate->search(int(model_point->age_valn) + t-1, sex_ind) * timing_items[t][PRORATA] - main_proj_array[t][DEATH_RATE] - 0.00015 * timing_items[t][PRORATA]), 0.)  * 1.01 * max (main_proj_array[t][GMDB_IF_BEF] - main_proj_array[t][AV_B_BEF], 0.);
+				else
+					main_proj_array[t][GMDB_CLAIMS] = 0.0;
+			}
+			else
+				main_proj_array[t][GMDB_CLAIMS] = 0.0;
+		}
+		
+		main_proj_array[t][PREMIUM_ACCUM] = main_proj_array[t][PREMIUM_ACCUM_BEF] * this->surv_mth_calc(t);
+		//premium_accum_prev = main_proj_array_2[PREMIUM_ACCUM][t];
+	}
+	
+	void project_gmab_bases_payments_claims(int t)
+	{
+		this->main_proj_array[t][GMAB_CLAIMS] = 0.0;
+		if (this->gmab_ind)
+		{
+			double premium = this->regular_premium_calculation(t);
+			double gmab_rollup_prev = 0.0;
+			double gmab_ratchet_prev= 0.0;
+
+			if (t == 1) 
+			{
+				gmab_rollup_prev = model_point->gmab_rollup_valn;
+				gmab_ratchet_prev = model_point->gmab_ratchet_valn;
+			}	
+			else
+			{      
+				gmab_ratchet_prev = main_proj_array[t-1][GMAB_RATCHET_BASE] / surv_cumul[t-1] ;
+ 				if (this->gmab_av_type == Projection_AB::AB_RATCHET)
+ 					gmab_rollup_prev = main_proj_array[t-1][GMAB_ROLLUP_BASE];
+				else
+ 					gmab_rollup_prev  = main_proj_array[t-1][GMAB_IF] ; 
+			}
+
+
+
+			if (((this->timing_items[t][POL_YEAR] > model_point->gmab_period)&&(!this->gmab_is_recursive)) || ((this->timing_items[t][POL_YEAR] > this->product_charging_duration)&&(this->gmab_is_recursive)))
+				main_proj_array[t][GMAB_IF] = 0.0;
+		
+			else 
+				{// GMAB BENEFIT BASE CALCULATION
+				//-------------------------------
+				
+					// Set GMAB Rollup Base   
+					double gmab_rollup_factor = 1.0 + model_point->gmab_rollup_rate / 100.0;
+					if (t == 1)
+						main_proj_array[t][GMAB_ROLLUP_BASE] = (gmab_rollup_prev * gmab_rollup_factor + premium) * paid_up_index ;
+					else
+						main_proj_array[t][GMAB_ROLLUP_BASE] = (gmab_rollup_prev * gmab_rollup_factor + premium) * paid_up_index / surv_cumul[t-1];
+					
+					// Set GMAB Ratchet Base
+					 double gmab_ratchet_bef = gmab_ratchet_prev ;
+					 
+	   
+					//Reset or ratchet the Benefit Base before decrement 
+					double gmab_bef_surv;
+				
+					double surv_mth = this->surv_mth_calc(t-1) * (1.0 - main_proj_array[t][DEATH_RATE]) 
+									* (1.0 - main_proj_array[t][LAPSE_RATE]) * (1.0 - this->main_proj_array[t][ANN_RATE]);
+
+					if ((this->gmab_av_type == Projection_AB::AB_RATCHET) && (model_point->gmab_av_period != 0))
+					{	
+						if ((fmod((this->timing_items[t][POL_YEAR]), model_point->gmab_av_period) == 0))
+						{
+							main_proj_array[t][GMAB_RATCHET_BASE] = 
+								max(main_proj_array[t][AV_E] / surv_cumul[t] , gmab_ratchet_bef * paid_up_index);
+						}
+			   
+						else 
+							main_proj_array[t][GMAB_RATCHET_BASE] = gmab_ratchet_bef;
+							
+						gmab_bef_surv = max(main_proj_array[t][GMAB_RATCHET_BASE], main_proj_array[t][GMAB_ROLLUP_BASE] * prem_mult_s() / 100.);
+					}
+					else
+					{ 
+						gmab_bef_surv = main_proj_array[t][GMAB_ROLLUP_BASE];
+					}
+				
+					main_proj_array[t][GMAB_RATCHET_BASE] = main_proj_array[t][GMAB_RATCHET_BASE] * surv_cumul[t]  ; 
+					main_proj_array[t][GMAB_ROLLUP_BASE] = main_proj_array[t][GMAB_ROLLUP_BASE] * surv_cumul[t]  ;
+					main_proj_array[t][GMAB_IF]  = gmab_bef_surv * surv_cumul[t] ; 
+
+			}//end of gmab benefit base calculation	
+
+			if (((int)this->timing_items[t][POL_YEAR] % (int)model_point->gmab_maturity_freq) != 0)
+				main_proj_array[t][GMAB_CLAIMS] = 0.0;
+			else
+				main_proj_array[t][GMAB_CLAIMS] = max(0.0, main_proj_array[t][GMAB_IF] - max(main_proj_array[t][AV_E_BEF_CLAIMS] - pw[t], 0.));
+		}
+	}
+
+	void project_t(int t, double **pvs, int curr_shock_nb, double lapse_mult, 
+							double mortality_mult, bool shock_av)
+	{
+		this->avBBef(t);
+		if (shock_av)
+		{
+			if(t==1)
+				this->delta_shock(t);
+		}
+		this->avBBefBis(t);
+		this->avB(t);
+		this->avEBef(t);
+		this->init_rates(t, lapse_mult, mortality_mult);
+		this->avEBefClaims(t);
+		this->avE(t);
+		this->project_gmab_bases_payments_claims(t);
+		this->project_gmdb_bases_payments_claims(t);
+		this->finish_t(t);
+		this->populate_pvs(t, pvs, curr_shock_nb);
+	}
+};

@@ -1,0 +1,66 @@
+#pragma once
+
+#include "Model point classes/Model_Point.h"
+//#include "Model point classes/Country model point classes/model_point_head_CHE_WB.h"
+
+using namespace std;
+
+class Model_Point_CHE_WB : public Model_Point
+{
+	public :
+		//string additional_premium;
+		//double gmwb_wdl_rate;
+		double duration_inforce;
+		double gmxb_deferral_period_inforce;
+		
+
+		Model_Point_CHE_WB(vector<string>& row, int rank, Product_configuration& product_config,						Scenario_configuration& scenario_config) : Model_Point(row, rank, product_config, scenario_config)
+		{
+			//this->additional_premium = row[ADDITIONAL_PREMIUM];
+			//this->initialise_mp_variable();
+			//this->gmwb_wdl_rate = atof(row[GMWB_WDL_RATE].c_str());
+			//this->gmwb_wdl_rate = 1;
+						
+			this->duration_inforce = atof(row[DURATION_VALN].c_str());
+			this->gmxb_deferral_period_inforce = atof(row[GMXB_WAIT_PERIOD].c_str()); 
+			//this->gmxb_deferral_period_inforce = this->gmxb_deferral_period;
+			
+			
+			if (this->gmxb_deferral_period_inforce == int(this->gmxb_deferral_period_inforce))
+			{
+				this->duration = this->duration_inforce;
+				this->gmxb_deferral_period = this->gmxb_deferral_period_inforce;
+			}
+
+			else if (this->gmxb_deferral_period_inforce != int(this->gmxb_deferral_period_inforce))
+			{
+				//this->duration = this->duration_inforce;
+				//this->gmxb_deferral_period = this->gmxb_deferral_period_inforce;
+				
+				this->duration = this->duration_inforce + (1 - this->gmxb_deferral_period_inforce) ;
+				this->gmxb_deferral_period = this->gmxb_deferral_period_inforce + (1 - this->gmxb_deferral_period_inforce);
+			}
+			
+
+			// Compute calculated fields
+			age_exact_issue = this->age_valn - this->duration;
+
+			// TO DO remove this (dbf round in Moses)
+			if (ceil(age_exact_issue) - (age_exact_issue) <= 0.005)
+				age_exact_issue = ceil(age_exact_issue);
+
+			// Modification timing
+			elapsed_months = (int)ceil(this->duration*12);
+
+			// Modification timing 
+			elapsed_mths_in_valn_yr = (int)((this->duration - (int)this->duration)*12);
+			
+			// Modification timing 
+			elapsed_years = (int) (this->duration);
+			
+			age_election_ddf_calculated = this->age_exact_issue + this->gmxb_deferral_period;
+
+		}
+
+
+};

@@ -1,0 +1,174 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1">
+  <Class Name="Launcher">
+    <Position X="0.5" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>oiQICFYAKQRAiACEAABAGAAAAAAMAgQoIgCAAAACAAI=</HashCode>
+      <FileName>Launcher.h</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Field Name="tab_of_delta_gamma_hedge" />
+    </ShowAsAssociation>
+  </Class>
+  <Class Name="Delta_Gamma_Hedge">
+    <Position X="4.25" Y="0.5" Width="2.5" />
+    <TypeIdentifier>
+      <HashCode>iAE4izmxAAQoBiRGiJGCkRCAiARgyFCFVYgBIEDBFaA=</HashCode>
+      <FileName>Delta_Gamma_Hedge.h</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Field Name="annual_swap_rates" />
+      <Field Name="assumptions" />
+      <Field Name="delta_asset" />
+      <Field Name="delta" />
+      <Field Name="delta_futures" />
+      <Field Name="delta_futures_in_portfolio" />
+      <Field Name="delta_futures_in_portfolio_2" />
+    </ShowAsAssociation>
+  </Class>
+  <Class Name="Annual_Swap_Rates">
+    <Position X="7.75" Y="0.5" Width="1.5" />
+    <Compartments>
+      <Compartment Name="Nested Types" Collapsed="false" />
+    </Compartments>
+    <NestedTypes>
+      <Struct Name="Annual_Swap_Rates::Objects_Needed">
+        <TypeIdentifier>
+          <NewMemberFileName>Annual_Swap_Rates.h</NewMemberFileName>
+        </TypeIdentifier>
+      </Struct>
+    </NestedTypes>
+    <TypeIdentifier>
+      <HashCode>AAAAACgAAIAAAAAAAAAAAgAAAACAAABgAgAAAAAAIEA=</HashCode>
+      <FileName>Annual_Swap_Rates.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Assumptions">
+    <Position X="7.75" Y="5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAABACBAwAAAEQggggAAgACAAACBAgBAAwIBBEAAAAA=</HashCode>
+      <FileName>Assumptions.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Delta_Asset">
+    <Position X="12" Y="0.5" Width="2.25" />
+    <Compartments>
+      <Compartment Name="Nested Types" Collapsed="false" />
+    </Compartments>
+    <NestedTypes>
+      <Struct Name="Delta_Asset::Objects_Needed">
+        <TypeIdentifier>
+          <NewMemberFileName>Delta_Asset.h</NewMemberFileName>
+        </TypeIdentifier>
+      </Struct>
+      <Struct Name="Delta_Asset::Characteristics" Collapsed="true">
+        <TypeIdentifier>
+          <NewMemberFileName>Delta_Asset.h</NewMemberFileName>
+        </TypeIdentifier>
+      </Struct>
+      <Struct Name="Delta_Asset::Delta_Asset_Struct">
+        <TypeIdentifier>
+          <NewMemberFileName>Delta_Asset.h</NewMemberFileName>
+        </TypeIdentifier>
+      </Struct>
+    </NestedTypes>
+    <TypeIdentifier>
+      <HashCode>AIAAAAAAAAEgAAQAABACgAgAAAAAAAAAAAAAAAAAAVA=</HashCode>
+      <FileName>Delta_Asset.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Delta">
+    <Position X="9.5" Y="0.5" Width="2.25" />
+    <Compartments>
+      <Compartment Name="Nested Types" Collapsed="false" />
+    </Compartments>
+    <NestedTypes>
+      <Struct Name="Delta::Objects_Needed">
+        <TypeIdentifier>
+          <NewMemberFileName>Delta.h</NewMemberFileName>
+        </TypeIdentifier>
+      </Struct>
+      <Struct Name="Delta::Inputs" Collapsed="true">
+        <TypeIdentifier>
+          <NewMemberFileName>Delta.h</NewMemberFileName>
+        </TypeIdentifier>
+      </Struct>
+      <Struct Name="Delta::Liability_Delta" Collapsed="true">
+        <TypeIdentifier>
+          <NewMemberFileName>Delta.h</NewMemberFileName>
+        </TypeIdentifier>
+      </Struct>
+      <Struct Name="Delta::Asset_Delta" Collapsed="true">
+        <TypeIdentifier>
+          <NewMemberFileName>Delta.h</NewMemberFileName>
+        </TypeIdentifier>
+      </Struct>
+      <Struct Name="Delta::Future_Delta" Collapsed="true">
+        <TypeIdentifier>
+          <NewMemberFileName>Delta.h</NewMemberFileName>
+        </TypeIdentifier>
+      </Struct>
+      <Struct Name="Delta::Nb_Of_Futures" Collapsed="true">
+        <TypeIdentifier>
+          <NewMemberFileName>Delta.h</NewMemberFileName>
+        </TypeIdentifier>
+      </Struct>
+    </NestedTypes>
+    <TypeIdentifier>
+      <HashCode>UAAIAQAAAkBGgUgKmAAAEAMAmABBEhBRgAIBgAQAAFA=</HashCode>
+      <FileName>Delta.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Delta_Futures">
+    <Position X="17.25" Y="0.5" Width="1.75" />
+    <Compartments>
+      <Compartment Name="Nested Types" Collapsed="false" />
+    </Compartments>
+    <NestedTypes>
+      <Struct Name="Delta_Futures::Objects_Needed">
+        <TypeIdentifier>
+          <NewMemberFileName>Delta_Futures.h</NewMemberFileName>
+        </TypeIdentifier>
+      </Struct>
+    </NestedTypes>
+    <TypeIdentifier>
+      <HashCode>AAAAACAAAAAAAABAAAAAAgAACAAAAAAAAAAAAAAAAEA=</HashCode>
+      <FileName>Delta_Futures.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Delta_Futures_In_Portfolio">
+    <Position X="14.5" Y="0.5" Width="2.25" />
+    <Compartments>
+      <Compartment Name="Nested Types" Collapsed="false" />
+    </Compartments>
+    <NestedTypes>
+      <Struct Name="Delta_Futures_In_Portfolio::Objects_Needed">
+        <TypeIdentifier>
+          <NewMemberFileName>Delta_Futures_in_Portfolio.h</NewMemberFileName>
+        </TypeIdentifier>
+      </Struct>
+    </NestedTypes>
+    <TypeIdentifier>
+      <HashCode>AAAAACAAAAAAAAAAAAAAAgIAAAAAAAAAAAAAAAIAAEA=</HashCode>
+      <FileName>Delta_Futures_in_Portfolio.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Delta_Futures_In_Portfolio_2">
+    <Position X="14.5" Y="7.5" Width="2.25" />
+    <Compartments>
+      <Compartment Name="Nested Types" Collapsed="false" />
+    </Compartments>
+    <NestedTypes>
+      <Struct Name="Delta_Futures_In_Portfolio_2::Objects_Needed" Collapsed="true">
+        <TypeIdentifier>
+          <NewMemberFileName>Delta_Futures_in_Portfolio_2.h</NewMemberFileName>
+        </TypeIdentifier>
+      </Struct>
+    </NestedTypes>
+    <TypeIdentifier>
+      <HashCode>AAAAACAAAAAAAAAAAAAAAgAAAAAAABAAAAAAAAAgAEA=</HashCode>
+      <FileName>Delta_Futures_in_Portfolio_2.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Font Name="Tahoma" Size="8.25" />
+</ClassDiagram>

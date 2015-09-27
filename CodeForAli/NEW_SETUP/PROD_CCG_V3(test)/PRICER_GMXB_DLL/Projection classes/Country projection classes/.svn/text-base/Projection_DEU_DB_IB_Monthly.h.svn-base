@@ -1,0 +1,84 @@
+#pragma once
+#include "head_DEU.h"
+#include <string>
+#include <math.h>
+#include <fstream>
+#include <iomanip>
+#include "Model point classes/Country model point classes/Model_Point_DEU.h"
+#include "Projection_DEU_DB_IB_2_Monthly.h"
+
+
+using namespace std;
+
+extern ofstream trace;
+
+
+class Projection_DEU_DB_IB_Monthly : public Projection_DEU_DB_IB_2_Monthly
+{
+public:
+	~Projection_DEU_DB_IB_Monthly(){}
+	Projection_DEU_DB_IB_Monthly( const vector<vector <int>>& i_s_a,const vector<vector <int>>& f_s_a,
+							const char * tables, bool generate_dbg_files,const string& debug_file_path, 
+							int t_high_shorter, bool l_longevity_tables,int t_step):
+		Projection_DEU_DB_IB_2_Monthly(i_s_a,f_s_a,tables,generate_dbg_files,debug_file_path, 
+							t_high_shorter,l_longevity_tables,t_step){}
+	
+	void initialize_variables()
+	{
+		
+		this->set_timing_items_to_zero();
+		this->set_main_proj_arrays_to_zero();
+		this->set_other_vectors_to_zero();
+
+		this->model_point_DEU->av_total_init=0.;
+		this->model_point_DEU->av_add=this->model_point_DEU->av_add_inforce;
+
+		int table_lookup=this->model_point_DEU->deferment_age - (int)this->model_point_DEU->age_exact_issue;
+		this->ger_lapse_dist_group=this->Assumption->Get_ger_lapse_dist_group(table_lookup);
+		this->Assumption->initialize_election_bound(this->model_point_DEU->tax_layer);
+		//this->ger_prem_admin_loading=this->Assumption->Get_ger_prem_admin_loading(this->model_point_DEU->ger_product_number);
+		this->model_point_DEU->ger_prem_duration *=(this->model_point_DEU->pay_status ==1);//mehdi
+		//changed from Private08
+		this->model_point_DEU->ger_prem_admin_loading = 0.02*((int)this->model_point_DEU->ger_product_number==1)+0.035*((int)this->model_point_DEU->ger_product_number==2)+0.05*((int)this->model_point_DEU->ger_product_number==3);
+
+		this->maturity_yr=60;
+	
+	}
+	void hedge_fee_premium(int t)
+	{
+		double premium_bef_h_c = timing_items_DEU[GROSS_PREMIUM_BEF_M][t]-timing_items_DEU[ADMIN_CHG_PREMIUM_BEF_M][t]
+						-timing_items_DEU[ACQUI_CHARGE_PREMIUM_BEF_M][t]-timing_items_DEU[FIXED_FEE_PREMIUM_BEF_M][t];
+
+		timing_items_DEU[HEDGE_FEE_PREMIUM_BEF_M][t] = max(0., premium_bef_h_c  * this->model_point_DEU->ger_prem_hedge_charge / 100.);
+		timing_items_DEU[HEDGE_FEE_SUM_PREMIUM_BEF_M][t] = 0.;//private06	
+
+	}
+	void commission_charge_premium(int t)
+	{	
+		Present_value_of_not_amortized_commissions(t);
+		Current_amortized_commissions_charges(t);
+		timing_items_DEU[ACQUI_CHARGE_PREMIUM_BEF_M][t]=timing_items_DEU[PV_AMORT_COMMISSIONS_BEF_M][t];
+	}
+	void Present_value_of_not_amortized_commissions( int t)
+	{
+		if(t==1)
+			timing_items_DEU[PV_NOT_AMORT_COMMISSIONS_BEF_M][t]=this->model_point_DEU->commission_acct;
+		else if((int)this->model_point_DEU->payt_freq==0)
+			timing_items_DEU[PV_NOT_AMORT_COMMISSIONS_BEF_M][t]=0.;
+		else
+			timing_items_DEU[PV_NOT_AMORT_COMMISSIONS_BEF_M][t]=max(0.,(timing_items_DEU[PV_NOT_AMORT_COMMISSIONS_BEF_M][t-1]-
+						timing_items_DEU[PV_AMORT_COMMISSIONS_BEF_M][t-1])*exp(log(1.+this->Assumption->ger_comm_dis/100.)/12.));
+	}
+	void Current_amortized_commissions_charges(int t)
+	{
+		if(timing_items_DEU[PV_NOT_AMORT_COMMISSIONS_BEF_M][t]<=0.)
+			timing_items_DEU[PV_AMORT_COMMISSIONS_BEF_M][t]=0.;
+		else
+			timing_items_DEU[PV_AMORT_COMMISSIONS_BEF_M][t]=timing_items_DEU[GROSS_PREMIUM_BEF_M][t]*
+							(1.-this->model_point_DEU->ger_prem_admin_loading)-
+							max(timing_items_DEU[GROSS_PREMIUM_BEF_M][t]*this->model_point_DEU->ger_min_invested_amount/100.
+							,timing_items_DEU[GROSS_PREMIUM_BEF_M][t]*(1.-this->model_point_DEU->ger_prem_admin_loading)
+							-timing_items_DEU[PV_NOT_AMORT_COMMISSIONS_BEF_M][t]);
+	}
+
+};

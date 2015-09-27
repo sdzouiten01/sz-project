@@ -1,0 +1,329 @@
+#pragma once
+#include <string>
+#include "Projection classes/Country projection classes/Projection_MED_REGION_WB_DB.h"
+#include "Projection classes/Country projection classes/Projection_MED_REGION_AB_DB.h"
+#include "Projection classes/Country projection classes/Projection_CHE_AB_DB_SB.h"
+#include "Projection classes/Country projection classes/Projection_MPF_AB_DB_SB.h"
+#include "Projection classes/Country projection classes/Projection_BEL_WB_DB.h"
+#include "Projection classes/Country projection classes/Projection_FRA_WB.h"
+#include "Projection classes/Country projection classes/Projection_FRC_WB_IB.h"
+#include "Projection classes/Guarantee projection classes/Projection.h"
+#include "Model point classes/Country model point classes/Model_Point_BEL_WB.h"
+#include "Model point classes/Country model point classes/Model_Point_FRC.h"
+#include "Model point classes/Country model point classes/Model_Point_FRA.h"
+#include "Projection classes/Country projection classes/Projection_CHE_WB.h"
+#include "Projection classes/Country projection classes/Projection_CHN_AB.h"
+#include "Projection classes/Country projection classes/Projection_JPN_WB_DB_01.h"
+#include "Projection classes/Country projection classes/Projection_JPN_WB_DB_02.h"
+#include "Projection classes/Country projection classes/Projection_JPA_WB_DB.h"
+#include "Projection classes/Country projection classes/Projection_DEU_DB_IB.h"
+#include "Projection classes/Country projection classes/Projection_DEU_DB_IB_2.h"
+#include "Projection classes/Country projection classes/Projection_DEU_AB_IB.h"
+#include "Projection classes/Country projection classes/Projection_DEU_AB_IB_Monthly.h"
+#include "Projection classes/Country projection classes/Projection_DEU_AB_IB_2_Monthly.h"
+#include "Projection classes/Country projection classes/Projection_DEU_AB_IB_2.h"
+#include "Projection classes/Country projection classes/Projection_DEU_DB_IB_2_Monthly.h"
+#include "Projection classes/Country projection classes/Projection_DEU_DB_IB_Monthly.h"
+#include "Projection classes/Country projection classes/Projection_DEU_AB_IB_DB_05.h"
+#include "Projection classes/Country projection classes/Projection_DEU_AB_IB_DB_05_Monthly.h"
+#include "Model point classes/Country model point classes/model_point_DEU.h"
+#include "Model point classes/Country model point classes/model_point_DEU_IADB05.h"
+#include "Projection classes/Country projection classes/Projection_AUS_AB.h"
+#include "Projection classes/Country projection classes/Projection_AUS_AB_R.h"
+#include "Projection classes/Country projection classes/Projection_AUS_AB_2.h"
+#include "Projection classes/Country projection classes/Projection_AUS_WB_DB_SB.h"
+#include "Projection classes/Country projection classes/Projection_AUS_WB_DB_SB_2.h"
+#include "Projection classes/Country projection classes/Projection_AUS_WB.h"
+#include "Model point classes/Country model point classes/Model_Point_AUS.h"
+#include "Projection classes/Country projection classes/Projection_HKG_AB_DB.h"
+#include "Model point classes/Country model point classes/Model_Point_HKG.h"
+#include "Projection classes/Country projection classes/Projection_AGD_AB_DB.h"
+#include "Projection classes/Country projection classes/Projection_AGD_WB_DB.h"
+#include "Model point classes/Country model point classes/Model_Point_AGD_WB.h"
+#include "Projection classes/Country projection classes/Projection_AGD_UK_AB_DB.h"
+#include "Projection classes/Country projection classes/Projection_AGD_UK_WB_DB.h"
+#include "Model point classes/Country model point classes/Model_Point_AGD_UK_WB.h"
+#include "Model point classes/Country model point classes/Model_Point_AGD_UK_AB.h"
+#include "Model point classes/Country model point classes/Model_Point_AGD_ESP_WB.h"
+#include "Projection classes/Country projection classes/Projection_AGD_ESP_AB_DB.h"
+#include "Projection classes/Country projection classes/Projection_AGD_ESP_WB_DB.h"
+#include "Utility classes/Summary_configuration.h"
+#include "Utility classes/Product_configuration.h"
+#include "Model point classes/Country model point classes/Model_Point_CHE_WB.h"
+#include "Projection classes/Country projection classes/Projection_JPN_AB_DB.h"
+
+using namespace std;
+
+/*
+* This function build the right Projection class
+* according to the passed product code key.
+* const string& pCK : product code key of the product o run
+* const char* assumption_file_name : Assumption file name and path
+* const vector<vector <int>>& i_s_a : Matrix of index shock (the first column contain the index id) 
+* const vector<vector <int>>& f_s_a : Matrix of fund shock (the first column contain the fund id)
+* bool generate_debug_files : Indicates whether the projection has to generate debug file or not
+* const string& debug_file_path : Path of the debug files
+* const int t_high_shorter : The maximum period in the scenario file
+* bool l_longevity_tables : Indicates whether we load and perform shock using the longevity table
+*/
+Projection* projectionBuilder(
+							const string& pCK, const char* assumption_file_name,
+							const vector<vector <int>>& i_s_a,const vector<vector <int>>& f_s_a, 
+							bool generate_debug_files, const string& debug_file_path, 
+							const int t_high_shorter, bool l_longevity_tables, int t_step)
+{
+	Projection * pro;
+
+	if(t_high_shorter > t_high){
+		char message[MAX_LENGTH_MESSAGE_EXCEPTION];
+		sprintf(message, "Error: in Builder.h, parameter: t_high_shorter > t_high");
+		throw new GMXBException(message);
+	}
+
+	if (!pCK.compare("DEU_IDB01")&& t_step==ANNUAL)
+	{
+		pro = new Projection_DEU_DB_IB(i_s_a, f_s_a, assumption_file_name,generate_debug_files, debug_file_path, t_high_shorter, l_longevity_tables);
+	}
+	else if (!pCK.compare("DEU_IDB02")&& t_step==ANNUAL)
+	{
+		pro = new Projection_DEU_DB_IB_2(i_s_a, f_s_a, assumption_file_name,generate_debug_files, debug_file_path, t_high_shorter, l_longevity_tables);
+	}
+	else if (!pCK.compare("DEU_IAB01")&& t_step==ANNUAL)
+	{	
+		pro = new Projection_DEU_AB_IB(i_s_a, f_s_a, assumption_file_name,generate_debug_files, debug_file_path, t_high_shorter, l_longevity_tables);
+	}
+	else if (!pCK.compare("DEU_IAB02")&& t_step==ANNUAL)
+	{	
+		pro = new Projection_DEU_AB_IB_2(i_s_a, f_s_a, assumption_file_name,generate_debug_files, debug_file_path, t_high_shorter, l_longevity_tables);
+	}
+	else if (!pCK.compare("DEU_IAB01")&& t_step!=ANNUAL)
+	{	
+		pro = new Projection_DEU_AB_IB_Monthly(i_s_a, f_s_a, assumption_file_name,generate_debug_files, debug_file_path, t_high_shorter, l_longevity_tables, t_step);
+	}
+	else if (!pCK.compare("DEU_IAB02")&& t_step!=ANNUAL)
+	{	
+		pro = new Projection_DEU_AB_IB_2_Monthly(i_s_a, f_s_a, assumption_file_name,generate_debug_files, debug_file_path, t_high_shorter, l_longevity_tables, t_step);
+	}
+	else if (!pCK.compare("DEU_IDB02")&& t_step!=ANNUAL)
+	{	
+		pro = new Projection_DEU_DB_IB_2_Monthly(i_s_a, f_s_a, assumption_file_name,generate_debug_files, debug_file_path, t_high_shorter, l_longevity_tables, t_step);
+	}
+	else if (!pCK.compare("DEU_IDB01")&& t_step!=ANNUAL)
+	{	
+		pro = new Projection_DEU_DB_IB_Monthly(i_s_a, f_s_a, assumption_file_name,generate_debug_files, debug_file_path, t_high_shorter, l_longevity_tables, t_step);
+	}
+
+	else if ((!pCK.compare("DEU_IAB03")||!pCK.compare("DEU_IDB03")||!pCK.compare("DEU_IAB04")||!pCK.compare("DEU_IDB04")||!pCK.compare("DEU_IAB05")||!pCK.compare("DEU_IDB05"))&& t_step==ANNUAL)
+	{	
+		pro = new Projection_DEU_AB_IB_DB_05(i_s_a, f_s_a, assumption_file_name,generate_debug_files, debug_file_path, t_high_shorter, l_longevity_tables);
+	}
+	else if ((!pCK.compare("DEU_IAB03")||!pCK.compare("DEU_IDB03")||!pCK.compare("DEU_IAB04")||!pCK.compare("DEU_IDB04")||!pCK.compare("DEU_IAB05")||!pCK.compare("DEU_IDB05"))&& t_step!=ANNUAL)
+	{	
+		pro = new Projection_DEU_AB_IB_DB_05_M(i_s_a, f_s_a, assumption_file_name,generate_debug_files, debug_file_path, t_high_shorter, l_longevity_tables);
+	}
+	else if ( (!pCK.compare("ITA_ADB01")) || (!pCK.compare("ESP_ADB01")) || (!pCK.compare("PRT_ADB01")) )
+	{
+			pro = new Projection_MED_REGION_AB_DB(i_s_a, f_s_a, assumption_file_name, generate_debug_files, debug_file_path, t_high_shorter, l_longevity_tables, t_step);
+	}
+	else if ( (!pCK.compare("ITA_WDB01")) || (!pCK.compare("ESP_WDB01")) || (!pCK.compare("PRT_WDB01")) )
+	{
+			pro = new Projection_MED_REGION_WB_DB(i_s_a, f_s_a, assumption_file_name, generate_debug_files, debug_file_path, t_high_shorter, l_longevity_tables, t_step);
+	}
+	else if (!pCK.compare("CHN_AB01"))
+	{	
+			pro = new Projection_CHN_AB(i_s_a, f_s_a, assumption_file_name, generate_debug_files, debug_file_path, t_high_shorter, l_longevity_tables, t_step);
+	}
+	else if (!pCK.compare("CHE_ADB01"))
+	{	
+			pro = new Projection_CHE_AB_DB_SB(i_s_a, f_s_a, assumption_file_name, generate_debug_files, debug_file_path, t_high_shorter, l_longevity_tables, t_step);
+	}
+	else if ((!pCK.compare("CHE_WB02")) || (!pCK.compare("CHE_WB03"))|| (!pCK.compare("CHE_WB04"))|| (!pCK.compare("CHE_WB05"))  )
+	{	
+			pro = new Projection_CHE_WB(i_s_a, f_s_a, assumption_file_name, generate_debug_files, debug_file_path, t_high_shorter, l_longevity_tables, t_step);
+	}
+	else if (!pCK.compare("MPF_ADS01"))
+	{	
+			pro = new Projection_MPF_AB_DB_SB(i_s_a, f_s_a, assumption_file_name, generate_debug_files, debug_file_path, t_high_shorter, l_longevity_tables, t_step);
+	}
+	else if (!pCK.compare("BEL_WB01"))
+	{	
+			pro = new Projection_BEL_WB_DB(i_s_a, f_s_a, assumption_file_name, generate_debug_files, debug_file_path, t_high_shorter, l_longevity_tables, t_step);
+	}
+	else if (!pCK.compare("FRA_ALWB01"))
+	{	
+			pro = new Projection_FRA_WB(i_s_a, f_s_a, assumption_file_name, generate_debug_files, debug_file_path, t_high_shorter, l_longevity_tables, t_step);
+	}
+	else if (!pCK.compare("FRC_WB01"))
+	{	
+			pro = new Projection_FRC_WB_IB(i_s_a, f_s_a, assumption_file_name, generate_debug_files, debug_file_path, t_high_shorter, l_longevity_tables, t_step);
+	}
+	else if (!pCK.compare("JPN_WDB01_QVC"))
+	{	
+			pro = new Projection_JPN_WB_DB_01(i_s_a, f_s_a, assumption_file_name, generate_debug_files, debug_file_path, t_high_shorter, l_longevity_tables, t_step);
+	}
+	else if (!pCK.compare("JPN_WDB02_QVC"))
+	{	
+			pro = new Projection_JPN_WB_DB_02(i_s_a, f_s_a, assumption_file_name, generate_debug_files, debug_file_path, t_high_shorter, l_longevity_tables, t_step);
+	}
+	else if ( (!pCK.compare("JPA_WDB03")) )
+	{
+			pro = new Projection_JPA_WB_DB(i_s_a, f_s_a, assumption_file_name, generate_debug_files, debug_file_path, t_high_shorter, l_longevity_tables, t_step);
+	}
+	else if ( (!pCK.compare("AUS_AB01")) || (!pCK.compare("AUS_AB01N")) || (!pCK.compare("AUS_AB02")) )
+	{
+			pro = new Projection_AUS_AB(i_s_a, f_s_a, assumption_file_name, generate_debug_files, debug_file_path, t_high_shorter, l_longevity_tables, t_step);
+	}
+	else if (  (!pCK.compare("AUS_AB01R")) || (!pCK.compare("AUS_AB01NR")) || (!pCK.compare("AUS_AB02R")) )
+	{
+			pro = new Projection_AUS_AB_R(i_s_a, f_s_a, assumption_file_name, generate_debug_files, debug_file_path, t_high_shorter, l_longevity_tables, t_step);
+	}
+	else if ( (!pCK.compare("AUS_PI01")) || (!pCK.compare("AUS_PI01N")) || (!pCK.compare("AUS_PI02")) )
+	{
+			pro = new Projection_AUS_AB_2(i_s_a, f_s_a, assumption_file_name, generate_debug_files, debug_file_path, t_high_shorter, l_longevity_tables, t_step);
+	}
+	else if (!pCK.compare("AUS_SWB01") || !pCK.compare("AUS_SWB01N")  || !pCK.compare("AUS_SWB02")  )
+	{	
+			pro = new Projection_AUS_WB_DB_SB(i_s_a, f_s_a, assumption_file_name, generate_debug_files, debug_file_path, t_high_shorter, l_longevity_tables, t_step);
+	}
+	else if ( (!pCK.compare("AUS_PG01")) || (!pCK.compare("AUS_PG01N")) || (!pCK.compare("AUS_PG02")) )
+	{	
+			pro = new Projection_AUS_WB_DB_SB_2(i_s_a, f_s_a, assumption_file_name, generate_debug_files, debug_file_path, t_high_shorter, l_longevity_tables, t_step);
+	}
+	else if (!pCK.compare("AUS_WB01") )
+	{	
+			pro = new Projection_AUS_WB(i_s_a, f_s_a, assumption_file_name, generate_debug_files, debug_file_path, t_high_shorter, l_longevity_tables, t_step);
+	}
+	else if (!pCK.compare("HKG_ADB01"))
+	{	
+			pro = new Projection_HKG_AB_DB(i_s_a, f_s_a, assumption_file_name, generate_debug_files, debug_file_path, t_high_shorter, l_longevity_tables, t_step);
+	}
+	else if (!pCK.compare("AGD_ADB01"))
+	{
+		pro = new Projection_AGD_AB_DB(i_s_a, f_s_a, assumption_file_name, generate_debug_files, debug_file_path, t_high_shorter, l_longevity_tables, t_step);
+	}
+	else if (!pCK.compare("AGD_WDB01"))
+	{
+		pro = new Projection_AGD_WB_DB(i_s_a, f_s_a, assumption_file_name, generate_debug_files, debug_file_path, t_high_shorter, l_longevity_tables, t_step);
+	}
+	else if (!pCK.compare("AGD_UK_ADB01"))
+	{
+		pro = new Projection_AGD_UK_AB_DB(i_s_a, f_s_a, assumption_file_name, generate_debug_files, debug_file_path, t_high_shorter, l_longevity_tables, t_step);
+	}
+	else if (!pCK.compare("AGD_UK_WDB01"))
+	{
+ 		pro = new Projection_AGD_UK_WB_DB(i_s_a, f_s_a, assumption_file_name, generate_debug_files, debug_file_path, t_high_shorter, l_longevity_tables, t_step);
+	}
+	else if (!pCK.compare("AGD_ESP_ADB01"))
+	{
+		pro = new Projection_AGD_ESP_AB_DB(i_s_a, f_s_a, assumption_file_name, generate_debug_files, debug_file_path, t_high_shorter, l_longevity_tables, t_step);
+	}
+	else if (!pCK.compare("JPN_ADB03"))
+	{
+		pro = new Projection_JPN_AB_DB(i_s_a, f_s_a, assumption_file_name, generate_debug_files, debug_file_path, t_high_shorter, l_longevity_tables, t_step);
+	}
+	else if (!pCK.compare("AGD_ESP_WDB01"))
+	{
+		pro = new Projection_AGD_ESP_WB_DB(i_s_a, f_s_a, assumption_file_name, generate_debug_files, debug_file_path, t_high_shorter, l_longevity_tables, t_step);
+	}
+	else 
+	{
+		char message[MAX_LENGTH_MESSAGE_EXCEPTION];
+		sprintf_s(message, "Projection Builder : The prod code key %s is not found", pCK.c_str());
+		throw new GMXBException(message);
+	}
+	return pro;
+}
+
+
+/*
+* This function build the right Model_point class
+* according to the passed product code key.
+* const string& pCK : product code Key of the model point to build
+* vector<string>& row : One row of the inforce file converted in vector of string (the separator is the comma)
+* int rank : The rank of the model_point in the inforce file (necessary for the dispatching of the policies)
+* Product_configuration& product_config :Contain all the information to build the model point object
+* Scenario_configuration& scenario_config : Contain all the information to build the model point object (size of the shocks ...)
+*/
+
+Model_Point* modelPointBuilder(const string& pCK, vector<string>& row, int rank, Product_configuration& product_config, 
+													Scenario_configuration& scenario_config)
+{
+	Model_Point* pMP;
+
+	if (   pCK == "ITA_WDB01"
+		|| pCK == "ITA_ADB01"
+		|| pCK == "ESP_WDB01"
+		|| pCK == "ESP_ADB01"
+		|| pCK == "PRT_WDB01"
+		|| pCK == "PRT_ADB01"
+		|| pCK == "CHE_ADB01"
+		|| pCK == "MPF_ADS01"
+		|| pCK == "JPN_WDB01_QVC"
+		|| pCK == "JPN_WDB02_QVC"
+		|| pCK == "JPA_WDB03"
+		|| pCK == "CHN_AB01"
+		|| pCK == "FRA_ALWB01"
+		|| pCK == "AGD_ADB01"
+		|| pCK == "JPN_ADB03"
+		|| pCK == "AGD_ESP_ADB01")
+	{
+		pMP = new Model_Point(row, rank, product_config, scenario_config);
+	}
+	else if(pCK == "DEU_IDB01" ||pCK == "DEU_IDB02" ||pCK == "DEU_IAB01" ||pCK == "DEU_IAB02")
+	{
+		pMP = new Model_Point_DEU(row, rank, product_config, scenario_config);
+	}
+	else if(pCK == "DEU_IDB03" ||pCK == "DEU_IAB03" ||pCK == "DEU_IAB04" ||pCK == "DEU_IDB04" ||pCK == "DEU_IDB05" ||pCK == "DEU_IAB05" )
+	{
+		pMP = new Model_Point_DEU_IADB05(row, rank, product_config, scenario_config);
+	}
+	else if(pCK == "BEL_WB01")
+	{
+			pMP = new Model_Point_BEL_WB(row, rank, product_config, scenario_config);
+	}
+	else if(pCK == "CHE_WB02" || pCK == "CHE_WB03"|| pCK == "CHE_WB04"|| pCK == "CHE_WB05")
+	{
+			pMP = new Model_Point_CHE_WB(row, rank, product_config, scenario_config);
+	}
+	else if(pCK == "FRC_WB01")
+	{
+			pMP = new Model_Point_FRC(row, rank, product_config, scenario_config);
+	}
+	else if( pCK == "AUS_SWB01" || pCK == "AUS_SWB01N" || pCK == "AUS_SWB02" 
+		  || pCK == "AUS_AB01" || pCK == "AUS_AB01N" || pCK == "AUS_AB02"
+		  || pCK == "AUS_AB01R" || pCK == "AUS_AB01NR" || pCK == "AUS_AB02R"
+		  || pCK == "AUS_PG01" || pCK == "AUS_PG01N" || pCK == "AUS_PG02"
+		  || pCK == "AUS_PI01" || pCK == "AUS_PI01N" || pCK == "AUS_PI02"
+		  || pCK == "AUS_WB01")
+	{
+			pMP = new Model_Point_AUS(row, rank, product_config, scenario_config);
+	}
+	else if(pCK == "HKG_ADB01")
+	{
+			pMP = new Model_Point_HKG(row, rank, product_config, scenario_config);
+	}
+	else if(pCK == "AGD_WDB01")
+	{
+			pMP = new Model_Point_AGD_WB(row, rank, product_config, scenario_config);
+	}
+	else if(pCK == "AGD_UK_ADB01")
+	{
+			pMP = new Model_Point_AGD_UK_AB(row, rank, product_config, scenario_config);
+	}
+	else if(pCK == "AGD_UK_WDB01")
+	{
+			pMP = new Model_Point_AGD_UK_WB(row, rank, product_config, scenario_config);
+	}
+	else if(pCK == "AGD_ESP_WDB01")
+	{
+			pMP = new Model_Point_AGD_ESP_WB(row, rank, product_config, scenario_config);
+	}
+	else 
+	{
+		char message[MAX_LENGTH_MESSAGE_EXCEPTION];
+		sprintf_s(message, "Model point builder : The prod code key %s is not found", pCK.c_str());
+		throw new GMXBException(message);
+	}
+
+	return pMP;
+}

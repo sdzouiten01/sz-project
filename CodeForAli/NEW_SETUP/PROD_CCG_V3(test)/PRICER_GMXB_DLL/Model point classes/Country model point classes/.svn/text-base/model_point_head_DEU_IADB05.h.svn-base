@@ -1,0 +1,134 @@
+#pragma once
+
+#define PRODUCT 0                                               //NOT USED FOR GERMANY
+#define GROUP 1                                               //NOT USED FOR GERMANY
+#define AGE_VALN 2                                               
+#define DURATION 3                                               
+#define PROD_TYPE 4                                               
+#define GMXB_TYPE_2 5                                               //NOT USED FOR GERMANY
+#define POLICY_ID 6                                               //NOT USED FOR GERMANY
+#define POLICIES 7                                               //NOT USED FOR GERMANY
+#define SEX 8                                               
+#define MALE_PERC 9                                               //NOT USED FOR GERMANY
+#define PREM_CURR 10                                               
+#define PREM_PAID 11                                               
+#define FWD_ACCUM 12                                               //NOT USED FOR GERMANY
+#define AV_INDEX_0 13                                               
+#define AV_INDEX_1 14                                               
+#define AV_INDEX_2 15                                               
+#define AV_INDEX_3 16                                               
+#define AV_INDEX_4 17                                               
+#define AV_INDEX_5 18                                               
+#define AV_INDEX_6 19                                               
+#define AV_INDEX_7 20                                               
+#define AV_INDEX_8 21                                               
+#define AV_INDEX_9 22                                               
+#define AV_INDEX_10 23                                               
+#define AV_INDEX_11 24                                               
+#define SPLIT_INDEX_0 25                                               
+#define SPLIT_INDEX_1 26                                               
+#define SPLIT_INDEX_2 27                                               
+#define SPLIT_INDEX_3 28                                               
+#define SPLIT_INDEX_4 29                                               
+#define SPLIT_INDEX_5 30                                               
+#define SPLIT_INDEX_6 31                                               
+#define SPLIT_INDEX_7 32                                               
+#define SPLIT_INDEX_8 33                                               
+#define SPLIT_INDEX_9 34                                               
+#define SPLIT_INDEX_10 35                                               
+#define SPLIT_INDEX_11 36                                               
+#define GMAB_RATCHET_VALN 37                                               //NOT USED FOR GERMANY
+#define GMAB_ROLLUP_VALN 38                                               
+#define GMDB_RATCHET_VALN 39                                               //NOT USED FOR GERMANY
+#define GMDB_ROLLUP_VALN 40                                               
+#define GMIB_RATCHET_VALN 41                                               //NOT USED FOR GERMANY
+#define GMIB_ROLLUP_VALN 42                                               
+#define GMWB_RATCHET_VALN 43                                               //NOT USED FOR GERMANY
+#define GMWB_ROLLUP_VALN 44                                               //NOT USED FOR GERMANY
+#define GMXB_DEF_PERIOD 45                                               //NOT USED FOR GERMANY
+#define GMXB_RAT_PERIOD 46                                               //NOT USED FOR GERMANY
+#define GMXB_G_C 47                                               
+#define GMXB_M_C 48                                               
+#define GMXB_H_C 49                                               
+#define GMXB_A_C 50                                               //NOT USED FOR GERMANY
+#define FUND_REBAL 51                                               //NOT USED FOR GERMANY
+#define GMXB_ROLLUP_RATE_1 52                                               
+#define AXA_STATUS 53                                               //NOT USED FOR GERMANY
+#define GMWB_WDL_RATE 54                                               //NOT USED FOR GERMANY
+#define GMWB_WDL_FREQ 55                                               //NOT USED FOR GERMANY
+#define GMWB_WBL_CUM 56                                               //NOT USED FOR GERMANY
+#define GMXB_ROLLUP_RATE_2 57                                               //NOT USED FOR GERMANY
+#define GMIB_YR_PAYT 58                                               //NOT USED FOR GERMANY
+#define PRODUCT_NBR 59                                               //NOT USED FOR GERMANY
+#define DISTRIB_CHANEL 60                                               
+#define ELECTION_AGE 61                                               
+#define PREM_DUR 62                                               
+#define FEE_RP 63                                               
+#define ACQUIS_CHARGE 64                                               
+#define LAYER_TAXATION 65                                               
+#define PAYMENT_FREQ 66                                               
+#define ACT_POL_FEE 67                                               
+#define PAIDUP_POL_FEE 68                                               
+#define LASTYEAR_BONUS 69                                               
+#define STEP_2008 70                                               //NOT USED FOR GERMANY
+#define LAST_PREMIUM_INFORMATION 71                                               
+#define GPP 72                                               
+#define PRODUCT_TYPE 73                                               
+#define RIESTER_ABRUFPHASE_INDICATOR 74                                               
+#define PREMIUM_TYPE_INDICATOR_PRIVAT_SP_OP 75                                               //NOT USED FOR GERMANY
+#define MIN_TRANS_PERIOD 76                                               //NOT USED FOR GERMANY
+#define VESTED_TERM 77                                               //NOT USED FOR GERMANY
+#define ADVISORY_CHARGE_PERC 78                                               //NOT USED FOR GERMANY
+#define ADVISORY_CHARGE_AMOUNT 79                                               //NOT USED FOR GERMANY
+#define TAX_LIABILITY 80                                               //NOT USED FOR GERMANY
+#define WITH_RATE_EXCESS_MIN 81                                               //NOT USED FOR GERMANY
+#define PREM_CURR_YEAR 82                                               //NOT USED FOR GERMANY
+#define POLICY_MAINTENANCE_FEE 83                                               //NOT USED FOR GERMANY
+#define GMDB_INDICATOR 84                                               //NOT USED FOR GERMANY
+#define PRODUCT_INDICATOR 85                                               //NOT USED FOR GERMANY
+#define PREMIUM_SUM_INCREASED_BETA 86                                               //NOT USED FOR GERMANY
+#define DISCOUNT_SURRENDER_VALUE 87                                               //NOT USED FOR GERMANY
+#define VT_KEY 88                                               //NOT USED FOR GERMANY
+#define ACQUISITION_CHARGE_ACTUAL_Y_0 89                                               
+#define ACQUISITION_CHARGE_ACTUAL_Y_1 90                                               
+#define ACQUISITION_CHARGE_ACTUAL_Y_2 91                                               
+#define ACQUISITION_CHARGE_ACTUAL_Y_3 92                                               
+#define ACQUISITION_CHARGE_ACTUAL_Y_4 93                                               
+#define ACQUISITION_CHARGE_ACTUAL_Y_5 94                                               
+#define ACQUISITION_CHARGE_ACTUAL_Y_6 95                                               
+#define ACQUISITION_CHARGE_ACTUAL_Y_7 96                                               
+#define ACQUISITION_CHARGE_ACTUAL_Y_8 97                                               
+#define ACQUISITION_CHARGE_ACTUAL_Y_9 98                                               
+#define ORIGINAL_ISSUE_DATE 99                                               //NOT USED FOR GERMANY
+#define INVEST_PROFILE 100                                               //NOT USED FOR GERMANY
+#define TOTAL_PREMIUM 101                                               
+#define AV_ADD 102                                               
+#define HEDGE_COST_ADD 103                                               
+#define IB_ADD 104                                               
+#define SUM_PREM_ADD 105                                               
+#define PAYMENT_MONTH 106                                               //NOT USED FOR GERMANY
+#define PAYMENT_STATUS 107                                               
+#define SEX_2 108                                               //NOT USED FOR GERMANY
+#define AGE_VALN_2 109                                               //NOT USED FOR GERMANY
+#define BENEFIT_PAYMENT 110                                               //NOT USED FOR GERMANY
+#define HC_PP_X 111                                               
+#define GMXB_G_C_GROSS_ADD 112                                               
+#define HC_PP_ADD_X 113                                               
+#define GMXB_G_C_GROSS 114                                               
+#define BACKDATED 115                                               //NOT USED FOR GERMANY
+#define OLD_MP_ID 116                                               //NOT USED FOR GERMANY
+#define NB_UNIT_OF_FUNDS 117                                               //NOT USED FOR GERMANY
+
+/*modifications for the stat inforces*/
+#define RRC_REALIZED 121 
+#define ADMIN_CHARGES 122 
+#define UPFRONT_G_C 123 
+#define ISSUE_DATE 125
+#define GUARANTEED_INTEREST_RATE 126
+#define GUARANTEED_INTEREST_RATE_PAID_UP 127
+#define YEAR_LAST_BONUS 128
+#define LAST_PREMIUM_DATE 129
+
+
+#define MAX_INFORCE_COLS_X 130
+

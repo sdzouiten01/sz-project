@@ -1,0 +1,84 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Swap">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="Future">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hpp;hxx;hm;inl;inc;xsd</Extensions>
+    </Filter>
+    <Filter Include="OptionPut">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav</Extensions>
+    </Filter>
+    <Filter Include="SwapRate">
+      <UniqueIdentifier>{428c9e59-f381-45a9-b32d-b374bc80edce}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Tool">
+      <UniqueIdentifier>{94c665eb-40d9-4696-9eef-d129bec52b2b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Porfolio">
+      <UniqueIdentifier>{1c43e663-0198-4e30-85f9-4535927076b2}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\HEDGEFF_COMPUTE\Swap.cpp">
+      <Filter>Swap</Filter>
+    </ClCompile>
+    <ClCompile Include="..\HEDGEFF_COMPUTE\Future.cpp">
+      <Filter>Future</Filter>
+    </ClCompile>
+    <ClCompile Include="..\HEDGEFF_COMPUTE\OptionPut.cpp">
+      <Filter>OptionPut</Filter>
+    </ClCompile>
+    <ClCompile Include="..\HEDGEFF_COMPUTE\SwapRate.cpp">
+      <Filter>SwapRate</Filter>
+    </ClCompile>
+    <ClCompile Include="..\HEDGEFF_COMPUTE\BandMatrix.cpp">
+      <Filter>Tool</Filter>
+    </ClCompile>
+    <ClCompile Include="..\HEDGEFF_COMPUTE\MathTools.cpp">
+      <Filter>Tool</Filter>
+    </ClCompile>
+    <ClCompile Include="..\HEDGEFF_COMPUTE\Portfolio.cpp">
+      <Filter>Porfolio</Filter>
+    </ClCompile>
+    <ClCompile Include="..\HEDGEFF_COMPUTE\Assumptions.cpp">
+      <Filter>Swap</Filter>
+    </ClCompile>
+    <ClCompile Include="..\HEDGEFF_COMPUTE\main.cpp">
+      <Filter>Swap</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\HEDGEFF_COMPUTE\Swap.h">
+      <Filter>Swap</Filter>
+    </ClInclude>
+    <ClInclude Include="..\HEDGEFF_COMPUTE\Future.h">
+      <Filter>Future</Filter>
+    </ClInclude>
+    <ClInclude Include="..\HEDGEFF_COMPUTE\OptionPut.h">
+      <Filter>OptionPut</Filter>
+    </ClInclude>
+    <ClInclude Include="..\HEDGEFF_COMPUTE\SwapRate.h">
+      <Filter>SwapRate</Filter>
+    </ClInclude>
+    <ClInclude Include="..\HEDGEFF_COMPUTE\BandMatrix.h">
+      <Filter>Tool</Filter>
+    </ClInclude>
+    <ClInclude Include="..\HEDGEFF_COMPUTE\MathTools.h">
+      <Filter>Tool</Filter>
+    </ClInclude>
+    <ClInclude Include="..\HEDGEFF_COMPUTE\TradeInfo.h">
+      <Filter>Tool</Filter>
+    </ClInclude>
+    <ClInclude Include="..\HEDGEFF_COMPUTE\Portfolio.h">
+      <Filter>Porfolio</Filter>
+    </ClInclude>
+    <ClInclude Include="..\HEDGEFF_COMPUTE\Assumptions.h">
+      <Filter>Future</Filter>
+    </ClInclude>
+  </ItemGroup>
+</Project>

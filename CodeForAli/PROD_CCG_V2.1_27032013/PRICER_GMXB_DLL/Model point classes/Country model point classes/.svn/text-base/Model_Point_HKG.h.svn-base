@@ -1,0 +1,42 @@
+#pragma once
+#include "Model point classes/Model_Point.h"
+#include "Model point classes/Country model point classes/model_point_HKG_head.h"
+
+using namespace std;
+
+class Model_Point_HKG : public Model_Point
+{
+	public :
+		double hkg_pol_m_f;
+		double hkg_gmdb_indic;
+		double hkg_policy_type;
+
+		Model_Point_HKG(vector<string>& row, int rank, Product_configuration& product_config, Scenario_configuration& scenario_config) : 
+		Model_Point(row, rank, product_config, scenario_config)
+		{
+			hkg_pol_m_f = atof(row[HKG_POL_M_FEE].c_str());
+			hkg_gmdb_indic = atof(row[HKG_GMDB_INDIC].c_str());
+			hkg_policy_type = atof(row[HKG_POLICY_TYPE].c_str());
+			this->initialise_mp_variable();
+		}
+
+	private:
+		void initialise_mp_variable()
+		{
+			// The payt_freq is different for HKG : 12 for once a year, 6 for twice, etc
+			if (payt_freq == 12.)	
+				payt_freq = 1.;	
+			else if (payt_freq == 6.)	
+				payt_freq = 2.;	
+			else if (payt_freq == 3.)
+				payt_freq = 4.;
+			else if (payt_freq == 1.)
+				payt_freq = 12.;
+			else		
+				payt_freq = 0.; 
+
+			//Old timing for calculation of elapsed_mths_in_valn_year - HKG
+			//this->elapsed_mths_in_valn_yr = elapsed_months % 12;
+			//this->elapsed_years = elapsed_months/12.;
+		}
+};

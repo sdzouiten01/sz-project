@@ -1,0 +1,720 @@
+#pragma once
+#include "stdafx.h"
+#include "Projection classes/Country projection classes/Projection_AUS.h"
+using namespace std;
+
+class Projection_AUS_WB : virtual public Projection_AUS
+{
+public:
+	
+	GMXBParameters * assump_WB;
+
+	GMXB_Assumption_Table *pwr_table;
+	GMXB_Assumption_Table *smwr_table;
+	
+	double pwb;
+	double fpw_rate;
+	double gmwb_withdrawal_period;
+
+	double pwr_x;
+	double max_adv_fee;
+	double av_threshold;
+	double max_adv_amt;
+	double max_adv_chg_super;
+	double max_adv_chg_pension;
+	double adviser_fee_threshold;
+
+	double adv_rate;
+	double adv_amt_wb;
+
+	// new assumptions variables for Projection_AUS_WB_DB_SB_2
+	GMXB_Assumption_Table * mort_table_2;
+	double mort_mult_2;
+	double mort_adj_2;
+	double surv_12;
+	double surv_1;
+	double surv_2;
+	string joint_life_ind;
+	double age_valn_2;
+	string sex_2;
+	double age_exact_issue_2;
+	int year_2; //Model Change May 2011
+
+	Projection_AUS_WB(const vector<vector <int>>& i_s_a,const vector<vector <int>>& f_s_a,
+						    const char* tables, bool generate_dbg_files, const string& dbg_file_path,
+							const int t_high_shorter, bool l_longevity_tables, int t_step):
+		Projection(i_s_a, f_s_a, tables, generate_dbg_files, dbg_file_path, t_high_shorter, l_longevity_tables,  t_step),
+		Projection_AUS(i_s_a, f_s_a, tables, generate_dbg_files, dbg_file_path, t_high_shorter, l_longevity_tables,  t_step)
+
+	{
+		assump_WB = new GMXBParameters(tables, "assump_WB");
+
+		pwb = atof(this->assump_WB->search("pwb").c_str()) / 100.0;
+		fpw_rate = atof(this->assump_WB->search("fpw_rate").c_str()) / 100.0;
+		gmwb_withdrawal_period = atof(this->assump_WB->search("gmwb_withdrawal_period").c_str());
+		
+		pwr_table = new GMXB_Assumption_Table(tables, "wdwl_table");
+		smwr_table = new GMXB_Assumption_Table(tables, "smwr_table");
+		
+		//For Advisory fees
+		max_adv_fee = atof(this->assump->search("max_adv_fee").c_str()) / 100.0;
+		av_threshold = atof(this->assump->search("AV_Threshold").c_str());
+		max_adv_amt = atof(this->assump->search("max_adv_amt").c_str());
+		max_adv_chg_super = max_adv_fee / 100.0;
+		max_adv_chg_pension = atof(this->assump->search("max_adv_chg_pension").c_str()) / 100.0;
+		adviser_fee_threshold = atof(this->assump->search("Adviser_Fee_threshold").c_str()) / 100.0;
+
+	}
+	
+	void set_current_model_point(Model_Point *mp)
+	{
+		aus_mp = dynamic_cast<Model_Point_AUS *> (mp);
+
+		if (aus_mp->au_ves_def==0) 
+			au_pension_term = aus_mp->au_ves_ter - aus_mp->gmxb_deferral_period;
+		else
+			au_pension_term = aus_mp->au_ves_ter + max(aus_mp->au_ves_def - aus_mp->gmxb_deferral_period,0);  
+
+		this->joint_life_ind = aus_mp->joint_life_ind;
+		this->sex_2 = aus_mp->sex_2;
+		this->age_valn_2 = aus_mp->age_valn_2;
+		this->year_2 = aus_mp->year_2; //Model Change May 2011
+		this->age_exact_issue_2 = aus_mp->age_exact_issue_2;
+
+		Projection::set_current_model_point(mp);
+	}
+	
+	void load_tables()
+	{
+		Projection::load_tables();
+		if(this->joint_life_ind=="LS")
+		{
+			if(this->sex_2=="F")
+			{
+				this->mort_table_2 = this->mort_table_f;
+				this->mort_mult_2 = this->mort_mult_f;
+				this->mort_adj_2 = this->mort_adj_f;
+			}
+			else if(this->sex_2=="M")
+			{
+				this->mort_table_2 = this->mort_table_m;
+				this->mort_mult_2 = this->mort_mult_m;
+				this->mort_adj_2 = this->mort_adj_m;
+			}
+			else 
+			{
+				char message[MAX_LENGTH_MESSAGE_EXCEPTION];
+				sprintf_s(message, "Only F or M are allowed for model_point->sex_2 variable");
+				throw new GMXBException(message);		
+			}
+		}
+	}
+
+	void avGrowth_annual(int t)
+	{	
+		if (!this->model_point->load_model_point_funds)
+		{
+			double acc_phase_indic = 0.;
+			Projection::avGrowth_annual(t);
+			if(this->timing_items[t][POL_YEAR] <= aus_mp->gmxb_deferral_period)
+				acc_phase_indic = 1;
+
+			if (main_proj_array[t][AV_B_BEF_BIS] > SMALL_DOUBLE)//Tax regain on admin correction AV_B_BEF_BIS instead of AV_B_BEF
+			{
+				//Changer Impact Production
+					main_proj_array[t][AV_GROWTH] = main_proj_array[t][AV_GROWTH] 
+											* (1 - tax_rate * acc_phase_indic / 100.)
+											+ main_proj_array[t][AV_B] 
+												* (au_main_proj_array[t][AU_ADMIN_FEE_AV]/(main_proj_array[t][AV_B_BEF_BIS])
+												+ bid_ask_charge * this->timing_items[t][PRORATA] / 100.
+												+ (au_main_proj_array[t][AU_ADVISORY_CHARGE_TOTAL]/(main_proj_array[t][AV_B_BEF]+au_main_proj_array[t][AU_ADVISORY_CHARGE_TOTAL])) /*  * this->timing_items[t][PRORATA]*/) 
+											* (tax_rate * acc_phase_indic / 100);
+			}
+			else
+			{
+				main_proj_array[t][AV_GROWTH] = 0.;
+			}
+		}
+		// TODO - should adapt this function
+		// in case we project funds
+		else
+		{
+			char message[MAX_LENGTH_MESSAGE_EXCEPTION];
+			sprintf_s(message, "Av growth function (AUS) not implemented for the projection of funds");
+			throw new GMXBException(message);							
+		}
+
+	}
+
+	int product_charging_duration_s()
+	{
+		return int(model_point->gmxb_deferral_period) + this->gmwb_withdrawal_period;	
+	}
+
+	virtual void fill_tables_LS(int sh_n){
+		double * survival;
+		//Jerome - Release May 2011 - Case t0=0
+		if (t0!=0)
+			survival = this->get_mortality(t0);
+		int age;
+		int age1;
+		double pwr_t;
+		for(int i=0; i<t0; i++){
+
+			age1 = (int)(timing_items[i][AGE_LAST]) + this->mort_age_adj;
+			if (this->joint_life_ind=="LS")
+			{
+				int age2 = (int)(this->age_exact_issue_2) + this->timing_items[i][POL_YEAR] - 1.0 + this->mort_age_adj;
+				age = min(age1, age2);
+			}
+			else
+			{
+				age = age1;
+			}
+			pwr_t = pwr_table->search(age,1);
+
+
+
+			ITM_for_LS ITM_object(i,this->model_point->prod_code_key, t0,
+					this->ITM_choice_type_1, this->ITM_choice_type_2, this->ITM_choice_type_3,
+					this->get_main_proj_array(AV_E, i), this->get_main_proj_array(GMAB_IF, i),
+					this->get_main_proj_array(GMWB_IF, i),this->get_main_proj_array(AU_CUM_BP,i),
+					this->afmr[this->model_point->elapsed_mths_in_valn_yr + 1][i][MAXIMUM_NUMBER_OF_INDEXES-1]/100.0,
+					survival,pwr_t,this->pwr_x,this->afmr[this->model_point->elapsed_mths_in_valn_yr + 1][i][MAXIMUM_NUMBER_OF_INDEXES]/100.0);
+
+			explicative_variables[sh_n][i][0][current_scenario_number-1] = 1;
+			explicative_variables[sh_n][i][1][current_scenario_number-1] = ITM_object.itm_calculation(1);
+			
+			if(p0>2){
+				explicative_variables[sh_n][i][2][current_scenario_number-1] = explicative_variables[sh_n][i][1][current_scenario_number-1] * explicative_variables[sh_n][i][1][current_scenario_number-1];
+			}
+			if(p0>3){
+				explicative_variables[sh_n][i][3][current_scenario_number-1] = ITM_object.itm_calculation(2);
+				explicative_variables[sh_n][i][4][current_scenario_number-1] = explicative_variables[sh_n][i][3][current_scenario_number-1] * explicative_variables[sh_n][i][3][current_scenario_number-1];
+				explicative_variables[sh_n][i][5][current_scenario_number-1] = explicative_variables[sh_n][i][1][current_scenario_number-1] * explicative_variables[sh_n][i][3][current_scenario_number-1];
+			}
+			if(p0>6){
+				explicative_variables[sh_n][i][6][current_scenario_number-1] = ITM_object.itm_calculation(3);
+				explicative_variables[sh_n][i][7][current_scenario_number-1] = explicative_variables[sh_n][i][6][current_scenario_number-1] * explicative_variables[sh_n][i][6][current_scenario_number-1];
+				explicative_variables[sh_n][i][8][current_scenario_number-1] = explicative_variables[sh_n][i][1][current_scenario_number-1] * explicative_variables[sh_n][i][6][current_scenario_number-1];
+				explicative_variables[sh_n][i][9][current_scenario_number-1] = explicative_variables[sh_n][i][3][current_scenario_number-1] * explicative_variables[sh_n][i][6][current_scenario_number-1];
+			}
+			
+			
+			gmxb_charges[sh_n][i][current_scenario_number-1] =  this->get_main_proj_array(GMXB_CHARGE, i)*this->get_main_proj_array(DISCOUNT_FACTOR, i);
+			abclaims[sh_n][i][current_scenario_number-1] = this->get_main_proj_array(GMAB_CLAIMS, i)*this->get_main_proj_array(DISCOUNT_FACTOR, i);
+			dbclaims[sh_n][i][current_scenario_number-1] = this->get_main_proj_array(GMDB_CLAIMS, i)*this->get_main_proj_array(DISCOUNT_FACTOR, i);
+			ibclaims[sh_n][i][current_scenario_number-1] = this->get_main_proj_array(GMIB_CLAIMS, i)*this->get_main_proj_array(DISCOUNT_FACTOR, i);
+			sbclaims[sh_n][i][current_scenario_number-1] = max(this->get_main_proj_array(GMSB_PREM_IF, i) - this->get_main_proj_array(AV_E,i),0) *this->get_main_proj_array(DISCOUNT_FACTOR, i);
+			wbclaims[sh_n][i][current_scenario_number-1] = this->get_main_proj_array(GMWB_CLAIMS, i) *this->get_main_proj_array(DISCOUNT_FACTOR, i);
+			paths[sh_n][i][current_scenario_number-1] += this->get_main_proj_array(GMDB_CLAIMS, i)*this->get_main_proj_array(DISCOUNT_FACTOR, i);
+			paths[sh_n][i][current_scenario_number-1] += this->get_main_proj_array(GMAB_CLAIMS, i)*this->get_main_proj_array(DISCOUNT_FACTOR, i);
+			paths[sh_n][i][current_scenario_number-1] += this->get_main_proj_array(GMIB_CLAIMS, i)*this->get_main_proj_array(DISCOUNT_FACTOR, i);
+			paths[sh_n][i][current_scenario_number-1] += this->get_main_proj_array(GMWB_CLAIMS, i)*this->get_main_proj_array(DISCOUNT_FACTOR, i);
+			if(this->get_ehc_for_longstaff()=="Y")
+				paths[sh_n][i][current_scenario_number-1] -= (this->model_point->gmxb_ehc_charge/this->model_point->gmxb_g_c)* this->get_main_proj_array(GMXB_CHARGE, i)*this->get_main_proj_array(DISCOUNT_FACTOR, i);
+			else 
+				paths[sh_n][i][current_scenario_number-1] -= this->get_main_proj_array(GMXB_CHARGE, i)*this->get_main_proj_array(DISCOUNT_FACTOR, i);
+		}
+		//Jerome - Release May 2011 - Case t0=0
+		if (t0!=0)
+			delete [] survival;
+		for(int i=1; i<t0; i++){
+			paths[sh_n][i][current_scenario_number-1] += paths[sh_n][i-1][current_scenario_number-1];
+		}
+		for (int i=1; i<t0; i++){
+			if  (i<t0-1){
+				paths[sh_n][i][current_scenario_number-1] += max(this->get_main_proj_array(GMSB_PREM_IF, i) - this->get_main_proj_array(AV_E, i) , 0) * this->get_main_proj_array(DISCOUNT_FACTOR, i);  
+			}
+			else{
+				paths[sh_n][i][current_scenario_number-1] += max(this->get_main_proj_array(GMSB_PREM_IF, i) - this->get_main_proj_array(AV_E, i) - this->get_main_proj_array(GMAB_CLAIMS, i) , 0)* this->get_main_proj_array(DISCOUNT_FACTOR, i);	
+			}		
+		}
+	}
+
+	
+	double dynamic_lapse_rate_axa(int t)
+	{
+		double ten_yr_rate;
+		double itm;
+		double ITM_Parameter_1;
+		double ITM_Parameter_2;
+		double ITM_Parameter_3;
+		double ITM_Parameter_4;
+		double Lapse_Parameter_1;
+		double Lapse_Parameter_2;
+		double Lapse_Parameter_3;
+		double base_lapse_rate_1;
+		double Lapse_Parameter_5;
+		double base_lapse_rate_2;
+		double Lapse_Parameter_7;
+		
+		double pwr_t;
+		int age;
+		double lapse_rate;
+		double pwr_x_lapse;
+
+		ten_yr_rate = this->afmr[this->model_point->elapsed_mths_in_valn_yr+1][t][MAXIMUM_NUMBER_OF_INDEXES] / 100.;//ann_from_mthly_rates[elapsed_mths_in_valn_yr_s() + 1][time][SUBACCT_NUM_FUNDS] /100.0;
+		main_proj_array[t][BOND_RATE_FOR_LAPSES] = ten_yr_rate;
+		if (main_proj_array[t][AV_E_BEF]<SMALL_DOUBLE)
+		{
+			return 0.0;
+		}
+		else
+		{
+			int age1;
+			age1 = (int)(timing_items[t][AGE_LAST]) + this->mort_age_adj;
+			if (this->joint_life_ind=="LS")
+			{
+				int age2 = (int)(this->age_exact_issue_2) + this->timing_items[t][POL_YEAR] - 1.0 + this->mort_age_adj;
+				age = min(age1, age2);
+			}
+			else
+			{
+				age = age1;
+			}
+			pwr_t = pwr_table->search(age,1);
+			if (this->timing_items[t][POL_YEAR] <= aus_mp->gmxb_deferral_period)
+			{
+				ITM_Parameter_1 = this->lapse_rates->search(1,1);
+				ITM_Parameter_2 = this->lapse_rates->search(2,1);
+				ITM_Parameter_3 = this->lapse_rates->search(3,1);
+				ITM_Parameter_4 = this->lapse_rates->search(4,1);
+				Lapse_Parameter_1 = this->lapse_rates->search(5,1);
+				Lapse_Parameter_2 = this->lapse_rates->search(6,1);
+				Lapse_Parameter_3 = this->lapse_rates->search(7,1);
+				base_lapse_rate_1 = this->lapse_rates->search(8,1);
+				Lapse_Parameter_5 = this->lapse_rates->search(9,1);
+				base_lapse_rate_2 = this->lapse_rates->search(10,1);
+				Lapse_Parameter_7 = this->lapse_rates->search(11,1);
+
+				pwr_x_lapse = pwr_t;
+			}
+			else
+			{
+				ITM_Parameter_1 = this->lapse_rates->search(1,2);
+				ITM_Parameter_2 = this->lapse_rates->search(2,2);
+				ITM_Parameter_3 = this->lapse_rates->search(3,2);
+				ITM_Parameter_4 = this->lapse_rates->search(4,2);
+				Lapse_Parameter_1 = this->lapse_rates->search(5,2);
+				Lapse_Parameter_2 = this->lapse_rates->search(6,2);
+				Lapse_Parameter_3 = this->lapse_rates->search(7,2);
+				base_lapse_rate_1 = this->lapse_rates->search(8,2);
+				Lapse_Parameter_5 = this->lapse_rates->search(9,2);
+				base_lapse_rate_2 = this->lapse_rates->search(10,2);
+				Lapse_Parameter_7 = this->lapse_rates->search(11,2);
+
+				pwr_x_lapse = pwr_x;
+			}
+
+
+			if ((pwr_t+ITM_Parameter_1)>ten_yr_rate)
+			{
+				itm = pwr_t-pwr_x_lapse*max(ITM_Parameter_2,main_proj_array[t][GMWB_IF_BEF]/main_proj_array[t][AV_E_BEF]);
+			}
+			else
+			{
+				itm = ten_yr_rate-pwr_x_lapse*max(ITM_Parameter_3,main_proj_array[t][GMWB_IF_BEF]/main_proj_array[t][AV_E_BEF])-ITM_Parameter_4;
+			}
+			main_proj_array[t][ITM] = itm;
+			if (itm<Lapse_Parameter_1)
+			{
+				lapse_rate = Lapse_Parameter_3 * itm + base_lapse_rate_1;
+			}
+			else if (itm<Lapse_Parameter_2)
+			{
+				lapse_rate = Lapse_Parameter_5 * itm + base_lapse_rate_2;
+			}
+			else
+			{
+				lapse_rate = Lapse_Parameter_7;
+			}
+		}
+
+		return max(lapse_rate,0);
+	}
+
+	
+	virtual double mortality_rate_calculation(int t) 
+	{
+		double table_age = (int)(timing_items[t][AGE_LAST]) + this->mort_age_adj;
+		int mort_table_high_ind = int(this->mort_table->get_row_high_index() - 1);
+		int pol_yr = min(int(this->timing_items[t][POL_YEAR]), mort_table_high_ind);
+		
+		double table_age_2 = 0.;
+
+		if (this->joint_life_ind=="LS")
+		{
+			table_age_2 = (int)(this->age_exact_issue_2) + this->timing_items[t][POL_YEAR] - 1.0 + this->mort_age_adj;
+			double q1 = min(1.0, this->mort_table->search(int(table_age), (int)(this->model_point->year)- MORT_CONST)* this->mort_mult);//MODEL CHANGE MAY 2011
+		  //double q1 = min(1.0, this->mort_table->search(int(table_age), (int)(this->model_point->valn_year - this->model_point->age_valn) - MORT_CONST)* this->mort_mult);
+	
+			double q2 = min(1.0, this->mort_table_2->search(int(table_age_2), (int)(this->year_2)- MORT_CONST)* this->mort_mult_2);//MODEL CHANGE MAY 2011
+		  //double q2 = min(1.0, this->mort_table_2->search(int(table_age_2), (int)(this->model_point->valn_year - this->age_valn_2) - MORT_CONST)* this->mort_mult_2);				
+
+			if (t == 1)
+			{
+				surv_12 = 10000.;
+				surv_1 = 0.;
+				surv_2 = 0.;
+			}
+			else
+			{
+				double q1_last_year = min(1.0, this->mort_table->search(int(table_age) - 1, (int)(this->model_point->year) - MORT_CONST)* this->mort_mult);	//MODEL CHANGE MAY 2011  
+				//double q1_last_year = min(1.0, this->mort_table->search(int(table_age) - 1, (int)(this->model_point->valn_year - this->model_point->age_valn) - MORT_CONST)* this->mort_mult);	
+				
+				double q2_last_year = min(1.0, this->mort_table_2->search(int(table_age_2)-1, (int)(this->year_2)- MORT_CONST)* this->mort_mult_2);//MODEL CHANGE MAY 2011 
+				//double q2_last_year = min(1.0, this->mort_table_2->search(int(table_age_2) - 1, (int)(this->model_point->valn_year - this->age_valn_2) - MORT_CONST)* this->mort_mult_2);			
+				
+				surv_1 = surv_12 * (1 - q1_last_year) * q2_last_year + surv_1 * (1 - q1_last_year);
+				surv_2 = surv_12 * (1 - q2_last_year) * q1_last_year + surv_2 * (1 - q2_last_year);
+				surv_12 = surv_12 * (1 - q1_last_year) * (1 - q2_last_year);
+			}
+			double surv = surv_12 + surv_1 + surv_2;
+			
+			if(surv < SMALL_DOUBLE)
+				return 0.0;
+			else
+				return min(1.0, (surv_12 * q1 * q2 + surv_1 * q1 + surv_2 * q2) / surv );
+	
+		}
+		else 
+			return min(1.0, this->mort_table->search(int(table_age), (int)(this->model_point->year) - MORT_CONST)* this->mort_mult);//MODEL CHANGE MAY 2011
+			//return min(1.0, this->mort_table->search(int(table_age), (int)(this->model_point->valn_year - this->model_point->age_valn) - MORT_CONST)* this->mort_mult);	
+				
+	}
+
+	
+	void calculate_gmwb_annuity(int t)
+	{
+		int age;
+		double wb_rate;
+		double av_rate;
+
+		if (t == 1)
+		{
+			int age1;
+			age1 = (int)(model_point->age_exact_issue);
+			if (this->joint_life_ind=="LS")
+			{
+				int age2 = (int)(this->age_exact_issue_2);
+				age = min(age1, age2) + aus_mp->gmxb_deferral_period;
+			}
+			else
+			{
+				age = age1 + aus_mp->gmxb_deferral_period;
+			}
+			pwr_x = pwr_table->search(age,1);
+			
+			if (this->timing_items[t][POL_YEAR] > aus_mp->gmxb_deferral_period)
+			{
+				av_rate = smwr_table->search((int)(timing_items[t][AGE_LAST]),1);
+				if (main_proj_array[t][AV_B_BEF]>pwb * main_proj_array[t][GMWB_IF_BEF])
+				{
+					wb_rate = model_point->gmwb_wdl_rate / 100.;
+				}
+				else
+				{
+					wb_rate = pwr_x;
+				}
+				main_proj_array[t][GMWB_PAYMENT] = max(av_rate*main_proj_array[t][AV_B_BEF],wb_rate*main_proj_array[t][GMWB_IF_BEF])-model_point->gmwb_payt_yr;
+			}
+			else
+			{
+				main_proj_array[t][GMWB_PAYMENT] = 0.0;
+			}
+		}
+		else
+		{
+			if (this->timing_items[t][POL_YEAR] > aus_mp->gmxb_deferral_period)
+			{
+				av_rate = smwr_table->search((int)(timing_items[t][AGE_LAST]),1);
+				if (main_proj_array[t][AV_B_BEF]>pwb * main_proj_array[t][GMWB_IF_BEF])
+				{
+					wb_rate = model_point->gmwb_wdl_rate / 100.;
+				}
+				else
+				{
+					wb_rate = pwr_x;
+				}
+				main_proj_array[t][GMWB_PAYMENT] = max(av_rate*main_proj_array[t][AV_B_BEF],wb_rate*main_proj_array[t][GMWB_IF_BEF]);
+			}
+			else
+			{
+				main_proj_array[t][GMWB_PAYMENT] = 0.0;
+			}
+
+		}
+		main_proj_array[t][GMWB_PAYMENT] = max(main_proj_array[t][GMWB_PAYMENT],0); //MODEL CHANGE MAY 2011
+	}
+
+	void project_gmwb_payments_claims_beg(int t)
+	{
+		if (t == 1)
+		{
+			main_proj_array[t][GMWB_AV_IF_BEF] = aus_mp->gmwb_ratchet_valn + main_proj_array[t][PREMIUM] +  max(-aus_mp->au_tax_lia,0.);
+		}
+		else if (this->timing_items[t][POL_YEAR] <= aus_mp->prem_durr)
+			main_proj_array[t][GMWB_AV_IF_BEF] = main_proj_array[t-1][GMWB_AV_IF] + main_proj_array[t][PREMIUM];
+		else
+			main_proj_array[t][GMWB_AV_IF_BEF] = main_proj_array[t-1][GMWB_AV_IF];
+		
+		main_proj_array[t][GMWB_IF_BEF] = main_proj_array[t][GMWB_AV_IF_BEF];
+		calculate_advisory_charge_wb(t);
+		main_proj_array[t][GMWB_AV_IF_BEF] = main_proj_array[t][GMWB_AV_IF_BEF] - adv_amt_wb;
+		main_proj_array[t][GMWB_IF_BEF] = main_proj_array[t][GMWB_IF_BEF] - adv_amt_wb;
+	}
+
+	//Jerome - LSM - May 2001 - Method deleted
+	/*double lapse_rate_calc(int t)
+	{
+		double lapse_rate = 0.0;
+		lapse_rate = this->timing_items[t][PRORATA] * dynamic_lapse_rate_axa(t);
+		return lapse_rate;
+	}*/
+
+	//LSM - Jerome - Start - May 2011
+	double lapse_rate_calc(int t)
+	{
+		double lapse_rate = 0.0;
+		int phase = 1;
+		//double lapse_rate_base = 0.0;
+		//if (main_proj_array[t][AV_E_BEF]>= SMALL_DOUBLE)
+		//{
+			if (this->lapse_is_dynamic)
+			{
+				lapse_rate = this->timing_items[t][PRORATA] * dynamic_lapse_rate_axa(t);
+			}
+			else
+			{
+				if (this->timing_items[t][POL_YEAR] <= aus_mp->gmxb_deferral_period)
+					phase = 1;
+				else
+					phase = 2;
+
+				// base lapse rate
+				if(phase == 1)
+					lapse_rate = this->acc_phase_base_lapse / 100. ;
+				else
+					lapse_rate = this->wdwl_phase_base_lapse / 100.;
+		
+				//return lapse_rate_base;
+
+				//return 0.05;
+
+			}
+		//}
+		if (this->longstaff_ind == "Y")
+			lapse_rate = 0;
+		return lapse_rate;
+	}
+	//LSM - Jerome - End - May 2011
+
+	
+	void project_gmwb_payments_claims_aft(int t)
+	{	
+		main_proj_array[t][GMWB_AV_IF] = main_proj_array[t][GMWB_AV_IF_BEF]  * this->surv_mth_calc(t);
+		
+
+		if (au_fpw_capped=="N")
+		{
+			if ((main_proj_array[t][AV_E_BEF_CLAIMS] +  au_main_proj_array[t][AU_FPW_AMT]) > SMALL_DOUBLE) 
+			{
+				if ((main_proj_array[t][AV_E_BEF_CLAIMS] +  au_main_proj_array[t][AU_FPW_AMT])<=main_proj_array[t][GMWB_AV_IF])
+				{
+					main_proj_array[t][GMWB_AV_IF] -= main_proj_array[t][GMWB_AV_IF] * this->aus_mp->au_min_wdwl /100 * this->timing_items[t][PRORATA]; 
+				}
+				else
+				{
+					main_proj_array[t][GMWB_AV_IF] -= (main_proj_array[t][AV_E_BEF_CLAIMS] +  au_main_proj_array[t][AU_FPW_AMT]) * this->aus_mp->au_min_wdwl /100 * this->timing_items[t][PRORATA]; 
+				}
+			}
+		}
+		
+		main_proj_array[t][GMWB_AV_IF] += max(0.0,main_proj_array[t][AV_E] - main_proj_array[t][GMWB_AV_IF]);
+		main_proj_array[t][GMWB_IF] = main_proj_array[t][GMWB_AV_IF];
+		
+		main_proj_array[t][GMWB_CLAIMS] = max(0.0,main_proj_array[t][GMWB_PAYMENT]-main_proj_array[t][AV_B_BEF]);
+	}
+
+	
+	void avBBefBis(int t)
+	{		
+		calculate_gmwb_annuity(t);
+		main_proj_array[t][AV_B_BEF_BIS] = max(0 , main_proj_array[t][AV_B_BEF] - main_proj_array[t][GMWB_PAYMENT]);
+	}
+
+	
+	void calculate_advisory_charge_total(int t)
+	{
+		if (main_proj_array[t-1][AV_E] <= SMALL_DOUBLE)
+		{
+			au_main_proj_array[t][AU_ADVISORY_CHARGE_TOTAL] = 0.;  
+		}
+		else
+		{
+			if (t==1)
+			{
+				if (this->timing_items[t][POL_YEAR] > aus_mp->gmxb_deferral_period)
+				{
+					adv_rate = min(max_adv_chg_pension,aus_mp->au_adv_per/100.0+aus_mp->au_adv_amt * (1 - main_proj_array[t-1][DEATH_RATE]) * 
+													(1 - main_proj_array[t-1][LAPSE_RATE] ) / (main_proj_array[t-1][AV_E] - aus_mp->au_tax_lia));
+				}
+				else
+				{
+					if ((main_proj_array[t-1][AV_E]- aus_mp->au_tax_lia)<av_threshold)
+					{
+						adv_rate = min(max_adv_fee,aus_mp->au_adv_per/100+aus_mp->au_adv_amt * (1 - main_proj_array[t-1][DEATH_RATE]) * 
+													(1 - main_proj_array[t-1][LAPSE_RATE] ) / (main_proj_array[t-1][AV_E]-aus_mp->au_tax_lia));
+					}
+					else
+					{
+						adv_rate = min(max_adv_fee+max_adv_amt*(1 - main_proj_array[t-1][DEATH_RATE]) * (1 - main_proj_array[t-1][LAPSE_RATE] ) / (main_proj_array[t-1][AV_E]-aus_mp->au_tax_lia),
+											aus_mp->au_adv_per/100+aus_mp->au_adv_amt * (1 - main_proj_array[t-1][DEATH_RATE]) * (1 - main_proj_array[t-1][LAPSE_RATE] ) / (main_proj_array[t-1][AV_E]-aus_mp->au_tax_lia));
+					}
+				}
+			}
+			else
+			{
+				if (this->timing_items[t][POL_YEAR] > aus_mp->gmxb_deferral_period)
+				{
+					adv_rate = min(max_adv_chg_pension,aus_mp->au_adv_per/100.0+aus_mp->au_adv_amt * (1 - main_proj_array[t-1][DEATH_RATE]) * 
+													(1 - main_proj_array[t-1][LAPSE_RATE] ) / main_proj_array[t-1][AV_E]);
+				}
+				else
+				{
+					if (main_proj_array[t-1][AV_E]<av_threshold)
+					{
+						adv_rate = min(max_adv_fee,aus_mp->au_adv_per/100+aus_mp->au_adv_amt * (1 - main_proj_array[t-1][DEATH_RATE]) * 
+													(1 - main_proj_array[t-1][LAPSE_RATE] ) / main_proj_array[t-1][AV_E]);
+					}
+					else
+					{
+						adv_rate = min(max_adv_fee+max_adv_amt*(1 - main_proj_array[t-1][DEATH_RATE]) * (1 - main_proj_array[t-1][LAPSE_RATE] ) / main_proj_array[t-1][AV_E],
+											aus_mp->au_adv_per/100+aus_mp->au_adv_amt * (1 - main_proj_array[t-1][DEATH_RATE]) * (1 - main_proj_array[t-1][LAPSE_RATE] ) / main_proj_array[t-1][AV_E]);
+					}
+				}
+			}
+
+		}
+		au_main_proj_array[t][AU_ADVISORY_CHARGE_TOTAL] = adv_rate * this->timing_items[t][PRORATA] * main_proj_array[t][AV_B_BEF];
+	}
+
+	
+	void calculate_advisory_charge_wb(int t)
+	{
+		if ((main_proj_array[t][AV_B_BEF]+au_main_proj_array[t][AU_ADVISORY_CHARGE_TOTAL]) * (1-adviser_fee_threshold * this->timing_items[t][PRORATA])<=main_proj_array[t][GMWB_IF_BEF])
+		{
+			adv_amt_wb = main_proj_array[t][GMWB_IF_BEF] * max(0,adv_rate-adviser_fee_threshold) * this->timing_items[t][PRORATA]; 
+		}
+		else
+		{
+			adv_amt_wb = (main_proj_array[t][AV_B_BEF]+au_main_proj_array[t][AU_ADVISORY_CHARGE_TOTAL]) * max(0,adv_rate-adviser_fee_threshold) * this->timing_items[t][PRORATA]; 
+		}
+	}
+
+	
+	virtual void avBBef(int t)
+	{
+		double prem = regular_premium_calculation(t);
+		if (t==1)
+			main_proj_array[t][AV_B_BEF] = main_proj_array[t-1][AV_E] + prem - aus_mp->au_tax_lia ;
+		else
+			main_proj_array[t][AV_B_BEF] = main_proj_array[t-1][AV_E] + prem ;
+		
+		calculate_advisory_charge_total(t);
+		main_proj_array[t][AV_B_BEF] -= au_main_proj_array[t][AU_ADVISORY_CHARGE_TOTAL];
+		main_proj_array[t][AV_B_BEF] = max(main_proj_array[t][AV_B_BEF],0);//MODEL CHANGE MAY 2011
+	}
+
+	void avEBefClaims(int t)
+	{
+		Projection::avEBefClaims(t);
+		if (au_fpw_capped=="N")
+		{
+			au_main_proj_array[t][AU_FPW_AMT] = main_proj_array[t][AV_E_BEF_CLAIMS] * this->aus_mp->au_min_wdwl /100 * this->timing_items[t][PRORATA];
+			main_proj_array[t][AV_E_BEF_CLAIMS] -=  au_main_proj_array[t][AU_FPW_AMT];
+		}
+	}
+
+		
+
+	virtual void populate_pvs(int t, double **pvs, int curr_shock_number)// ML ajout output
+	{
+		if (!this->project_aging_policies)
+		{
+			double discount_factor = 0.;
+			if (t == 0)
+				discount_factor = 1.0;
+			else	 
+				discount_factor = this->get_rate(this->model_point->elapsed_mths_in_valn_yr + 1,t,MAXIMUM_NUMBER_OF_INDEXES + 1);  
+
+			if (t==1)
+			{
+				pvs[curr_shock_number][BEGINING_ACCOUNT_VALUE] += 
+						main_proj_array[1][AV_B_BEF];
+
+				pvs[curr_shock_number][PV_INCOME_AUS_WB]+=aus_mp->gmwb_ratchet_valn;//ml include all income bases from time zero
+			}
+			
+			pvs[curr_shock_number][PV_GMAB] += 
+									(main_proj_array[t][GMAB_CLAIMS] * discount_factor);
+
+			pvs[curr_shock_number][PV_GMDB] += 
+									(main_proj_array[t][GMDB_CLAIMS]* discount_factor);
+
+			pvs[curr_shock_number][PV_GMWB] += 
+									(main_proj_array[t][GMWB_CLAIMS] * discount_factor);
+
+			pvs[curr_shock_number][PV_GMSB] += 
+									(main_proj_array[t][GMSB_CLAIMS]* discount_factor);
+
+			pvs[curr_shock_number][PV_GMIB] += (main_proj_array[t][GMIB_CLAIMS]* discount_factor);
+
+
+			pvs[curr_shock_number][PV_GMXB_REAL_CHG] += 
+									(main_proj_array[t][GMXB_CHARGE]* discount_factor);
+			
+			if (model_point->gmxb_g_c ==0)
+			{
+				pvs[curr_shock_number][PV_GMXB_EHC_CHG] = 0.;
+			}
+			else 
+				pvs[curr_shock_number][PV_GMXB_EHC_CHG] = 
+							(pvs[curr_shock_number][PV_GMXB_REAL_CHG] 
+								* adjusted_rate(model_point->gmxb_ehc_charge/100.0, this->time_step,-1) / adjusted_rate(model_point->gmxb_g_c /100.0, this->time_step,-1)
+							 );
+		
+			pvs[curr_shock_number][PV_DEP_FEE] += 
+									(main_proj_array[t][HC_PREM]* discount_factor);
+
+			pvs[curr_shock_number][PV_INCOME_AUS_WB] += (main_proj_array[t][GMWB_IF]* discount_factor);//ML ajout Output Australie
+								 
+
+			this->main_proj_array[t][DISCOUNT_FACTOR] = discount_factor;
+		}
+	}
+
+
+	// Account value Rollforward
+	void project_t(int t, double **pvs, int curr_shock_nb, double lapse_mult, 
+							double mortality_mult, bool shock_av)
+	{
+		if (shock_av)
+		{
+			if(t==1)
+				this->delta_shock(t);
+		}
+		this->avBBef(t);
+		this->project_gmwb_payments_claims_beg(t);
+		this->avBBefBis(t);
+		this->avB(t);
+		this->avEBef(t);
+		this->init_rates(t, lapse_mult, mortality_mult);
+		this->avEBefClaims(t);
+		this->avE(t);
+		this->project_gmwb_payments_claims_aft(t);
+		this->finish_t(t);
+		this->populate_pvs(t, pvs, curr_shock_nb);
+	}
+};

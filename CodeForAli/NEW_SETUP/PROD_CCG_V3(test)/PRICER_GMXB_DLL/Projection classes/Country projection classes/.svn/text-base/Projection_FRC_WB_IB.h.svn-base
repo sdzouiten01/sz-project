@@ -1,0 +1,386 @@
+#pragma once
+#include "stdafx.h"
+#include "Projection classes/Guarantee projection classes/Projection.h"
+#include "Projection classes/Guarantee projection classes/Projection_WB_IB.h"
+#include "Model point classes/Country model point classes/Model_Point_FRC.h"
+
+//Macros for lapse_dyn_medregion table
+#define SLOPE 1
+#define THRESHOLD1 2
+#define THRESHOLD2 3
+
+//Macros for lapse_dyn_profile_split table
+#define IRRATIONAL 1
+#define RATIONAL 2
+
+//Macros for lapse_rate table
+#define ACC 1
+#define DIST 2
+
+#define MORT_CONST 1900
+
+class Projection_FRC_WB_IB: public Projection_WB_IB
+{
+	public:
+	double pol_initial_issue_date;
+	//Specific variables for FRANCE declaration
+	double rational_index[SUBACCT_MAX_PERIOD_MTH + 1];
+	double irrational_index[SUBACCT_MAX_PERIOD_MTH + 1];
+	GMXB_Assumption_Table * lapse_dyn_medregion;
+	GMXB_Assumption_Table * lapse_dyn_profile_split;
+	// GMXB_Assumption_Table * gmwb_max_annual_wdl_pct_table;
+	double gmwb_max_annual_wdl_pct_table;
+	double tax_deferral;
+
+	Projection_FRC_WB_IB(const vector<vector <int>>& i_s_a,const vector<vector <int>>& f_s_a,
+						const char* tables, bool generate_dbg_files, const string& dbg_file_path,
+						const int t_high_shorter, bool l_longevity_tables, int time_step):
+	Projection(i_s_a, f_s_a, tables, generate_dbg_files, dbg_file_path, t_high_shorter, l_longevity_tables, time_step),
+	Projection_WB_IB(i_s_a, f_s_a, tables, generate_dbg_files, dbg_file_path, t_high_shorter, l_longevity_tables, time_step)
+	{	
+
+		lapse_dyn_medregion = new GMXB_Assumption_Table (tables, "lapse_dyn_medregion");
+		lapse_dyn_profile_split = new GMXB_Assumption_Table (tables, "lapse_dyn_profile_split");
+		tax_deferral = atof(this->assump->search("tax_deferral").c_str());
+		// gmwb_max_annual_wdl_pct_table = new GMXB_Assumption_Table(tables, "gmwb_max_annual_wdl_pct_table");
+
+	}
+
+	~Projection_FRC_WB_IB()
+	{
+		//delete gmwb_max_annual_wdl_pct_table;
+		delete lapse_dyn_medregion;
+		delete lapse_dyn_profile_split;
+	}
+	
+	void set_initial_value()
+	{
+		Projection::set_initial_value();
+		this->gmib_election_ind = 0;
+	}
+
+	void set_current_model_point(Model_Point *mp)
+	{
+		Projection_WB::set_current_model_point(mp);
+		Model_Point_FRC *frc_mp = dynamic_cast<Model_Point_FRC *> (mp);
+		this->pol_initial_issue_date = frc_mp->policy_initial_issue_date;
+		gmwb_max_annual_wdl_pct_table = frc_mp->frc_coupon/100.;
+	}
+
+	vector<Model_Point*> age_policies_from_projection()
+	{
+		vector<Model_Point*> vector_aged_polices;
+		
+		for( int tt = 1;  tt <= this->get_subacct_max_period() && 
+			this->get_timing_items(POL_YEAR,tt) <= this->get_maturity_yr(); tt++)
+		{
+			Model_Point_FRC * p_mp = new Model_Point_FRC(this->model_point, 1, 0);
+			p_mp->mp_position_in_file=tt;
+
+			p_mp->age_valn = this->get_timing_items(AGE_LAST,tt);
+			p_mp->duration = p_mp->age_valn - this->model_point->age_exact_issue;
+			p_mp->policy_initial_issue_date = p_mp->age_valn - p_mp->age_exact_issue_old_date;
+
+							
+			//Sheng: superior rounding on age_valn and duration, (10^(-6)) 
+			p_mp->age_valn = rounding_sup(p_mp->age_valn, 0.000001);
+			p_mp->duration = rounding_sup(p_mp->duration, 0.000001);
+			p_mp->policy_initial_issue_date = rounding_sup(p_mp->policy_initial_issue_date, 0.000001);
+
+			p_mp->elapsed_months = (int)(p_mp->duration*12);
+			p_mp->elapsed_mths_in_valn_yr = (int)((p_mp->duration - (int)p_mp->duration)*12);
+			p_mp->elapsed_years = (int) (p_mp->duration);
+			
+			double wb_payt_yr = 0;
+				
+			int first_time_step_of_year = (p_mp->elapsed_months-1)/12*12 + 1 + (tt - p_mp->elapsed_months);
+			cout<<" first_time_step_of_year="<< first_time_step_of_year<<endl;
+
+			if (first_time_step_of_year<=0)
+				for (int i=1; i<=tt;i++)
+					wb_payt_yr += this->get_main_proj_array (GMWB_PAYMENT,i-1);
+			else
+				for (int i=first_time_step_of_year; i<=tt; i++)
+					wb_payt_yr += this->get_main_proj_array (GMWB_PAYMENT,i-1);	
+			if (tt == first_time_step_of_year + 11)
+				wb_payt_yr = 0;
+			    
+			p_mp->gmwb_payt_yr = wb_payt_yr;	
+			
+			if (tt!=1)
+			{
+				// Modif Base
+				p_mp->gmab_rollup_valn		= this->get_main_proj_array(GMAB_ROLLUP_BASE,tt-1);
+				p_mp->gmab_ratchet_valn	= this->get_main_proj_array(GMAB_RATCHET_BASE,tt-1);
+				p_mp->gmdb_ratchet_valn 	= this->get_main_proj_array(GMDB_AV_IF,tt-1);
+				p_mp->gmdb_rollup_valn 	= this->get_main_proj_array(GMDB_PREM_IF,tt-1);
+				p_mp->gmwb_ratchet_valn 	= this->get_main_proj_array(GMWB_AV_IF,tt-1); 
+				p_mp->gmwb_rollup_valn 	= this->get_main_proj_array(GMWB_PREM_IF,tt-1);
+				p_mp->prem_paid = this->model_point->prem_paid * this->get_main_proj_array(SURV_INDEX,tt);
+				// Modif AV
+
+				p_mp->total_av = 0;
+				for (int i=0; i< MAXIMUM_NUMBER_OF_INDEXES; i++)
+				{
+					p_mp->av_split_prop_array[i] = this->get_index_weights(i,tt);
+					p_mp->av_if_array[i] = this->get_main_proj_array(AV_E,tt-1)*p_mp->av_split_prop_array[i]/100;
+					p_mp->total_av += p_mp->av_if_array[i];
+				}
+
+				double wb_wdl_cumul = 0;
+				for (int i=1; i<=tt; i++)
+					wb_wdl_cumul += this->get_main_proj_array(GMWB_PAYMENT,i-1);
+		
+				p_mp->gmwb_wdl_cum_dyn_lapse = wb_wdl_cumul;
+			}
+			vector_aged_polices.push_back(p_mp);
+		}
+		return vector_aged_polices;
+
+	}
+
+	double mortality_rate_calculation(int t) 
+	{
+
+		int pol_yr = int(timing_items[t][POL_YEAR]);
+		double table_age= (int)(timing_items[t][AGE_LAST]) + this->mort_age_adj;
+		//return min(1.0, this->mort_table->search(int(table_age), (int)(this->model_point->valn_year + (this->model_point->valn_month - 1.0) / 12.0 + (this->model_point->valn_day) / 365.0 - this->model_point->age_valn) - MORT_CONST)* this->mort_mult);
+		return min(1.0, this->mort_table->search(int(table_age), (int)(this->model_point->year) - MORT_CONST)* this->mort_mult);
+	}
+
+	void gmxbCharge(int t)
+	{
+		double gmxb_g_c_local;
+		gmxb_g_c_local = this->model_point->gmxb_g_c/100;
+		if (this->time_step == MONTHLY)
+			gmxb_g_c_local = 1 - pow(1-gmxb_g_c_local, (double)(1.0/time_step));
+
+		if (this->timing_items[t][POL_YEAR] <= this->product_charging_duration)
+			main_proj_array[t][GMXB_CHARGE] = min(this->main_proj_array[t][AV_B_BEF_BIS], this->timing_items[t][PRORATA] * gmxb_g_c_local * this->model_point->prem_paid * surv_cumul[t-1]);
+		else
+			main_proj_array[t][GMXB_CHARGE] = 0.0;
+	}
+	double dynamic_lapse_rate_axa(int t) 
+	{
+		int pol_yr = (int)this->timing_items[t][POL_YEAR] ; 
+		double itm;		 
+		//double tenyr = this->afmr[this->model_point->elapsed_mths_in_valn_yr + 1][t][MAXIMUM_NUMBER_OF_INDEXES]/100.0;
+
+		double tenyr = get_rate(this->model_point->elapsed_mths_in_valn_yr + 1,t,MAXIMUM_NUMBER_OF_INDEXES)/100.0;
+		main_proj_array[t][BOND_RATE_FOR_LAPSES] = tenyr; 
+
+		double fra_irr_lapse_rate;
+		double fra_dynamic_rate;
+		double local_wdl_perc;  
+
+		//ITM Calculation
+		if (t == 1)
+		{ 
+		  main_proj_array[t][GMWB_IF]  = max(this->model_point->gmwb_rollup_valn, this->model_point->gmwb_ratchet_valn);
+		} 
+		else
+			main_proj_array[t][GMWB_IF] = main_proj_array[t-1][GMWB_IF]; 
+
+		   
+		// local_wdl_perc =  this->gmwb_max_annual_wdl_pct_table->search(this->model_point->age_election_ddf_calculated, 1)/100;
+		
+		local_wdl_perc = this->gmwb_max_annual_wdl_pct_table;
+
+		if(main_proj_array[t][AV_E_BEF] > SMALL_DOUBLE)
+				itm = tenyr - local_wdl_perc * max(main_proj_array[t][AV_E_BEF], main_proj_array[t][GMWB_IF])/main_proj_array[t][AV_E_BEF] ;
+		else
+				itm = 0.0;	
+		
+		//Dynamic rationnal rate calculation
+		double itm_threshold_inf = this->lapse_dyn_medregion->quick_search(THRESHOLD1, 1)/100;
+		double itm_threshold_sup = this->lapse_dyn_medregion->quick_search(THRESHOLD2, 1)/100;
+		double slope = this->lapse_dyn_medregion->quick_search(SLOPE, 1);
+				
+		if	(this->pol_initial_issue_date + t <= tax_deferral)
+
+		{
+			 fra_dynamic_rate = 0.0;
+		}
+		else
+		{
+			if (itm > itm_threshold_sup)
+				fra_dynamic_rate = this->lapse_max_pa_perc / 100.0;
+			else if (itm < itm_threshold_inf)	
+				fra_dynamic_rate = this->lapse_min_pa_perc / 100.0;
+			else		
+				fra_dynamic_rate = min(this->lapse_max_pa_perc/ 100.0 , max(slope * (itm - itm_threshold_inf), 0.0)) ;
+		}	
+
+		if (this->time_step == MONTHLY)
+			fra_dynamic_rate = adjusted_rate(fra_dynamic_rate, this->time_step, -1);
+
+			
+		 //Irrational rate calculation
+		 if(pol_yr <= this->model_point->gmxb_deferral_period)
+			 fra_irr_lapse_rate = this->lapse_rates->search(pol_yr, ACC)/100; 
+		else
+			fra_irr_lapse_rate = this->lapse_rates->search(pol_yr, DIST)/100; 
+		 if(this->time_step == MONTHLY)
+			 fra_irr_lapse_rate = 1 - pow(1 - fra_irr_lapse_rate, (1.0/(double)time_step));
+
+	     
+	 
+		//Rationnal - irationnal percentage rate calculation	   
+		if (t==1)
+		{
+			rational_index[0] = this->lapse_dyn_profile_split->quick_search(RATIONAL, 1);
+			irrational_index[0] =  this->lapse_dyn_profile_split->quick_search(IRRATIONAL, 1);
+			
+			for (int i = 2; i != SUBACCT_MAX_PERIOD_MTH+1; i++)
+			{
+				rational_index[i] = 0.0;
+				irrational_index[i] = 0.0;
+			}
+		}
+			
+		 double denom = rational_index[t-1] * (1 - fra_dynamic_rate) + irrational_index[t-1] * (1- fra_irr_lapse_rate); 
+		 	
+		 if (denom > SMALL_DOUBLE)
+		 {
+			rational_index[t] = rational_index[t-1] * (1 - fra_dynamic_rate) / denom;
+			irrational_index[t] = irrational_index[t-1] * (1 - fra_irr_lapse_rate) / denom;
+		 }   
+		 else
+		 {
+			rational_index[t] = 0.0;
+			irrational_index[t] = 0.0;
+		 }
+		
+		//Effective lapse rate
+		return rational_index[t-1] * fra_dynamic_rate + irrational_index[t-1]* fra_irr_lapse_rate;
+	} 
+
+	void project_gmwb_payments_claims_beg(int t)
+	{
+			if (t == 1) 
+			{
+				main_proj_array[t][GMWB_ROLLUP_PREV] = this->model_point->gmwb_rollup_valn;     
+				main_proj_array[t][GMWB_RATCHET_PREV] = this->model_point->gmwb_ratchet_valn;
+				main_proj_array[t][GMWB_IF] = max(this->model_point->gmwb_rollup_valn, model_point->gmwb_ratchet_valn);
+			}
+			else
+			{      
+				main_proj_array[t][GMWB_RATCHET_PREV] = main_proj_array[t-1][GMWB_AV_IF];
+
+				if (this->gmwb_ratchet_type == "RATCHET")
+					main_proj_array[t][GMWB_ROLLUP_PREV] = main_proj_array[t-1][GMWB_PREM_IF];
+				else
+				{
+					main_proj_array[t][GMWB_ROLLUP_PREV]  = main_proj_array[t-1][GMWB_IF] ; 	
+			
+				}
+			}	
+
+			if (((this->timing_items[t][POL_YEAR]> this->model_point->gmxb_deferral_period)
+				&&(this->timing_items[t][POL_YEAR] <= this->model_point->gmxb_deferral_period + this->gmwb_withdrawal_period))
+				&&(this->time_step==ANNUAL || ((this->time_step == MONTHLY) && (this->timing_items[t][POL_YEAR]!= this->timing_items[t-1][POL_YEAR]))))
+			{
+				// NA - TO DO - gmwb_max_annual_wdl_pct should be dependant on the product code key
+				if (t == 1)
+					//main_proj_array[t][GMWB_PAYMENT] = this->gmwb_max_annual_wdl_pct_table * main_proj_array[t][GMWB_IF];
+					main_proj_array[t][GMWB_PAYMENT] = max(this->gmwb_max_annual_wdl_pct_table * main_proj_array[t][GMWB_IF] - model_point->gmwb_payt_yr, 0.0);
+					
+					// this->gmwb_max_annual_wdl_pct_table->search((int)this->model_point->age_election_ddf_calculated, 1)/100
+									   // * main_proj_array_2[GMWB_IF][t];
+				else
+					main_proj_array[t][GMWB_PAYMENT] =  this->gmwb_max_annual_wdl_pct_table 
+									* main_proj_array[t-1][GMWB_IF];
+					// this->gmwb_max_annual_wdl_pct_table->search((int)this->model_point->age_election_ddf_calculated, 1)/100
+					// 				   * main_proj_array_2[GMWB_IF][t-1];
+				
+				
+				main_proj_array[t][GMWB_CLAIMS] = 
+							max(0.0, main_proj_array[t][GMWB_PAYMENT]  - main_proj_array[t][AV_B_BEF]);
+			}
+			else
+			{
+				main_proj_array[t][GMWB_PAYMENT] =  0.0;
+				main_proj_array[t][GMWB_CLAIMS] = 0.0;
+			}
+	
+	}//END
+	void avBBefBis(int t)
+	{
+		main_proj_array[t][AV_B_BEF_BIS] = 0.0;
+		main_proj_array[t][GMWB_PAYMENT_FROM_AV] = 0.0;
+		if (this->gmwb_timing == "BEG")
+		{
+			double current_gmwb_payment;
+			
+			if (this->time_step==ANNUAL || ((this->time_step == MONTHLY) && (this->timing_items[t][POL_YEAR]!= this->timing_items[t-1][POL_YEAR])))
+			{
+				if (this->withdrawal_prorata == 1)
+					current_gmwb_payment = this->timing_items[t][PRORATA] * main_proj_array[t][GMWB_PAYMENT];
+				else
+					current_gmwb_payment = main_proj_array[t][GMWB_PAYMENT];
+			}
+			else 
+				current_gmwb_payment = 0;
+
+			
+			// Option to be deleted for the release V13.0
+			if (this->is_he == true)
+				if (t == 1)
+				{
+					current_gmwb_payment = main_proj_array[t][GMWB_PAYMENT];
+				}
+
+			main_proj_array[t][AV_B_BEF_BIS] = 
+											 max(0.0, main_proj_array[t][AV_B_BEF]- current_gmwb_payment);
+			main_proj_array[t][GMWB_PAYMENT_FROM_AV]= 
+											 min(current_gmwb_payment, main_proj_array[t][AV_B_BEF]);
+		}
+		else
+		{
+			Projection::avBBefBis(t);
+		}		
+	}
+
+	void project_gmib_bases_payments_claims(int t)
+	{
+		//Survival index calculation
+		double dth_rate ;
+		int table_age;
+		int pol_yr = int(timing_items[t][POL_YEAR]);
+		table_age = int(timing_items[t][AGE_LAST]);
+		int omega_age = this->term_to_omega - table_age + 1;
+
+		//initialisation at t = election year
+		//TO DO YANN - to be changed - for tests - surv_rate
+		double surv_rate[100][100];
+		surv_rate[t][0] = 1.0;
+		
+		for (int i =1; i < omega_age; i++)		
+		{
+			// dth_rate =  min(1.0, this->mort_table->search(int(table_age+ i-1), 
+			//(int)(this->model_point->valn_year + (this->model_point->valn_month - 1.0) / 12.0 + (this->model_point->valn_day) / 365.0 - this->model_point->age_valn) - MORT_CONST )* this->mort_mult);
+
+			dth_rate =  min(1.0, this->mort_table->search(int(table_age+ i-1), 
+			(int)(this->model_point->year) - MORT_CONST )* this->mort_mult);
+
+
+			surv_rate[t][i] = (1.0 - dth_rate) * surv_rate[t][i-1];
+		}
+
+		//Annuity Factor calculation
+		double tenyr = this->afmr[this->model_point->elapsed_mths_in_valn_yr + 1][t][MAXIMUM_NUMBER_OF_INDEXES] / 100.0;
+		
+		main_proj_array[t][TECHNICAL_RATE]  =  int(min(0.035, this->gmib_factor_rate * tenyr + this->gmib_spread_rate) / 0.0025) * 0.0025;
+  main_proj_array[t][BOND_RATE_FOR_LAPSES] = tenyr;   
+
+
+		for (int i = 0; i < omega_age; i++)
+			main_proj_array[t][GMIB_AX_CURR] += surv_rate[t][i] / pow(1 + main_proj_array[t][TECHNICAL_RATE], i);
+
+		//GMIB Claims Calculation
+		if (main_proj_array[t-1][GMIB_CLAIMS] < SMALL_DOUBLE)
+			main_proj_array[t][GMIB_CLAIMS] = main_proj_array[t][GMIB_AX_CURR] * main_proj_array[t][GMWB_PAYMENT]  - main_proj_array[t][GMWB_PAYMENT_FROM_AV];
+		else
+			main_proj_array[t][GMIB_CLAIMS] = 0.0;
+	}
+};

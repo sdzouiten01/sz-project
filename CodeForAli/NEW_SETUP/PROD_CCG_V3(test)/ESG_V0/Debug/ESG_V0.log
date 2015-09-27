@@ -1,0 +1,27 @@
+﻿Build started 05.03.2015 16:11:14.
+     1>Project "C:\Users\b029735\NoBackupData\10_C++ Code New Version2013(working version)\NEW_SETUP\PROD_CCG_V3(test)\ESG_V0\ESG_V0.vcxproj" on node 2 (Build target(s)).
+     1>ClCompile:
+         C:\Program Files\Microsoft Visual Studio 11.0\VC\bin\CL.exe /c /I../ /I"C:\Users\b029735\NoBackupData\10_C++ Code New Version2013(working version)\NEW_SETUP\PROD_CCG_V3(test)\AHS_PARSER" /I"C:\Users\b029735\NoBackupData\10_C++ Code New Version2013(working version)\NEW_SETUP\PROD_CCG_V3(test)\ESG_V0" /Zi /nologo /W4 /WX- /Od /Oy- /GL /D WIN32 /D NDEBUG /D _WINDOWS /D _USRDLL /D AHS_ESG_EXPORTS /D _MBCS /Gm /EHsc /MTd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Fo"Debug\\" /Fd"Debug\vc110.pdb" /Gd /TP /analyze- /errorReport:prompt GaussianGen\VarianceReduction.cpp
+         VarianceReduction.cpp
+     1>GaussianGen\VarianceReduction.cpp(126): warning C4189: 'const_1' : local variable is initialized but not referenced
+     1>GaussianGen\VarianceReduction.cpp(128): warning C4189: 'const_2' : local variable is initialized but not referenced
+       Lib:
+         C:\Program Files\Microsoft Visual Studio 11.0\VC\bin\Lib.exe /OUT:"C:\Users\b029735\NoBackupData\10_C++ Code New Version2013(working version)\NEW_SETUP\PROD_CCG_V3(test)\Debug\ESG_V0.lib" /NOLOGO /LTCG Debug\HW1FCalibrator.obj
+         Debug\GaussianGen.obj
+         Debug\GaussianGenModelParameters.obj
+         Debug\VarianceReduction.obj
+         Debug\Analytics.obj
+         Debug\InterfaceESG0.obj
+         Debug\Interpolation.obj
+         Debug\Matrice.obj
+         Debug\YieldCurve.obj
+         Debug\BS_HW1F.obj
+         Debug\ScenarioGen.obj
+         Debug\Mersenne_Twister.obj
+         Debug\UniformGen.obj
+         ESG_V0.vcxproj -> C:\Users\b029735\NoBackupData\10_C++ Code New Version2013(working version)\NEW_SETUP\PROD_CCG_V3(test)\Debug\ESG_V0.lib
+     1>Done Building Project "C:\Users\b029735\NoBackupData\10_C++ Code New Version2013(working version)\NEW_SETUP\PROD_CCG_V3(test)\ESG_V0\ESG_V0.vcxproj" (Build target(s)).
+
+Build succeeded.
+
+Time Elapsed 00:00:03.01

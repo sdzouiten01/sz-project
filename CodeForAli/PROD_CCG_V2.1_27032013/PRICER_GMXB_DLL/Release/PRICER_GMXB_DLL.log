@@ -1,0 +1,398 @@
+﻿Build started 09.04.2015 10:00:43.
+     1>Project "C:\Users\b029735\NoBackupData\12_MONTHLY_PROCESS\PROD_CCG_V2.1_27032013\PRICER_GMXB_DLL\PRICER_GMXB_DLL.vcxproj" on node 3 (Build target(s)).
+     1>ClCompile:
+         C:\Program Files\Microsoft Visual Studio 11.0\VC\bin\CL.exe /c /IC:\Users\b029735\NoBackupData\12_MONTHLY_PROCESS\PROD_CCG_V2.1_27032013\AHS_PARSER /I"C:\Users\b029735\NoBackupData\12_MONTHLY_PROCESS\PROD_CCG_V2.1_27032013\ScenarioGenerator(v2)" /IC:\Users\b029735\NoBackupData\12_MONTHLY_PROCESS\PROD_CCG_V2.1_27032013\Calibration /Zi /nologo /W4 /WX- /Ox /Oi /Oy- /GL /D WIN32 /D NDEBUG /D _WINDOWS /D _USRDLL /D PRICER_GMXB_DLL_EXPORTS /D _WINDLL /Gm- /EHsc /MT /GS /Gy /fp:precise /Zc:wchar_t /Zc:forScope /Fo"Release\\" /Fd"Release\vc110.pdb" /Gd /TP /wd4996 /wd4250 /wd4503 /analyze- /errorReport:prompt Interface_dll.cpp
+         Interface_dll.cpp
+     1>c:\users\b029735\nobackupdata\12_monthly_process\prod_ccg_v2.1_27032013\pricer_gmxb_dll\Utility classes/Scenario_configuration.h(285): warning C4100: 'i' : unreferenced formal parameter
+     1>c:\users\b029735\nobackupdata\12_monthly_process\prod_ccg_v2.1_27032013\pricer_gmxb_dll\Utility classes/Product_configuration.h(63): warning C4189: 'fund_mgr' : local variable is initialized but not referenced
+     1>c:\users\b029735\nobackupdata\12_monthly_process\prod_ccg_v2.1_27032013\pricer_gmxb_dll\Model point classes/Model_Point.h(929): warning C4100: 'fund_shock_size_in' : unreferenced formal parameter
+     1>c:\users\b029735\nobackupdata\12_monthly_process\prod_ccg_v2.1_27032013\pricer_gmxb_dll\Model point classes/Model_Point.h(929): warning C4100: 'index_shock_size_in' : unreferenced formal parameter
+     1>c:\users\b029735\nobackupdata\12_monthly_process\prod_ccg_v2.1_27032013\pricer_gmxb_dll\Utility classes/Summary_configuration.h(219): warning C4018: '<' : signed/unsigned mismatch
+     1>c:\users\b029735\nobackupdata\12_monthly_process\prod_ccg_v2.1_27032013\pricer_gmxb_dll\Projection classes/Guarantee projection classes/Projection.h(493): warning C4244: '=' : conversion from 'double' to 'int', possible loss of data
+     1>c:\users\b029735\nobackupdata\12_monthly_process\prod_ccg_v2.1_27032013\pricer_gmxb_dll\Projection classes/Guarantee projection classes/Projection.h(1191): warning C4100: 'mode' : unreferenced formal parameter
+     1>c:\users\b029735\nobackupdata\12_monthly_process\prod_ccg_v2.1_27032013\pricer_gmxb_dll\Projection classes/Guarantee projection classes/Projection.h(1191): warning C4100: 'perc' : unreferenced formal parameter
+     1>c:\users\b029735\nobackupdata\12_monthly_process\prod_ccg_v2.1_27032013\pricer_gmxb_dll\Projection classes/Guarantee projection classes/Projection.h(1191): warning C4100: 'inforce' : unreferenced formal parameter
+     1>c:\users\b029735\nobackupdata\12_monthly_process\prod_ccg_v2.1_27032013\pricer_gmxb_dll\Projection classes/Guarantee projection classes/Projection.h(1191): warning C4100: 'n_MP' : unreferenced formal parameter
+     1>c:\users\b029735\nobackupdata\12_monthly_process\prod_ccg_v2.1_27032013\pricer_gmxb_dll\Projection classes/Guarantee projection classes/Projection.h(1191): warning C4100: 't' : unreferenced formal parameter
+     1>c:\users\b029735\nobackupdata\12_monthly_process\prod_ccg_v2.1_27032013\pricer_gmxb_dll\Projection classes/Guarantee projection classes/Projection.h(1858): warning C4189: 'pol_yr' : local variable is initialized but not referenced
+     1>c:\users\b029735\nobackupdata\12_monthly_process\prod_ccg_v2.1_27032013\pricer_gmxb_dll\Projection classes/Guarantee projection classes/Projection.h(2357): warning C4189: 'pol_yr' : local variable is initialized but not referenced
+     1>c:\users\b029735\nobackupdata\12_monthly_process\prod_ccg_v2.1_27032013\pricer_gmxb_dll\Projection classes/Guarantee projection classes/Projection.h(2978): warning C4018: '<' : signed/unsigned mismatch
+     1>c:\users\b029735\nobackupdata\12_monthly_process\prod_ccg_v2.1_27032013\pricer_gmxb_dll\Projection classes/Guarantee projection classes/Projection.h(2986): warning C4018: '<' : signed/unsigned mismatch
+     1>c:\users\b029735\nobackupdata\12_monthly_process\prod_ccg_v2.1_27032013\pricer_gmxb_dll\Projection classes/Guarantee projection classes/Projection.h(3127): warning C4244: 'initializing' : conversion from 'double' to 'int', possible loss of data
+     1>c:\users\b029735\nobackupdata\12_monthly_process\prod_ccg_v2.1_27032013\pricer_gmxb_dll\utility classes\Scenario_manager.h(359): warning C4189: 'col' : local variable is initialized but not referenced
+     1>c:\users\b029735\nobackupdata\12_monthly_process\prod_ccg_v2.1_27032013\pricer_gmxb_dll\utility classes\Scenario_manager.h(470): warning C4189: 'col' : local variable is initialized but not referenced
+     1>c:\users\b029735\nobackupdata\12_monthly_process\prod_ccg_v2.1_27032013\pricer_gmxb_dll\utility classes\Scenario_manager.h(763): warning C4018: '<' : signed/unsigned mismatch
+     1>c:\users\b029735\nobackupdata\12_monthly_process\prod_ccg_v2.1_27032013\pricer_gmxb_dll\utility classes\Scenario_manager.h(801): warning C4018: '<' : signed/unsigned mismatch
+     1>c:\users\b029735\nobackupdata\12_monthly_process\prod_ccg_v2.1_27032013\pricer_gmxb_dll\utility classes\Scenario_manager.h(833): warning C4018: '<' : signed/unsigned mismatch
+     1>c:\users\b029735\nobackupdata\12_monthly_process\prod_ccg_v2.1_27032013\pricer_gmxb_dll\utility classes\Scenario_manager.h(909): warning C4100: 'nb_date' : unreferenced formal parameter
+     1>c:\users\b029735\nobackupdata\12_monthly_process\prod_ccg_v2.1_27032013\pricer_gmxb_dll\utility classes\Scenario_manager.h(909): warning C4100: 'swap_table' : unreferenced formal parameter
+     1>c:\users\b029735\nobackupdata\12_monthly_process\prod_ccg_v2.1_27032013\pricer_gmxb_dll\utility classes\Scenario_manager.h(938): warning C4189: 'col' : local variable is initialized but not referenced
+     1>c:\users\b029735\nobackupdata\12_monthly_process\prod_ccg_v2.1_27032013\pricer_gmxb_dll\utility classes\Scenario_manager.h(1081): warning C4189: 'col' : local variable is initialized but not referenced
+     1>c:\users\b029735\nobackupdata\12_monthly_process\prod_ccg_v2.1_27032013\pricer_gmxb_dll\utility classes\Scenario_manager.h(1241): warning C4189: 'col' : local variable is initialized but not referenced
+     1>c:\users\b029735\nobackupdata\12_monthly_process\prod_ccg_v2.1_27032013\pricer_gmxb_dll\utility classes\Scenario_manager.h(1293): warning C4100: 'reset_value' : unreferenced formal parameter
+     1>c:\users\b029735\nobackupdata\12_monthly_process\prod_ccg_v2.1_27032013\pricer_gmxb_dll\projection classes\country projection classes\head_BL_LIE_RST_DEIT.h(34): warning C4005: 'GMDB_LIE_RST_DE' : macro redefinition
+                 c:\users\b029735\nobackupdata\12_monthly_process\prod_ccg_v2.1_27032013\pricer_gmxb_dll\Model point classes/Country model point classes/model_point_head_BL_RST_DEIT_LIE_01.h(32) : see previous definition of 'GMDB_LIE_RST_DE'
+     1>c:\users\b029735\nobackupdata\12_monthly_process\prod_ccg_v2.1_27032013\pricer_gmxb_dll\Projection classes/Country projection classes/Projection_BL_LIE_DEIT_WBD_01.h(663): warning C4189: 'local_surival_t_bef_longevity' : local variable is initialized but not referenced
+     1>c:\users\b029735\nobackupdata\12_monthly_process\prod_ccg_v2.1_27032013\pricer_gmxb_dll\Projection classes/Country projection classes/Projection_BL_LIE_DEIT_WBD_01.h(664): warning C4189: 'local_surival_t_longevity' : local variable is initialized but not referenced
+     1>c:\users\b029735\nobackupdata\12_monthly_process\prod_ccg_v2.1_27032013\pricer_gmxb_dll\Projection classes/Country projection classes/Projection_BL_LIE_DEIT_WBD_01.h(661): warning C4189: 'qx_month_1_local_longevity' : local variable is initialized but not referenced
+     1>c:\users\b029735\nobackupdata\12_monthly_process\prod_ccg_v2.1_27032013\pricer_gmxb_dll\projection classes\country projection classes\head_BL_LIE_RS_DE.h(33): warning C4005: 'GMDB_LIE_RS_DE' : macro redefinition
+                 c:\users\b029735\nobackupdata\12_monthly_process\prod_ccg_v2.1_27032013\pricer_gmxb_dll\Model point classes/Country model point classes/model_point_head_BL_RS_DE_LIE_01.h(38) : see previous definition of 'GMDB_LIE_RS_DE'
+     1>c:\users\b029735\nobackupdata\12_monthly_process\prod_ccg_v2.1_27032013\pricer_gmxb_dll\Utility classes/Builder.h(96): warning C4100: 't_step' : unreferenced formal parameter
+     1>c:\users\b029735\nobackupdata\12_monthly_process\prod_ccg_v2.1_27032013\pricer_gmxb_dll\Utility classes/Inforce_Manager.h(663): warning C4018: '<' : signed/unsigned mismatch
+     1>c:\users\b029735\nobackupdata\12_monthly_process\prod_ccg_v2.1_27032013\pricer_gmxb_dll\Summary classes/Summary_File_Writer.h(317): warning C4018: '<' : signed/unsigned mismatch
+     1>c:\users\b029735\nobackupdata\12_monthly_process\prod_ccg_v2.1_27032013\pricer_gmxb_dll\Summary classes/Summary_File_Writer.h(322): warning C4018: '<' : signed/unsigned mismatch
+     1>c:\users\b029735\nobackupdata\12_monthly_process\prod_ccg_v2.1_27032013\pricer_gmxb_dll\Summary classes/Summary_File_Writer.h(327): warning C4018: '<' : signed/unsigned mismatch
+     1>c:\users\b029735\nobackupdata\12_monthly_process\prod_ccg_v2.1_27032013\pricer_gmxb_dll\Summary classes/Summary_File_Writer.h(332): warning C4018: '<' : signed/unsigned mismatch
+     1>c:\users\b029735\nobackupdata\12_monthly_process\prod_ccg_v2.1_27032013\pricer_gmxb_dll\Summary classes/Summary_File_Writer.h(461): warning C4100: 'shock_number' : unreferenced formal parameter
+     1>c:\users\b029735\nobackupdata\12_monthly_process\prod_ccg_v2.1_27032013\pricer_gmxb_dll\Summary classes/Summary_File_Writer.h(461): warning C4100: 'scenario_pass_number' : unreferenced formal parameter
+     1>c:\users\b029735\nobackupdata\12_monthly_process\prod_ccg_v2.1_27032013\pricer_gmxb_dll\Summary classes/Summary_File_Writer.h(551): warning C4100: 'shock_number' : unreferenced formal parameter
+     1>c:\users\b029735\nobackupdata\12_monthly_process\prod_ccg_v2.1_27032013\pricer_gmxb_dll\Summary classes/Summary_File_Writer.h(551): warning C4100: 'scenario_number' : unreferenced formal parameter
+     1>c:\users\b029735\nobackupdata\12_monthly_process\prod_ccg_v2.1_27032013\pricer_gmxb_dll\Summary classes/Summary_File_Writer.h(578): warning C4189: 'record_number' : local variable is initialized but not referenced
+     1>c:\users\b029735\nobackupdata\12_monthly_process\prod_ccg_v2.1_27032013\pricer_gmxb_dll\Summary classes/Summary_File_Writer.h(628): warning C4189: 'record_number' : local variable is initialized but not referenced
+     1>c:\users\b029735\nobackupdata\12_monthly_process\prod_ccg_v2.1_27032013\pricer_gmxb_dll\Summary classes/Summary_File_Writer.h(651): warning C4100: 'shock_number' : unreferenced formal parameter
+     1>c:\users\b029735\nobackupdata\12_monthly_process\prod_ccg_v2.1_27032013\pricer_gmxb_dll\Summary classes/Summary_File_Writer.h(651): warning C4100: 'scenario_number' : unreferenced formal parameter
+     1>c:\users\b029735\nobackupdata\12_monthly_process\prod_ccg_v2.1_27032013\pricer_gmxb_dll\Summary classes/Summary_File_Writer.h(688): warning C4189: 'tot_num_iterations' : local variable is initialized but not referenced
+     1>c:\users\b029735\nobackupdata\12_monthly_process\prod_ccg_v2.1_27032013\pricer_gmxb_dll\Summary classes/Summary_File_Writer.h(700): warning C4189: 'record_number' : local variable is initialized but not referenced
+     1>c:\users\b029735\nobackupdata\12_monthly_process\prod_ccg_v2.1_27032013\pricer_gmxb_dll\Summary classes/Summary_File_Writer.h(754): warning C4189: 'tot_num_iterations' : local variable is initialized but not referenced
+     1>c:\users\b029735\nobackupdata\12_monthly_process\prod_ccg_v2.1_27032013\pricer_gmxb_dll\Summary classes/Summary_File_Writer.h(766): warning C4189: 'record_number' : local variable is initialized but not referenced
+     1>c:\users\b029735\nobackupdata\12_monthly_process\prod_ccg_v2.1_27032013\pricer_gmxb_dll\Summary classes/Summary_File_Writer.h(892): warning C4100: 'ehc_1' : unreferenced formal parameter
+     1>c:\users\b029735\nobackupdata\12_monthly_process\prod_ccg_v2.1_27032013\pricer_gmxb_dll\Summary classes/Summary_File_Writer.h(935): warning C4100: 'fund_results_map' : unreferenced formal parameter
+     1>c:\users\b029735\nobackupdata\12_monthly_process\prod_ccg_v2.1_27032013\pricer_gmxb_dll\Summary classes/Summary_File_Writer.h(1124): warning C4100: 'fund_results_map' : unreferenced formal parameter
+     1>c:\users\b029735\nobackupdata\12_monthly_process\prod_ccg_v2.1_27032013\pricer_gmxb_dll\Summary classes/Summary_File_Writer.h(2518): warning C4018: '<' : signed/unsigned mismatch
+     1>c:\users\b029735\nobackupdata\12_monthly_process\prod_ccg_v2.1_27032013\pricer_gmxb_dll\Summary classes/Summary_File_Writer.h(3458): warning C4189: 'bucket_id' : local variable is initialized but not referenced
+     1>c:\users\b029735\nobackupdata\12_monthly_process\prod_ccg_v2.1_27032013\pricer_gmxb_dll\Summary classes/Summary_File_Writer.h(4142): warning C4018: '<' : signed/unsigned mismatch
+     1>c:\users\b029735\nobackupdata\12_monthly_process\prod_ccg_v2.1_27032013\pricer_gmxb_dll\Summary classes/Summary_File_Writer.h(4262): warning C4018: '<' : signed/unsigned mismatch
+     1>c:\users\b029735\nobackupdata\12_monthly_process\prod_ccg_v2.1_27032013\pricer_gmxb_dll\Summary classes/Summary_File_Writer.h(4382): warning C4018: '<' : signed/unsigned mismatch
+     1>c:\users\b029735\nobackupdata\12_monthly_process\prod_ccg_v2.1_27032013\pricer_gmxb_dll\Summary classes/Summary_File_Writer.h(4502): warning C4018: '<' : signed/unsigned mismatch
+     1>c:\users\b029735\nobackupdata\12_monthly_process\prod_ccg_v2.1_27032013\pricer_gmxb_dll\Summary classes/Summary_File_Writer.h(4755): warning C4100: 'results_paidup' : unreferenced formal parameter
+     1>c:\users\b029735\nobackupdata\12_monthly_process\prod_ccg_v2.1_27032013\pricer_gmxb_dll\Summary classes/Summary_File_Writer.h(4753): warning C4100: 'results_longevity' : unreferenced formal parameter
+     1>c:\users\b029735\nobackupdata\12_monthly_process\prod_ccg_v2.1_27032013\pricer_gmxb_dll\Summary classes/Summary_File_Writer.h(4752): warning C4100: 'results_mort' : unreferenced formal parameter
+     1>c:\users\b029735\nobackupdata\12_monthly_process\prod_ccg_v2.1_27032013\pricer_gmxb_dll\Summary classes/Summary_File_Writer.h(4751): warning C4100: 'results_lapse' : unreferenced formal parameter
+     1>c:\users\b029735\nobackupdata\12_monthly_process\prod_ccg_v2.1_27032013\pricer_gmxb_dll\Summary classes/Summary_File_Writer.h(4750): warning C4100: 'fund_results_map' : unreferenced formal parameter
+     1>c:\users\b029735\nobackupdata\12_monthly_process\prod_ccg_v2.1_27032013\pricer_gmxb_dll\Summary classes/Summary_File_Writer.h(4830): warning C4100: 'results_paidup' : unreferenced formal parameter
+     1>c:\users\b029735\nobackupdata\12_monthly_process\prod_ccg_v2.1_27032013\pricer_gmxb_dll\Summary classes/Summary_File_Writer.h(4828): warning C4100: 'results_longevity' : unreferenced formal parameter
+     1>c:\users\b029735\nobackupdata\12_monthly_process\prod_ccg_v2.1_27032013\pricer_gmxb_dll\Summary classes/Summary_File_Writer.h(4827): warning C4100: 'results_mort' : unreferenced formal parameter
+     1>c:\users\b029735\nobackupdata\12_monthly_process\prod_ccg_v2.1_27032013\pricer_gmxb_dll\Summary classes/Summary_File_Writer.h(4826): warning C4100: 'results_lapse' : unreferenced formal parameter
+     1>c:\users\b029735\nobackupdata\12_monthly_process\prod_ccg_v2.1_27032013\pricer_gmxb_dll\Summary classes/Summary_File_Writer.h(4825): warning C4100: 'fund_results_map' : unreferenced formal parameter
+     1>c:\users\b029735\nobackupdata\12_monthly_process\prod_ccg_v2.1_27032013\pricer_gmxb_dll\Summary classes/Summary_File_Writer.h(4955): warning C4018: '<' : signed/unsigned mismatch
+     1>c:\users\b029735\nobackupdata\12_monthly_process\prod_ccg_v2.1_27032013\pricer_gmxb_dll\Summary classes/Summary_File_Writer.h(4962): warning C4018: '<' : signed/unsigned mismatch
+     1>c:\users\b029735\nobackupdata\12_monthly_process\prod_ccg_v2.1_27032013\pricer_gmxb_dll\Summary classes/Summary_File_Writer.h(4994): warning C4100: 'prod_code_keys' : unreferenced formal parameter
+     1>c:\users\b029735\nobackupdata\12_monthly_process\prod_ccg_v2.1_27032013\pricer_gmxb_dll\Summary classes/Summary_File_Writer.h(5796): warning C4189: 'number_of_model_points' : local variable is initialized but not referenced
+     1>c:\users\b029735\nobackupdata\12_monthly_process\prod_ccg_v2.1_27032013\pricer_gmxb_dll\Summary classes/Summary_File_Writer.h(6741): warning C4100: 'IR_shock_list' : unreferenced formal parameter
+     1>c:\users\b029735\nobackupdata\12_monthly_process\prod_ccg_v2.1_27032013\pricer_gmxb_dll\Summary classes/Summary_File_Writer.h(6897): warning C4018: '<' : signed/unsigned mismatch
+     1>c:\users\b029735\nobackupdata\12_monthly_process\prod_ccg_v2.1_27032013\pricer_gmxb_dll\Summary classes/Summary_File_Writer.h(6911): warning C4018: '<' : signed/unsigned mismatch
+     1>c:\users\b029735\nobackupdata\12_monthly_process\prod_ccg_v2.1_27032013\pricer_gmxb_dll\Summary classes/Summary_File_Writer.h(6930): warning C4018: '<' : signed/unsigned mismatch
+     1>c:\users\b029735\nobackupdata\12_monthly_process\prod_ccg_v2.1_27032013\pricer_gmxb_dll\Summary classes/Summary_File_Writer.h(6952): warning C4018: '<' : signed/unsigned mismatch
+     1>c:\users\b029735\nobackupdata\12_monthly_process\prod_ccg_v2.1_27032013\pricer_gmxb_dll\Summary classes/Summary_File_Writer.h(7008): warning C4018: '<' : signed/unsigned mismatch
+     1>c:\users\b029735\nobackupdata\12_monthly_process\prod_ccg_v2.1_27032013\pricer_gmxb_dll\Summary classes/Summary_File_Writer.h(7040): warning C4018: '<' : signed/unsigned mismatch
+     1>c:\users\b029735\nobackupdata\12_monthly_process\prod_ccg_v2.1_27032013\pricer_gmxb_dll\Summary classes/Summary_File_Writer.h(7072): warning C4018: '<' : signed/unsigned mismatch
+     1>c:\users\b029735\nobackupdata\12_monthly_process\prod_ccg_v2.1_27032013\pricer_gmxb_dll\Summary classes/Summary_File_Writer.h(7105): warning C4018: '<' : signed/unsigned mismatch
+     1>c:\users\b029735\nobackupdata\12_monthly_process\prod_ccg_v2.1_27032013\pricer_gmxb_dll\Summary classes/Summary_File_Writer.h(7169): warning C4018: '<' : signed/unsigned mismatch
+     1>c:\users\b029735\nobackupdata\12_monthly_process\prod_ccg_v2.1_27032013\pricer_gmxb_dll\Summary classes/Summary_File_Writer.h(7224): warning C4018: '<' : signed/unsigned mismatch
+     1>c:\users\b029735\nobackupdata\12_monthly_process\prod_ccg_v2.1_27032013\pricer_gmxb_dll\Summary classes/Summary_File_Writer.h(7237): warning C4018: '<' : signed/unsigned mismatch
+     1>c:\users\b029735\nobackupdata\12_monthly_process\prod_ccg_v2.1_27032013\pricer_gmxb_dll\Summary classes/Summary_File_Writer.h(7370): warning C4018: '<' : signed/unsigned mismatch
+     1>c:\users\b029735\nobackupdata\12_monthly_process\prod_ccg_v2.1_27032013\pricer_gmxb_dll\Summary classes/Summary_File_Writer.h(7501): warning C4100: 'IR_shock_list' : unreferenced formal parameter
+     1>c:\users\b029735\nobackupdata\12_monthly_process\prod_ccg_v2.1_27032013\pricer_gmxb_dll\Utility classes/HE_Writter.h(199): warning C4129: '%' : unrecognized character escape sequence
+     1>c:\users\b029735\nobackupdata\12_monthly_process\prod_ccg_v2.1_27032013\pricer_gmxb_dll\Utility classes/HE_Writter.h(274): warning C4100: 'v_scen_config' : unreferenced formal parameter
+     1>c:\users\b029735\nobackupdata\12_monthly_process\prod_ccg_v2.1_27032013\pricer_gmxb_dll\Utility classes/HE_Writter.h(374): warning C4100: 'nb_scenario_outer' : unreferenced formal parameter
+     1>c:\users\b029735\nobackupdata\12_monthly_process\prod_ccg_v2.1_27032013\pricer_gmxb_dll\Utility classes/HE_Writter.h(372): warning C4100: 'output_path' : unreferenced formal parameter
+     1>c:\users\b029735\nobackupdata\12_monthly_process\prod_ccg_v2.1_27032013\pricer_gmxb_dll\Utility classes/HE_Writter.h(489): warning C4100: 'reset_value' : unreferenced formal parameter
+     1>c:\users\b029735\nobackupdata\12_monthly_process\prod_ccg_v2.1_27032013\pricer_gmxb_dll\Utility classes/HE_Summary_File_Writer.h(22): warning C4100: 'product_name' : unreferenced formal parameter
+     1>c:\users\b029735\nobackupdata\12_monthly_process\prod_ccg_v2.1_27032013\pricer_gmxb_dll\Utility classes/HE_Summary_File_Writer.h(353): warning C4189: 'index_shock_pvs' : local variable is initialized but not referenced
+     1>c:\users\b029735\nobackupdata\12_monthly_process\prod_ccg_v2.1_27032013\pricer_gmxb_dll\Utility classes/HE_Summary_File_Writer.h(645): warning C4239: nonstandard extension used : 'argument' : conversion from 'std::vector<_Ty>' to 'std::vector<_Ty> &'
+                 with
+                 [
+                     _Ty=Scenario_configuration
+                 ]
+                 A non-const reference may only be bound to an lvalue
+     1>c:\users\b029735\nobackupdata\12_monthly_process\prod_ccg_v2.1_27032013\pricer_gmxb_dll\Utility classes/Summary_Builder.h(15): warning C4100: 'pCK' : unreferenced formal parameter
+     1>c:\users\b029735\nobackupdata\12_monthly_process\prod_ccg_v2.1_27032013\pricer_gmxb_dll\Utility classes/Summary_Builder.h(49): warning C4100: 'pCK' : unreferenced formal parameter
+     1>c:\users\b029735\nobackupdata\12_monthly_process\prod_ccg_v2.1_27032013\pricer_gmxb_dll\Utility classes/Summary_Builder.h(71): warning C4100: 'pCK' : unreferenced formal parameter
+     1>c:\users\b029735\nobackupdata\12_monthly_process\prod_ccg_v2.1_27032013\pricer_gmxb_dll\Utility classes/Stat_Inforce_Configuration.h(73): warning C4100: 'gmxb_type' : unreferenced formal parameter
+     1>c:\users\b029735\nobackupdata\12_monthly_process\prod_ccg_v2.1_27032013\pricer_gmxb_dll\Utility classes/Stat_Inforce_Manager.h(44): warning C4018: '<' : signed/unsigned mismatch
+     1>c:\users\b029735\nobackupdata\12_monthly_process\prod_ccg_v2.1_27032013\pricer_gmxb_dll\Utility classes/Stat_Inforce_Manager.h(96): warning C4189: 'total_fund_value' : local variable is initialized but not referenced
+     1>c:\users\b029735\nobackupdata\12_monthly_process\prod_ccg_v2.1_27032013\pricer_gmxb_dll\Utility classes/Stat_Inforce_Manager.h(95): warning C4189: 'fund_value' : local variable is initialized but not referenced
+     1>c:\users\b029735\nobackupdata\12_monthly_process\prod_ccg_v2.1_27032013\pricer_gmxb_dll\Utility classes/Stat_Inforce_Manager.h(94): warning C4189: 'total_nb_shares' : local variable is initialized but not referenced
+     1>c:\users\b029735\nobackupdata\12_monthly_process\prod_ccg_v2.1_27032013\pricer_gmxb_dll\Utility classes/Stat_Inforce_Manager.h(148): warning C4100: 'stat_inforce_config' : unreferenced formal parameter
+     1>c:\users\b029735\nobackupdata\12_monthly_process\prod_ccg_v2.1_27032013\pricer_gmxb_dll\Utility classes/Stat_Inforce_Manager.h(154): warning C4189: 'total_fund_value' : local variable is initialized but not referenced
+     1>c:\users\b029735\nobackupdata\12_monthly_process\prod_ccg_v2.1_27032013\pricer_gmxb_dll\Utility classes/Stat_Inforce_Manager.h(153): warning C4189: 'fund_value' : local variable is initialized but not referenced
+     1>c:\users\b029735\nobackupdata\12_monthly_process\prod_ccg_v2.1_27032013\pricer_gmxb_dll\Utility classes/Stat_Inforce_Manager.h(152): warning C4189: 'total_nb_shares' : local variable is initialized but not referenced
+     1>c:\users\b029735\nobackupdata\12_monthly_process\prod_ccg_v2.1_27032013\pricer_gmxb_dll\Utility classes/Stat_Inforce_Manager.h(234): warning C4189: 'weighted_ehc' : local variable is initialized but not referenced
+     1>c:\users\b029735\nobackupdata\12_monthly_process\prod_ccg_v2.1_27032013\pricer_gmxb_dll\Utility classes/Stat_Inforce_Manager.h(243): warning C4189: 'total_premium_old' : local variable is initialized but not referenced
+     1>c:\users\b029735\nobackupdata\12_monthly_process\prod_ccg_v2.1_27032013\pricer_gmxb_dll\Utility classes/Stat_Inforce_Manager.h(242): warning C4189: 'total_av_old' : local variable is initialized but not referenced
+     1>c:\users\b029735\nobackupdata\12_monthly_process\prod_ccg_v2.1_27032013\pricer_gmxb_dll\Utility classes/Stat_Inforce_Manager.h(233): warning C4189: 'weighted_rrc' : local variable is initialized but not referenced
+     1>c:\users\b029735\nobackupdata\12_monthly_process\prod_ccg_v2.1_27032013\pricer_gmxb_dll\Utility classes/Stat_Inforce_Manager.h(830): warning C4018: '<' : signed/unsigned mismatch
+     1>c:\users\b029735\nobackupdata\12_monthly_process\prod_ccg_v2.1_27032013\pricer_gmxb_dll\Utility classes/Stat_Inforce_Manager.h(833): warning C4018: '<' : signed/unsigned mismatch
+     1>c:\users\b029735\nobackupdata\12_monthly_process\prod_ccg_v2.1_27032013\pricer_gmxb_dll\Utility classes/Stat_Inforce_Manager.h(853): warning C4018: '<' : signed/unsigned mismatch
+     1>c:\users\b029735\nobackupdata\12_monthly_process\prod_ccg_v2.1_27032013\pricer_gmxb_dll\Utility classes/Stat_Inforce_Manager.h(856): warning C4018: '<' : signed/unsigned mismatch
+     1>c:\users\b029735\nobackupdata\12_monthly_process\prod_ccg_v2.1_27032013\pricer_gmxb_dll\Utility classes/Stat_Inforce_Manager.h(876): warning C4018: '<' : signed/unsigned mismatch
+     1>c:\users\b029735\nobackupdata\12_monthly_process\prod_ccg_v2.1_27032013\pricer_gmxb_dll\Utility classes/Stat_Inforce_Manager.h(878): warning C4018: '<' : signed/unsigned mismatch
+     1>c:\users\b029735\nobackupdata\12_monthly_process\prod_ccg_v2.1_27032013\pricer_gmxb_dll\Utility classes/Stat_Inforce_Manager.h(898): warning C4018: '<' : signed/unsigned mismatch
+     1>c:\users\b029735\nobackupdata\12_monthly_process\prod_ccg_v2.1_27032013\pricer_gmxb_dll\Utility classes/Stat_Inforce_Manager.h(902): warning C4018: '<' : signed/unsigned mismatch
+     1>c:\users\b029735\nobackupdata\12_monthly_process\prod_ccg_v2.1_27032013\pricer_gmxb_dll\Utility classes/Stat_Inforce_Manager.h(910): warning C4018: '<' : signed/unsigned mismatch
+     1>c:\users\b029735\nobackupdata\12_monthly_process\prod_ccg_v2.1_27032013\pricer_gmxb_dll\Utility classes/Stat_Inforce_Manager.h(913): warning C4018: '<' : signed/unsigned mismatch
+     1>c:\users\b029735\nobackupdata\12_monthly_process\prod_ccg_v2.1_27032013\pricer_gmxb_dll\Utility classes/Stat_Inforce_Manager.h(999): warning C4018: '<' : signed/unsigned mismatch
+     1>c:\users\b029735\nobackupdata\12_monthly_process\prod_ccg_v2.1_27032013\pricer_gmxb_dll\Utility classes/Stat_Inforce_Manager.h(1047): warning C4018: '<' : signed/unsigned mismatch
+     1>c:\users\b029735\nobackupdata\12_monthly_process\prod_ccg_v2.1_27032013\pricer_gmxb_dll\Utility classes/Stat_Inforce_Builder.h(12): warning C4100: 'product_code_key' : unreferenced formal parameter
+     1>c:\users\b029735\nobackupdata\12_monthly_process\prod_ccg_v2.1_27032013\pricer_gmxb_dll\Utility classes/back_ground_final.h(86): warning C4100: 'sigma' : unreferenced formal parameter
+     1>c:\users\b029735\nobackupdata\12_monthly_process\prod_ccg_v2.1_27032013\pricer_gmxb_dll\Utility classes/back_ground_final.h(86): warning C4100: 'alpha' : unreferenced formal parameter
+     1>c:\users\b029735\nobackupdata\12_monthly_process\prod_ccg_v2.1_27032013\pricer_gmxb_dll\Utility classes/back_ground_final.h(86): warning C4100: 'axagen_config_file' : unreferenced formal parameter
+     1>c:\users\b029735\nobackupdata\12_monthly_process\prod_ccg_v2.1_27032013\pricer_gmxb_dll\Utility classes/back_ground_final.h(86): warning C4100: 'w_id' : unreferenced formal parameter
+     1>c:\users\b029735\nobackupdata\12_monthly_process\prod_ccg_v2.1_27032013\pricer_gmxb_dll\Utility classes/back_ground_final.h(86): warning C4100: 'tot_nb_workers' : unreferenced formal parameter
+     1>c:\users\b029735\nobackupdata\12_monthly_process\prod_ccg_v2.1_27032013\pricer_gmxb_dll\Utility classes/back_ground_final.h(86): warning C4100: 'product_config' : unreferenced formal parameter
+     1>c:\users\b029735\nobackupdata\12_monthly_process\prod_ccg_v2.1_27032013\pricer_gmxb_dll\Utility classes/back_ground_final.h(211): warning C4100: 'tot_nb_workers' : unreferenced formal parameter
+     1>c:\users\b029735\nobackupdata\12_monthly_process\prod_ccg_v2.1_27032013\pricer_gmxb_dll\Utility classes/back_ground_final.h(435): warning C4100: 'scen_conf' : unreferenced formal parameter
+     1>c:\users\b029735\nobackupdata\12_monthly_process\prod_ccg_v2.1_27032013\pricer_gmxb_dll\Utility classes/back_ground_final.h(434): warning C4100: 'shock_size' : unreferenced formal parameter
+     1>c:\users\b029735\nobackupdata\12_monthly_process\prod_ccg_v2.1_27032013\pricer_gmxb_dll\Utility classes/back_ground_final.h(431): warning C4100: 'p' : unreferenced formal parameter
+     1>c:\users\b029735\nobackupdata\12_monthly_process\prod_ccg_v2.1_27032013\pricer_gmxb_dll\Utility classes/back_ground_final.h(535): warning C4100: 'shock_size' : unreferenced formal parameter
+     1>c:\users\b029735\nobackupdata\12_monthly_process\prod_ccg_v2.1_27032013\pricer_gmxb_dll\Utility classes/back_ground_final.h(532): warning C4100: 'p' : unreferenced formal parameter
+     1>c:\users\b029735\nobackupdata\12_monthly_process\prod_ccg_v2.1_27032013\pricer_gmxb_dll\Utility classes/back_ground_final.h(845): warning C4100: 'shock_size' : unreferenced formal parameter
+     1>c:\users\b029735\nobackupdata\12_monthly_process\prod_ccg_v2.1_27032013\pricer_gmxb_dll\Utility classes/back_ground_final.h(998): warning C4189: 'number_of_policies' : local variable is initialized but not referenced
+     1>c:\users\b029735\nobackupdata\12_monthly_process\prod_ccg_v2.1_27032013\pricer_gmxb_dll\Utility classes/back_ground_final.h(1080): warning C4239: nonstandard extension used : 'argument' : conversion from 'std::vector<_Ty>' to 'std::vector<_Ty> &'
+                 with
+                 [
+                     _Ty=int
+                 ]
+                 A non-const reference may only be bound to an lvalue
+     1>c:\users\b029735\nobackupdata\12_monthly_process\prod_ccg_v2.1_27032013\pricer_gmxb_dll\Utility classes/back_ground_final.h(1188): warning C4239: nonstandard extension used : 'argument' : conversion from 'std::vector<_Ty>' to 'std::vector<_Ty> &'
+                 with
+                 [
+                     _Ty=int
+                 ]
+                 A non-const reference may only be bound to an lvalue
+     1>c:\users\b029735\nobackupdata\12_monthly_process\prod_ccg_v2.1_27032013\pricer_gmxb_dll\Utility classes/back_ground_final.h(1376): warning C4239: nonstandard extension used : 'argument' : conversion from 'std::vector<_Ty>' to 'std::vector<_Ty> &'
+                 with
+                 [
+                     _Ty=int
+                 ]
+                 A non-const reference may only be bound to an lvalue
+     1>c:\users\b029735\nobackupdata\12_monthly_process\prod_ccg_v2.1_27032013\pricer_gmxb_dll\Utility classes/back_ground_final.h(1190): warning C4189: 'number_of_scenarios_to_run' : local variable is initialized but not referenced
+     1>c:\users\b029735\nobackupdata\12_monthly_process\prod_ccg_v2.1_27032013\pricer_gmxb_dll\Utility classes/back_ground_final.h(1481): warning C4239: nonstandard extension used : 'argument' : conversion from 'std::vector<_Ty>' to 'std::vector<_Ty> &'
+                 with
+                 [
+                     _Ty=int
+                 ]
+                 A non-const reference may only be bound to an lvalue
+     1>c:\users\b029735\nobackupdata\12_monthly_process\prod_ccg_v2.1_27032013\pricer_gmxb_dll\Utility classes/back_ground_final.h(1642): warning C4018: '<' : signed/unsigned mismatch
+     1>c:\users\b029735\nobackupdata\12_monthly_process\prod_ccg_v2.1_27032013\pricer_gmxb_dll\Utility classes/back_ground_final.h(1649): warning C4018: '<' : signed/unsigned mismatch
+     1>c:\users\b029735\nobackupdata\12_monthly_process\prod_ccg_v2.1_27032013\pricer_gmxb_dll\Utility classes/back_ground_final.h(1778): warning C4239: nonstandard extension used : 'argument' : conversion from 'std::vector<_Ty>' to 'std::vector<_Ty> &'
+                 with
+                 [
+                     _Ty=int
+                 ]
+                 A non-const reference may only be bound to an lvalue
+     1>c:\users\b029735\nobackupdata\12_monthly_process\prod_ccg_v2.1_27032013\pricer_gmxb_dll\Utility classes/back_ground_final.h(1787): warning C4018: '<' : signed/unsigned mismatch
+     1>c:\users\b029735\nobackupdata\12_monthly_process\prod_ccg_v2.1_27032013\pricer_gmxb_dll\Utility classes/back_ground_final.h(1832): warning C4018: '<' : signed/unsigned mismatch
+     1>c:\users\b029735\nobackupdata\12_monthly_process\prod_ccg_v2.1_27032013\pricer_gmxb_dll\Utility classes/back_ground_final.h(2068): warning C4239: nonstandard extension used : 'argument' : conversion from 'std::vector<_Ty>' to 'std::vector<_Ty> &'
+                 with
+                 [
+                     _Ty=int
+                 ]
+                 A non-const reference may only be bound to an lvalue
+     1>c:\users\b029735\nobackupdata\12_monthly_process\prod_ccg_v2.1_27032013\pricer_gmxb_dll\Utility classes/back_ground_final.h(1959): warning C4100: 'log_strm' : unreferenced formal parameter
+     1>c:\users\b029735\nobackupdata\12_monthly_process\prod_ccg_v2.1_27032013\pricer_gmxb_dll\Utility classes/back_ground_final.h(2255): warning C4389: '!=' : signed/unsigned mismatch
+     1>c:\users\b029735\nobackupdata\12_monthly_process\prod_ccg_v2.1_27032013\pricer_gmxb_dll\Utility classes/back_ground_final.h(2598): warning C4239: nonstandard extension used : 'argument' : conversion from 'std::vector<_Ty>' to 'std::vector<_Ty> &'
+                 with
+                 [
+                     _Ty=int
+                 ]
+                 A non-const reference may only be bound to an lvalue
+     1>c:\users\b029735\nobackupdata\12_monthly_process\prod_ccg_v2.1_27032013\pricer_gmxb_dll\Utility classes/back_ground_final.h(2751): warning C4239: nonstandard extension used : 'argument' : conversion from 'std::vector<_Ty>' to 'std::vector<_Ty> &'
+                 with
+                 [
+                     _Ty=int
+                 ]
+                 A non-const reference may only be bound to an lvalue
+     1>c:\users\b029735\nobackupdata\12_monthly_process\prod_ccg_v2.1_27032013\pricer_gmxb_dll\Utility classes/back_ground_final.h(2844): warning C4018: '<' : signed/unsigned mismatch
+     1>c:\users\b029735\nobackupdata\12_monthly_process\prod_ccg_v2.1_27032013\pricer_gmxb_dll\Utility classes/back_ground_final.h(2892): warning C4239: nonstandard extension used : 'argument' : conversion from 'std::vector<_Ty>' to 'std::vector<_Ty> &'
+                 with
+                 [
+                     _Ty=Scenario_configuration
+                 ]
+                 A non-const reference may only be bound to an lvalue
+     1>c:\users\b029735\nobackupdata\12_monthly_process\prod_ccg_v2.1_27032013\pricer_gmxb_dll\Utility classes/back_ground_final.h(2824): warning C4189: 'if_he_inner_mode' : local variable is initialized but not referenced
+     1>c:\users\b029735\nobackupdata\12_monthly_process\prod_ccg_v2.1_27032013\pricer_gmxb_dll\Utility classes/back_ground_final.h(3060): warning C4018: '<' : signed/unsigned mismatch
+     1>c:\users\b029735\nobackupdata\12_monthly_process\prod_ccg_v2.1_27032013\pricer_gmxb_dll\Utility classes/back_ground_final.h(3093): warning C4018: '<' : signed/unsigned mismatch
+     1>c:\users\b029735\nobackupdata\12_monthly_process\prod_ccg_v2.1_27032013\pricer_gmxb_dll\Utility classes/back_ground_final.h(3143): warning C4018: '<' : signed/unsigned mismatch
+     1>c:\users\b029735\nobackupdata\12_monthly_process\prod_ccg_v2.1_27032013\pricer_gmxb_dll\Utility classes/back_ground_final.h(3201): warning C4018: '<' : signed/unsigned mismatch
+     1>c:\users\b029735\nobackupdata\12_monthly_process\prod_ccg_v2.1_27032013\pricer_gmxb_dll\Utility classes/back_ground_final.h(3041): warning C4100: 'w_id' : unreferenced formal parameter
+     1>c:\users\b029735\nobackupdata\12_monthly_process\prod_ccg_v2.1_27032013\pricer_gmxb_dll\Utility classes/back_ground_final.h(3041): warning C4100: 'tot_nb_workers' : unreferenced formal parameter
+     1>c:\users\b029735\nobackupdata\12_monthly_process\prod_ccg_v2.1_27032013\pricer_gmxb_dll\Utility classes/back_ground_final.h(3086): warning C4189: 'number_of_outer_scenarios' : local variable is initialized but not referenced
+     1>c:\users\b029735\nobackupdata\12_monthly_process\prod_ccg_v2.1_27032013\pricer_gmxb_dll\Utility classes/back_ground_final.h(3063): warning C4189: 'nb_product_inner' : local variable is initialized but not referenced
+     1>c:\users\b029735\nobackupdata\12_monthly_process\prod_ccg_v2.1_27032013\pricer_gmxb_dll\Utility classes/inforces_AP.h(90): warning C4130: '!=' : logical operation on address of string constant
+     1>c:\users\b029735\nobackupdata\12_monthly_process\prod_ccg_v2.1_27032013\pricer_gmxb_dll\Utility classes/inforces_AP.h(149): warning C4130: '!=' : logical operation on address of string constant
+     1>c:\users\b029735\nobackupdata\12_monthly_process\prod_ccg_v2.1_27032013\pricer_gmxb_dll\Utility classes/inforces_AP.h(220): warning C4130: '!=' : logical operation on address of string constant
+     1>c:\users\b029735\nobackupdata\12_monthly_process\prod_ccg_v2.1_27032013\pricer_gmxb_dll\Utility classes/inforces_AP.h(293): warning C4130: '!=' : logical operation on address of string constant
+     1>Interface_dll.cpp(357): warning C4239: nonstandard extension used : 'argument' : conversion from 'std::string' to 'std::string &'
+                 A non-const reference may only be bound to an lvalue
+     1>Interface_dll.cpp(465): warning C4239: nonstandard extension used : 'argument' : conversion from 'std::string' to 'std::string &'
+                 A non-const reference may only be bound to an lvalue
+     1>Interface_dll.cpp(466): warning C4239: nonstandard extension used : 'argument' : conversion from 'std::string' to 'std::string &'
+                 A non-const reference may only be bound to an lvalue
+     1>Interface_dll.cpp(471): warning C4239: nonstandard extension used : 'argument' : conversion from 'std::string' to 'std::string &'
+                 A non-const reference may only be bound to an lvalue
+     1>Interface_dll.cpp(472): warning C4239: nonstandard extension used : 'argument' : conversion from 'std::string' to 'std::string &'
+                 A non-const reference may only be bound to an lvalue
+     1>Interface_dll.cpp(473): warning C4239: nonstandard extension used : 'argument' : conversion from 'std::string' to 'std::string &'
+                 A non-const reference may only be bound to an lvalue
+     1>Interface_dll.cpp(474): warning C4239: nonstandard extension used : 'argument' : conversion from 'std::string' to 'std::string &'
+                 A non-const reference may only be bound to an lvalue
+     1>Interface_dll.cpp(475): warning C4239: nonstandard extension used : 'argument' : conversion from 'std::string' to 'std::string &'
+                 A non-const reference may only be bound to an lvalue
+     1>Interface_dll.cpp(476): warning C4239: nonstandard extension used : 'argument' : conversion from 'std::string' to 'std::string &'
+                 A non-const reference may only be bound to an lvalue
+     1>Interface_dll.cpp(506): warning C4239: nonstandard extension used : 'argument' : conversion from 'std::string' to 'std::string &'
+                 A non-const reference may only be bound to an lvalue
+     1>Interface_dll.cpp(343): warning C4100: 'use_scn_file' : unreferenced formal parameter
+     1>Interface_dll.cpp(559): warning C4239: nonstandard extension used : 'argument' : conversion from 'std::string' to 'std::string &'
+                 A non-const reference may only be bound to an lvalue
+     1>Interface_dll.cpp(682): warning C4239: nonstandard extension used : 'argument' : conversion from 'std::string' to 'std::string &'
+                 A non-const reference may only be bound to an lvalue
+     1>Interface_dll.cpp(683): warning C4239: nonstandard extension used : 'argument' : conversion from 'std::string' to 'std::string &'
+                 A non-const reference may only be bound to an lvalue
+     1>Interface_dll.cpp(688): warning C4239: nonstandard extension used : 'argument' : conversion from 'std::string' to 'std::string &'
+                 A non-const reference may only be bound to an lvalue
+     1>Interface_dll.cpp(689): warning C4239: nonstandard extension used : 'argument' : conversion from 'std::string' to 'std::string &'
+                 A non-const reference may only be bound to an lvalue
+     1>Interface_dll.cpp(690): warning C4239: nonstandard extension used : 'argument' : conversion from 'std::string' to 'std::string &'
+                 A non-const reference may only be bound to an lvalue
+     1>Interface_dll.cpp(691): warning C4239: nonstandard extension used : 'argument' : conversion from 'std::string' to 'std::string &'
+                 A non-const reference may only be bound to an lvalue
+     1>Interface_dll.cpp(692): warning C4239: nonstandard extension used : 'argument' : conversion from 'std::string' to 'std::string &'
+                 A non-const reference may only be bound to an lvalue
+     1>Interface_dll.cpp(693): warning C4239: nonstandard extension used : 'argument' : conversion from 'std::string' to 'std::string &'
+                 A non-const reference may only be bound to an lvalue
+     1>Interface_dll.cpp(1068): warning C4239: nonstandard extension used : 'argument' : conversion from 'std::string' to 'std::string &'
+                 A non-const reference may only be bound to an lvalue
+     1>Interface_dll.cpp(1181): warning C4239: nonstandard extension used : 'argument' : conversion from 'std::string' to 'std::string &'
+                 A non-const reference may only be bound to an lvalue
+     1>Interface_dll.cpp(1182): warning C4239: nonstandard extension used : 'argument' : conversion from 'std::string' to 'std::string &'
+                 A non-const reference may only be bound to an lvalue
+     1>Interface_dll.cpp(1187): warning C4239: nonstandard extension used : 'argument' : conversion from 'std::string' to 'std::string &'
+                 A non-const reference may only be bound to an lvalue
+     1>Interface_dll.cpp(1188): warning C4239: nonstandard extension used : 'argument' : conversion from 'std::string' to 'std::string &'
+                 A non-const reference may only be bound to an lvalue
+     1>Interface_dll.cpp(1189): warning C4239: nonstandard extension used : 'argument' : conversion from 'std::string' to 'std::string &'
+                 A non-const reference may only be bound to an lvalue
+     1>Interface_dll.cpp(1190): warning C4239: nonstandard extension used : 'argument' : conversion from 'std::string' to 'std::string &'
+                 A non-const reference may only be bound to an lvalue
+     1>Interface_dll.cpp(1191): warning C4239: nonstandard extension used : 'argument' : conversion from 'std::string' to 'std::string &'
+                 A non-const reference may only be bound to an lvalue
+     1>Interface_dll.cpp(1192): warning C4239: nonstandard extension used : 'argument' : conversion from 'std::string' to 'std::string &'
+                 A non-const reference may only be bound to an lvalue
+     1>Interface_dll.cpp(1206): warning C4239: nonstandard extension used : 'argument' : conversion from 'std::string' to 'std::string &'
+                 A non-const reference may only be bound to an lvalue
+     1>Interface_dll.cpp(1207): warning C4239: nonstandard extension used : 'argument' : conversion from 'std::string' to 'std::string &'
+                 A non-const reference may only be bound to an lvalue
+     1>Interface_dll.cpp(1208): warning C4239: nonstandard extension used : 'argument' : conversion from 'std::string' to 'std::string &'
+                 A non-const reference may only be bound to an lvalue
+     1>Interface_dll.cpp(1240): warning C4239: nonstandard extension used : 'argument' : conversion from 'std::string' to 'std::string &'
+                 A non-const reference may only be bound to an lvalue
+     1>Interface_dll.cpp(2013): warning C4018: '<' : signed/unsigned mismatch
+     1>Interface_dll.cpp(2043): warning C4100: 's' : unreferenced formal parameter
+     1>Interface_dll.cpp(2063): warning C4100: 'w_id' : unreferenced formal parameter
+     1>Interface_dll.cpp(2063): warning C4100: 'nb_workers' : unreferenced formal parameter
+     1>Interface_dll.cpp(2110): warning C4100: 'w_id' : unreferenced formal parameter
+     1>Interface_dll.cpp(2110): warning C4100: 'nb_workers' : unreferenced formal parameter
+     1>Interface_dll.cpp(2178): warning C4018: '<' : signed/unsigned mismatch
+     1>Interface_dll.cpp(2189): warning C4018: '<' : signed/unsigned mismatch
+     1>Interface_dll.cpp(2161): warning C4100: 's' : unreferenced formal parameter
+     1>Interface_dll.cpp(2161): warning C4100: 'idWorker' : unreferenced formal parameter
+     1>Interface_dll.cpp(2313): warning C4100: 's' : unreferenced formal parameter
+     1>Interface_dll.cpp(2313): warning C4100: 'w_id' : unreferenced formal parameter
+     1>Interface_dll.cpp(2313): warning C4100: 'nb_workers' : unreferenced formal parameter
+     1>Interface_dll.cpp(2355): warning C4018: '<' : signed/unsigned mismatch
+     1>Interface_dll.cpp(2390): warning C4800: 'int' : forcing value to bool 'true' or 'false' (performance warning)
+     1>Interface_dll.cpp(2381): warning C4100: 'w_id' : unreferenced formal parameter
+     1>Interface_dll.cpp(2381): warning C4100: 'nb_workers' : unreferenced formal parameter
+     1>Interface_dll.cpp(2466): warning C4100: 'w_id' : unreferenced formal parameter
+     1>Interface_dll.cpp(2466): warning C4100: 'nb_workers' : unreferenced formal parameter
+     1>Interface_dll.cpp(2496): warning C4189: 'shock_size' : local variable is initialized but not referenced
+     1>Interface_dll.cpp(2556): warning C4100: 's' : unreferenced formal parameter
+     1>Interface_dll.cpp(2556): warning C4100: 'w_id' : unreferenced formal parameter
+     1>Interface_dll.cpp(2556): warning C4100: 'nb_workers' : unreferenced formal parameter
+     1>Interface_dll.cpp(2619): warning C4239: nonstandard extension used : 'argument' : conversion from 'std::string' to 'std::string &'
+                 A non-const reference may only be bound to an lvalue
+     1>Interface_dll.cpp(2646): warning C4100: 's' : unreferenced formal parameter
+     1>Interface_dll.cpp(2646): warning C4100: 'nbWorker' : unreferenced formal parameter
+     1>Interface_dll.cpp(2691): warning C4239: nonstandard extension used : 'argument' : conversion from 'std::string' to 'std::string &'
+                 A non-const reference may only be bound to an lvalue
+     1>Interface_dll.cpp(2720): warning C4800: 'int' : forcing value to bool 'true' or 'false' (performance warning)
+     1>Interface_dll.cpp(2747): warning C4800: 'int' : forcing value to bool 'true' or 'false' (performance warning)
+     1>Interface_dll.cpp(2704): warning C4100: 's' : unreferenced formal parameter
+     1>Interface_dll.cpp(2704): warning C4100: 'nb_of_workers' : unreferenced formal parameter
+     1>Interface_dll.cpp(2767): warning C4239: nonstandard extension used : 'argument' : conversion from 'std::string' to 'std::string &'
+                 A non-const reference may only be bound to an lvalue
+     1>Interface_dll.cpp(2784): warning C4239: nonstandard extension used : 'argument' : conversion from 'std::string' to 'std::string &'
+                 A non-const reference may only be bound to an lvalue
+     1>Interface_dll.cpp(2776): warning C4100: 's' : unreferenced formal parameter
+     1>Interface_dll.cpp(2877): warning C4239: nonstandard extension used : 'argument' : conversion from 'std::string' to 'std::string &'
+                 A non-const reference may only be bound to an lvalue
+     1>Interface_dll.cpp(2900): warning C4239: nonstandard extension used : 'argument' : conversion from 'std::string' to 'std::string &'
+                 A non-const reference may only be bound to an lvalue
+     1>Interface_dll.cpp(2921): warning C4100: 's' : unreferenced formal parameter
+     1>Interface_dll.cpp(2921): warning C4100: 'w_id' : unreferenced formal parameter
+     1>Interface_dll.cpp(2921): warning C4100: 'nb_workers' : unreferenced formal parameter
+     1>Interface_dll.cpp(3067): warning C4239: nonstandard extension used : 'argument' : conversion from 'std::string' to 'std::string &'
+                 A non-const reference may only be bound to an lvalue
+     1>Interface_dll.cpp(3068): warning C4239: nonstandard extension used : 'argument' : conversion from 'std::string' to 'std::string &'
+                 A non-const reference may only be bound to an lvalue
+     1>Interface_dll.cpp(3070): warning C4239: nonstandard extension used : 'argument' : conversion from 'std::string' to 'std::string &'
+                 A non-const reference may only be bound to an lvalue
+     1>Interface_dll.cpp(3071): warning C4239: nonstandard extension used : 'argument' : conversion from 'std::string' to 'std::string &'
+                 A non-const reference may only be bound to an lvalue
+     1>Interface_dll.cpp(3095): warning C4239: nonstandard extension used : 'argument' : conversion from 'std::string' to 'std::string &'
+                 A non-const reference may only be bound to an lvalue
+     1>Interface_dll.cpp(3097): warning C4239: nonstandard extension used : 'argument' : conversion from 'std::string' to 'std::string &'
+                 A non-const reference may only be bound to an lvalue
+     1>Interface_dll.cpp(3053): warning C4100: 'config' : unreferenced formal parameter
+     1>Interface_dll.cpp(3142): warning C4018: '<' : signed/unsigned mismatch
+     1>Interface_dll.cpp(3170): warning C4189: 'loadOK' : local variable is initialized but not referenced
+     1>Interface_dll.cpp(3348): warning C4018: '<' : signed/unsigned mismatch
+     1>Interface_dll.cpp(3407): warning C4297: 'run_aging_policies' : function assumed not to throw an exception but does
+                 __declspec(nothrow) or throw() was specified on the function
+     1>Interface_dll.cpp(3313): warning C4100: 's' : unreferenced formal parameter
+     1>Interface_dll.cpp(3422): warning C4018: '<' : signed/unsigned mismatch
+     1>Interface_dll.cpp(3445): warning C4239: nonstandard extension used : 'argument' : conversion from 'std::string' to 'std::string &'
+                 A non-const reference may only be bound to an lvalue
+     1>Interface_dll.cpp(3446): warning C4239: nonstandard extension used : 'argument' : conversion from 'std::string' to 'std::string &'
+                 A non-const reference may only be bound to an lvalue
+     1>Interface_dll.cpp(3448): warning C4239: nonstandard extension used : 'argument' : conversion from 'std::string' to 'std::string &'
+                 A non-const reference may only be bound to an lvalue
+     1>Interface_dll.cpp(3449): warning C4239: nonstandard extension used : 'argument' : conversion from 'std::string' to 'std::string &'
+                 A non-const reference may only be bound to an lvalue
+     1>Interface_dll.cpp(3413): warning C4100: 'idWorker' : unreferenced formal parameter
+     1>Interface_dll.cpp(3413): warning C4100: 'nbWorker' : unreferenced formal parameter
+     1>Interface_dll.cpp(3413): warning C4100: 'config' : unreferenced formal parameter
+     1>Interface_dll.cpp(3502): warning C4239: nonstandard extension used : 'argument' : conversion from 'std::string' to 'std::string &'
+                 A non-const reference may only be bound to an lvalue
+     1>Interface_dll.cpp(3516): warning C4018: '<' : signed/unsigned mismatch
+     1>Interface_dll.cpp(3531): warning C4100: 's' : unreferenced formal parameter
+     1>Interface_dll.cpp(3732): warning C4100: 'w_id_' : unreferenced formal parameter
+     1>Interface_dll.cpp(3833): warning C4239: nonstandard extension used : 'argument' : conversion from 'std::string' to 'std::string &'
+                 A non-const reference may only be bound to an lvalue
+     1>Interface_dll.cpp(3844): warning C4189: 'p' : local variable is initialized but not referenced
+       Link:
+         C:\Program Files\Microsoft Visual Studio 11.0\VC\bin\link.exe /ERRORREPORT:PROMPT /OUT:"C:\Users\b029735\NoBackupData\12_MONTHLY_PROCESS\PROD_CCG_V2.1_27032013\Release\PRICER_GMXB_DLL.dll" /INCREMENTAL:NO /NOLOGO /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /manifestinput:"C:\Program Files\Microsoft Visual Studio 11.0\VC\Include\Manifest\dpiaware.manifest" /DEBUG /PDB:"C:\Users\b029735\NoBackupData\12_MONTHLY_PROCESS\PROD_CCG_V2.1_27032013\Release\PRICER_GMXB_DLL.pdb" /SUBSYSTEM:WINDOWS /OPT:REF /OPT:ICF /LTCG /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"C:\Users\b029735\NoBackupData\12_MONTHLY_PROCESS\PROD_CCG_V2.1_27032013\Release\PRICER_GMXB_DLL.lib" /MACHINE:X86 /SAFESEH /DLL Release\Interface_dll.obj
+         Release\stdafx.obj
+         Release\Fund_Manager.obj
+         C:\Users\b029735\NoBackupData\12_MONTHLY_PROCESS\PROD_CCG_V2.1_27032013\Release\AHS_PARSER.lib
+         "C:\Users\b029735\NoBackupData\12_MONTHLY_PROCESS\PROD_CCG_V2.1_27032013\Release\Calibration(dll).lib"
+         C:\Users\b029735\NoBackupData\12_MONTHLY_PROCESS\PROD_CCG_V2.1_27032013\Release\HE_Asset.lib
+         "C:\Users\b029735\NoBackupData\12_MONTHLY_PROCESS\PROD_CCG_V2.1_27032013\Release\ScenarioGenerator(v2).lib"
+            Creating library C:\Users\b029735\NoBackupData\12_MONTHLY_PROCESS\PROD_CCG_V2.1_27032013\Release\PRICER_GMXB_DLL.lib and object C:\Users\b029735\NoBackupData\12_MONTHLY_PROCESS\PROD_CCG_V2.1_27032013\Release\PRICER_GMXB_DLL.exp
+         Generating code
+     1>c:\users\b029735\nobackupdata\12_monthly_process\prod_ccg_v2.1_27032013\pricer_gmxb_dll\projection classes\guarantee projection classes\projection.h(3287): warning C4701: potentially uninitialized local variable 'survival' used
+     1>c:\users\b029735\nobackupdata\12_monthly_process\prod_ccg_v2.1_27032013\pricer_gmxb_dll\projection classes\guarantee projection classes\projection.h(3287): warning C4703: potentially uninitialized local pointer variable 'survival' used
+     1>c:\users\b029735\nobackupdata\12_monthly_process\prod_ccg_v2.1_27032013\ahs_parser\gmxb_assumption_table.h(335): warning C4706: assignment within conditional expression
+     1>c:\users\b029735\nobackupdata\12_monthly_process\prod_ccg_v2.1_27032013\ahs_parser\gmxb_assumption_table.cpp(544): warning C4706: assignment within conditional expression
+     1>c:\users\b029735\nobackupdata\12_monthly_process\prod_ccg_v2.1_27032013\pricer_gmxb_dll\utility classes\back_ground_final.h(1293): warning C4701: potentially uninitialized local variable 'inforce_sum' used
+     1>c:\users\b029735\nobackupdata\12_monthly_process\prod_ccg_v2.1_27032013\pricer_gmxb_dll\utility classes\back_ground_final.h(1293): warning C4703: potentially uninitialized local pointer variable 'inforce_sum' used
+     1>c:\users\b029735\nobackupdata\12_monthly_process\prod_ccg_v2.1_27032013\pricer_gmxb_dll\interface_dll.cpp(3475): warning C4700: uninitialized local variable 'nb_workers_used' used
+         Finished generating code
+         PRICER_GMXB_DLL.vcxproj -> C:\Users\b029735\NoBackupData\12_MONTHLY_PROCESS\PROD_CCG_V2.1_27032013\Release\PRICER_GMXB_DLL.dll
+     1>Done Building Project "C:\Users\b029735\NoBackupData\12_MONTHLY_PROCESS\PROD_CCG_V2.1_27032013\PRICER_GMXB_DLL\PRICER_GMXB_DLL.vcxproj" (Build target(s)).
+
+Build succeeded.
+
+Time Elapsed 00:00:56.10

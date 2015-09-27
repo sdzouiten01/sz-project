@@ -1,0 +1,7 @@
+#pragma once
+
+//JOINT LIFE
+#define GMDB_IND 84
+#define SEX_2 108
+#define AGE_VALN_2 109
+#define GMXB_BIRTHDAY_DATE_2 124

@@ -1,0 +1,143 @@
+#pragma once
+#include "stdafx.h"
+#include "Projection classes/Guarantee projection classes/Projection.h"
+#include "Projection classes/Guarantee projection classes/Projection_AB_DB.h"
+
+#define MORT_CONST2 1885
+#define SURV_INDEX 85
+
+class Projection_AGD_ESP_AB_DB : public Projection_AB_DB
+{
+public:
+ 
+	GMXB_Assumption_Table *max_lapse;
+	GMXB_Assumption_Table *min_lapse;
+	double slope;
+	double intercept;
+	double min_lapse_rate;
+	double max_lapse_rate;
+	double lapse_function;
+    bool charge_benefit_base;
+	double itm_mult;
+
+	Projection_AGD_ESP_AB_DB(const vector<vector <int>>& i_s_a,const vector<vector <int>>& f_s_a,
+							const char* tables, bool generate_debug_files, 
+						   const string& debug_file_path, const int t_shorter, bool l_longevity_tables, int time_step):
+		Projection(i_s_a, f_s_a, tables,   generate_debug_files, debug_file_path, t_shorter, l_longevity_tables, time_step),
+		Projection_AB_DB(i_s_a, f_s_a, tables, generate_debug_files, debug_file_path, t_shorter, l_longevity_tables, time_step)
+	{	
+		this->min_lapse= new GMXB_Assumption_Table(tables , "min_lapse");
+		this->max_lapse= new GMXB_Assumption_Table(tables , "max_lapse");
+
+		slope = atof(this->assump->search("slope").c_str());
+		intercept = atof(this->assump->search("intercept").c_str());
+		itm_mult = atof(this->assump->search("itm_mult").c_str());
+
+        charge_benefit_base = false;
+
+	}
+	
+	~Projection_AGD_ESP_AB_DB()
+	{	
+		delete this->min_lapse;
+		delete this->max_lapse;
+	}
+	
+	double mortality_rate_calculation(int t) 
+	{
+		double table_age= (int)(timing_items[t][AGE_LAST]) + this->mort_age_adj;
+		return min(1.0, this->mort_table->quick_search(int(table_age), this->model_point->year - MORT_CONST2)* this->mort_mult);	
+	}
+
+	double lapse_rate_calc(int t)
+	{		
+		double lapse_rate = 0.0;
+		if (main_proj_array[t][AV_E_BEF]>= SMALL_DOUBLE)
+		{
+			if (this->lapse_is_dynamic)
+			{
+				lapse_rate = this->timing_items[t][PRORATA] * dynamic_lapse_rate_axa(t);
+			}
+			else
+			{
+				int pol_yr = (int)(this->timing_items[t][POL_YEAR]);
+				lapse_rate = this->timing_items[t][PRORATA] * this->lapse_rates->search((int)pol_yr, 1)/100;
+			}
+		}
+		if (this->longstaff_ind == "Y")
+			lapse_rate = 0;
+		return lapse_rate;
+	};
+	
+	double dynamic_lapse_rate_axa(int t)
+	{
+		if (t == 1) {
+			main_proj_array[t-1][GMAB_IF] = model_point->gmab_rollup_valn;
+		}
+		double years_to_maturity = model_point->gmab_period - this->timing_items[t][POL_YEAR] + 1;
+		double PV_of_guarantee = max(main_proj_array[t-1][GMAB_IF],model_point->prem_paid*main_proj_array[t-1][SURV_INDEX]*pow(1+model_point->gmab_rollup_rate/100.0,model_point->gmxb_deferral_period));
+		double short_rate_factor = this->afmr[this->model_point->elapsed_mths_in_valn_yr + 1][t][MAXIMUM_NUMBER_OF_INDEXES] / 100.0;
+		main_proj_array[t][BOND_RATE_FOR_LAPSES] = short_rate_factor;
+		
+		if (PV_of_guarantee< SMALL_DOUBLE)
+			main_proj_array[t][ITM] = 0.0;	
+		else
+		{
+			main_proj_array[t][ITM]= itm_mult*(main_proj_array[t][AV_B_BEF]/ (PV_of_guarantee*exp(-years_to_maturity*short_rate_factor)) );    
+		}
+
+
+		int pol_yr = int(this->timing_items[t][POL_YEAR]);
+		double lapse_function = main_proj_array[t][ITM]* slope + intercept;
+		
+		min_lapse_rate =  this->min_lapse->search((int)pol_yr, 1)/100;
+		max_lapse_rate =  this->max_lapse->search((int)pol_yr, 1)/100;
+		
+		return max(	min_lapse_rate,
+					min (max_lapse_rate, 
+					(this->lapse_rates->search((int)pol_yr, 1)/100 * lapse_function) ));
+
+	}
+
+	bool find_string(std::string& s, std::string& s_toBeFind)
+	{
+		std::string::size_type loc = s.find( s_toBeFind, 0 );
+		if( loc != std::string::npos ) 
+			return true;
+		else 
+			return false;    
+	}
+
+	void set_current_model_point(Model_Point *mp)
+	{
+		Projection::set_current_model_point(mp);
+		std::string s_toFind("BASE");
+		this->charge_benefit_base = find_string(mp->gmxb_type2, s_toFind);
+	} 
+
+    void gmxbCharge(int t)
+	{
+		if (!this->charge_benefit_base)
+			Projection::gmxbCharge(t);
+		else
+		{
+			if (this->timing_items[t][POL_YEAR] <= this->product_charging_duration)
+			{
+				if (t==1)
+				{
+					main_proj_array[t][GMXB_CHARGE] = min(this->timing_items[t][PRORATA]* (model_point->gmxb_g_c / 100.0)* max(model_point->gmab_rollup_valn,model_point->gmab_ratchet_valn),
+						                                 main_proj_array[t][AV_B_BEF_BIS]- main_proj_array[t][ADMIN_FEE] - main_proj_array[t][M_AND_E_FEE]);
+				}
+				else
+				{
+					main_proj_array[t][GMXB_CHARGE] = min(this->timing_items[t][PRORATA]* (model_point->gmxb_g_c / 100.0)* main_proj_array[t-1][GMAB_IF],
+                                                         main_proj_array[t][AV_B_BEF_BIS] - main_proj_array[t][ADMIN_FEE] - main_proj_array[t][M_AND_E_FEE]);
+                }			
+			}
+			else
+			{
+				main_proj_array[t][GMXB_CHARGE] = 0.0;
+			}
+		}
+	}
+};

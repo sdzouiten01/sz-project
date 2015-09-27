@@ -1,0 +1,118 @@
+#pragma once
+
+#define AGE_AT_VALN 2
+#define DURATION_VALN 3
+#define POLICY_DURATION 3
+#define PROD_CODE 4
+//#define GMWB_JAPAN_TYPE 5
+#define POLICY_ID 6
+#define POLICIES_CURR 7
+#define SEX 8
+#define M_SEX_PERC 9
+#define PREM_PERIOD 10
+#define PREM_PAID 11
+#define FPW_ACCUM_TOTAL 12
+#define AV_VALN_INDEX0 13
+#define AV_VALN_INDEX1 14
+#define AV_VALN_INDEX2 15
+#define AV_VALN_INDEX3 16
+#define AV_VALN_INDEX4 17
+#define AV_VALN_INDEX5 18
+#define AV_VALN_INDEX6 19
+#define AV_VALN_INDEX7 20
+#define AV_VALN_INDEX8 21
+#define AV_VALN_INDEX9  22
+#define AV_VALN_INDEX10 23
+#define AV_VALN_INDEX11 24
+#define TARGET_AV_SPLIT_VALN_INDEX0 25
+#define TARGET_AV_SPLIT_VALN_INDEX1 26
+#define TARGET_AV_SPLIT_VALN_INDEX2 27
+#define TARGET_AV_SPLIT_VALN_INDEX3 28
+#define TARGET_AV_SPLIT_VALN_INDEX4 29
+#define TARGET_AV_SPLIT_VALN_INDEX5 30
+#define TARGET_AV_SPLIT_VALN_INDEX6 31
+#define TARGET_AV_SPLIT_VALN_INDEX7 32
+#define TARGET_AV_SPLIT_VALN_INDEX8 33
+#define TARGET_AV_SPLIT_VALN_INDEX9 34
+#define TARGET_AV_SPLIT_VALN_INDEX10 35
+#define TARGET_AV_SPLIT_VALN_INDEX11 36
+#define GMAB_VALN  38 // 37
+// No gmab_2_valn
+#define GMDB_AV_VALN 39
+#define GMDB_PREM_VALN 40
+#define GMIB_RATCHET_VALN 41
+#define GMIB_ROLLUP_VALN 42
+
+#define GMXB_CHG_PERC 47
+// gmxb_m_r not linked
+#define MANAGEMENT_FEE_PERC 48
+#define GMXB_EHC_CHG 49
+#define M_AND_FEE_PERC 50
+#define AV_REBAL_IND 51
+#define GMAB_ROLLUP_RATE 52
+#define GMIB_ROLLUP_RATE_AT_VALN 52
+// axa status not linked
+// uk1, uk2, uk3 ..... not linked
+#define GER_PRODUCT_NUMBER 59
+#define GER_DISTRIBUTION_CHANNEL 60
+#define DEFERMENT_AGE 61
+#define GER_PREM_DURATION 62
+#define GER_PREM_HEDGE_CHARGE 63
+#define COMMISSION_ACCT 64
+#define TAX_LAYER 65
+#define PAYT_FREQ 66
+#define GER_PREM_FIXED_FEE 67
+#define GER_GMIB_FIXED_FEE 68
+#define ADMIN_FEE_DOLLAR 68
+// gr_symbol not linked
+// #define GR_SYMBOL 75
+#define LAST_YEAR_BONUS 69
+#define STEP_2008_IND 70
+#define LAST_PREMIUM_IND 71
+#define GPP 72
+#define RIESTER_TYPE 73
+#define ABRUFPHASE_IND 74
+#define PREMIUM_TYPE_IND 75
+#define DIS_FAC_SB 87
+//Acquisition Charges
+#define ACQU_CH_T0 89
+#define ACQU_CH_T1 90
+#define ACQU_CH_T2 91
+#define ACQU_CH_T3 92
+#define ACQU_CH_T4 93
+#define ACQU_CH_T5 94
+#define ACQU_CH_T6 95
+#define ACQU_CH_T7 96
+#define ACQU_CH_T8 97
+#define ACQU_CH_T9 98
+
+
+#define TOT_PREM 101
+#define AV_ADD 102
+#define HC_ADD 103
+#define BB_ADD 104
+#define SUM_PREM_ADD 105
+#define PAY_STATUS 107
+#define HC_PP 108
+#define STAFFEL_FACTOR 109
+#define HC_PP_ADD 110
+#define HC_AV_BRUTTO 111
+
+#define GMXB_CHG_GROSS 114
+
+
+/*modifications for the stat inforces*/
+#define RRC_REALIZED 121 
+#define ADMIN_CHARGES 122 
+#define UPFRONT_G_C 123 
+
+#define ISSUE_DATE 125
+#define GUARANTEED_INTEREST_RATE 126
+#define GUARANTEED_INTEREST_RATE_PAID_UP 127
+#define YEAR_LAST_BONUS 128
+#define LAST_PREMIUM_DATE 129
+
+
+#define MAX_INFORCE_COLS 130
+
+

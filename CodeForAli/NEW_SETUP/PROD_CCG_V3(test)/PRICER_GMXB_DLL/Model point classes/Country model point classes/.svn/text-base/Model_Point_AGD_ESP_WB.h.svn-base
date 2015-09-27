@@ -1,0 +1,49 @@
+#pragma once
+
+#include "Model point classes/Model_Point.h"
+#include "Model point classes/Country model point classes/model_point_head_AGD_WB.h"
+
+using namespace std;
+
+class Model_Point_AGD_ESP_WB : public Model_Point
+{
+	public :
+			
+			// for joint life - jonathan
+			string joint_life_ind;
+			double age_valn_2;
+			string sex_2;
+			//double wb_wdl_rate;
+			double age_exact_issue_2;
+			int birthday2;
+			string db_indicator;
+
+			Model_Point_AGD_ESP_WB(vector<string>& row, int rank, Product_configuration& product_config, Scenario_configuration& scenario_config) :  
+				Model_Point(row, rank, product_config, scenario_config)
+			{
+
+				this->joint_life_ind = row[GMDB_IND];
+				//this->wb_wdl_rate = atof(row[WB_WDL_RATE].c_str());
+				this->db_indicator = row[PRODUCT_CD1];
+
+				//For joint life - jonathan
+				if (joint_life_ind == "LS")
+				{
+					sex_2 = row[SEX_2];
+					age_valn_2 = atof(row[AGE_VALN_2].c_str());
+					age_exact_issue_2 = this->age_valn_2 - this->duration;
+					if (ceil(age_exact_issue_2) - (age_exact_issue_2) <= 0.005)
+						age_exact_issue_2 = ceil(age_exact_issue_2);
+					birthday2 = (int)(this->extraction_year + (this->extraction_month-1)/12. + (this->extraction_day-1)/365. - this->age_valn_2); 
+				}
+				else
+					age_valn_2 = 0.;
+				}
+
+				~Model_Point_AGD_ESP_WB()
+			{
+				//cout << "appel au destructeur " << endl;
+				//delete[] this->retPtr;
+				//cout << "fin appel au destructeur " << endl;
+			}
+};

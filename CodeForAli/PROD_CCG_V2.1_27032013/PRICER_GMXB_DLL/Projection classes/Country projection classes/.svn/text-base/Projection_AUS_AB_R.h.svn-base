@@ -1,0 +1,69 @@
+#pragma once
+#include "stdafx.h"
+#include "Projection classes/Country projection classes/Projection_AUS_AB.h"
+
+using namespace std;
+
+class Projection_AUS_AB_R : public Projection_AUS_AB
+{
+protected:
+
+public:
+	Projection_AUS_AB_R(const vector<vector <int>>& i_s_a,const vector<vector <int>>& f_s_a,
+						const char* tables, bool generate_dbg_files, const string& dbg_file_path, 
+						const int t_high_shorter, bool l_longevity_tables, int time_step):
+		Projection(i_s_a, f_s_a, tables, generate_dbg_files, dbg_file_path, t_high_shorter, l_longevity_tables, time_step),
+		Projection_AUS_AB(i_s_a, f_s_a, tables, generate_dbg_files, dbg_file_path, t_high_shorter, l_longevity_tables, time_step)
+	{
+	}
+
+	double dynamic_lapse_rate_axa(int t) 
+	{
+		int pol_yr = (int)(this->timing_items[t][POL_YEAR]);
+		int phase = 1;
+		double itm_dyn_factor = 0.0;
+		double lapse_rate_base = 0.0;
+		double premium = this->regular_premium_calculation(t);
+		
+		double lapse_threshold_low = this->lapse_rates->search(pol_yr,1);
+		double lapse_threshold_up = this->lapse_rates->search(pol_yr,2);
+		double min_dyn_factor = this->lapse_rates->search(pol_yr,3);
+		double max_dyn_factor = this->lapse_rates->search(pol_yr,4);
+		double dyn_factor_slope = this->lapse_rates->search(pol_yr,5); 
+		double dyn_factor_intercept = this->lapse_rates->search(pol_yr,6);
+	
+		if (this->timing_items[t][POL_YEAR] <= aus_mp->gmxb_deferral_period)
+			phase = 1;
+		else
+			phase = 2;
+
+		if(t==1)
+			main_proj_array[t-1][GMAB_ROLLUP_BASE] = aus_mp->gmab_rollup_valn +  max(-aus_mp->au_tax_lia,0.);
+		// itm 
+		if ((main_proj_array[t-1][GMAB_ROLLUP_BASE] + premium) < SMALL_DOUBLE || pol_yr > aus_mp->au_ves_ter) 
+			main_proj_array[t][ITM] = 0.;
+		else
+			main_proj_array[t][ITM] = main_proj_array[t][AV_E_BEF] / (main_proj_array[t-1][GMAB_ROLLUP_BASE] + premium);
+
+		// itm dynamic factor 
+		if(main_proj_array[t][ITM] <= lapse_threshold_low)	
+			itm_dyn_factor = min_dyn_factor;
+		else if(main_proj_array[t][ITM] <= lapse_threshold_up)	
+			itm_dyn_factor = dyn_factor_slope * main_proj_array[t][ITM] + dyn_factor_intercept;
+		else	
+			itm_dyn_factor = max_dyn_factor;
+
+		// base lapse rate
+		if(phase == 1)
+			lapse_rate_base = this->acc_phase_base_lapse / 100. ;
+		else
+			lapse_rate_base = this->wdwl_phase_base_lapse / 100.;
+		
+		if(pol_yr == 1)
+			return itm_dyn_factor * lapse_rate_base / this->timing_items[t][PRORATA];
+		else
+			return itm_dyn_factor * lapse_rate_base;
+	}
+};
+	
+

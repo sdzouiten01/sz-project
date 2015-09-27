@@ -1,0 +1,9 @@
+#pragma once
+
+#define	PERCENTAGE_WHDL	0
+#define ITM_LAPSE_RATE 1
+#define ITM_GUARANTEE_DURATION 2
+#define ITM_BASE 3
+#define ITM_GUARANTEE 4
+#define GMWB_WDL_CUMM 5
+#define CHE_WB_MAIN_PROJ_NUM_COLS 6

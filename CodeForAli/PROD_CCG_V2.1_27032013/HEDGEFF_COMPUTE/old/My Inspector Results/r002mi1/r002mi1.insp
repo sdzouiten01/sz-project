@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<root>
+ <rdmgr>
+  <hostname>ch_pc</hostname>
+  <timestamp type="u64_t">1259080731</timestamp>
+  <variables>
+   <at>mi1</at>
+  </variables>
+ </rdmgr>
+</root>

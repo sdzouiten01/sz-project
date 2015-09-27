@@ -1,0 +1,252 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hpp;hxx;hm;inl;inc;xsd</Extensions>
+    </Filter>
+    <Filter Include="Header Files\Model point classes">
+      <UniqueIdentifier>{bf76ef17-9365-4409-9e3a-84a1379f93bb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Model point classes\Country model point classes">
+      <UniqueIdentifier>{b6549c85-3fd5-47e2-9d49-d4df46c0269f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Model point classes\Country model point classes\SWISS">
+      <UniqueIdentifier>{19a01e79-c0d0-4350-babf-d60292c24377}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Model point classes\Country model point classes\LUXEMBOURG">
+      <UniqueIdentifier>{7fb54c74-103b-4db3-96c2-96d2bbd31c8b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Model point classes\Country model point classes\LIE">
+      <UniqueIdentifier>{7e50d773-3aec-4c07-9a95-0a79a6dbca2c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Projection classes">
+      <UniqueIdentifier>{661b3653-58b8-406e-8ddd-a6a12e053545}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Projection classes\Country projection classes">
+      <UniqueIdentifier>{0ae549fa-da04-45d3-9b97-22dd47c42099}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Projection classes\Country projection classes\LUXEMBOURG">
+      <UniqueIdentifier>{a67590f1-5ff0-475d-b550-41ffc8456f0b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Projection classes\Country projection classes\SWISS">
+      <UniqueIdentifier>{99493181-4581-4691-a477-60cf0c3c5a72}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Projection classes\Country projection classes\LIE">
+      <UniqueIdentifier>{3c2f14d6-9ba7-4b2b-9384-86d30db1959d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Utility classes">
+      <UniqueIdentifier>{5b4a91c1-9f12-45b9-8b33-0825c956262a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resource Files">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav</Extensions>
+    </Filter>
+    <Filter Include="Source Files\Projection classes">
+      <UniqueIdentifier>{cdb348aa-4140-4e62-b352-ea0210f74d26}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Projection classes\Country projection classes">
+      <UniqueIdentifier>{e944f308-8a49-4dba-8888-d076b518f700}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Projection classes\Country projection classes\SWISS">
+      <UniqueIdentifier>{415936f6-9292-478d-ad08-9fb6e9c64da3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Projection classes\Country projection classes\LUXEMBOURG">
+      <UniqueIdentifier>{2f5ca779-c394-425a-8083-827c7b728f8c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Projection classes\Country projection classes\LIE">
+      <UniqueIdentifier>{0a517d3a-bc29-4ab1-8592-11fd0d675f76}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Utility classes">
+      <UniqueIdentifier>{8f082c58-0983-45c5-a94a-05a65ca1d860}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Model point classes">
+      <UniqueIdentifier>{31e62d55-baa0-403d-a0a6-cfbb2aec6765}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Model point classes\LIE">
+      <UniqueIdentifier>{0c1678e8-0bf6-416f-bcd1-f34a311e76a9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Model point classes\LUXEMBOURG">
+      <UniqueIdentifier>{851ebdd2-1177-4526-b2cc-971d1c0ccc13}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Model point classes\SWISS">
+      <UniqueIdentifier>{903eab25-6ec3-4c43-8785-1a0fc2822943}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="Interface_dll.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Projection classes\Projection.cpp">
+      <Filter>Source Files\Projection classes</Filter>
+    </ClCompile>
+    <ClCompile Include="Projection classes\Country projection classes\Projection_BL_CH_WB_01.cpp">
+      <Filter>Source Files\Projection classes\Country projection classes\SWISS</Filter>
+    </ClCompile>
+    <ClCompile Include="Projection classes\Country projection classes\Projection_BL_LUX_WBD_01.cpp">
+      <Filter>Source Files\Projection classes\Country projection classes\LUXEMBOURG</Filter>
+    </ClCompile>
+    <ClCompile Include="Projection classes\Country projection classes\Projection_BL_LUX_WBLD_01.cpp">
+      <Filter>Source Files\Projection classes\Country projection classes\LUXEMBOURG</Filter>
+    </ClCompile>
+    <ClCompile Include="Projection classes\Country projection classes\Projection_BL_LIE_CH_WB_01.cpp">
+      <Filter>Source Files\Projection classes\Country projection classes\LIE</Filter>
+    </ClCompile>
+    <ClCompile Include="Projection classes\Country projection classes\Projection_BL_LIE_CH_WBL_01.cpp">
+      <Filter>Source Files\Projection classes\Country projection classes\LIE</Filter>
+    </ClCompile>
+    <ClCompile Include="Projection classes\Country projection classes\Projection_BL_LIE_DE_WBDL_01.cpp">
+      <Filter>Source Files\Projection classes\Country projection classes\LIE</Filter>
+    </ClCompile>
+    <ClCompile Include="Projection classes\Country projection classes\Projection_BL_LIE_DEIT_WBD_01.cpp">
+      <Filter>Source Files\Projection classes\Country projection classes\LIE</Filter>
+    </ClCompile>
+    <ClCompile Include="Utility classes\Dispatch_Manager.cpp">
+      <Filter>Source Files\Utility classes</Filter>
+    </ClCompile>
+    <ClCompile Include="Utility classes\Inforce_Manager.cpp">
+      <Filter>Source Files\Utility classes</Filter>
+    </ClCompile>
+    <ClCompile Include="Model point classes\Model_Point.cpp">
+      <Filter>Source Files\Model point classes</Filter>
+    </ClCompile>
+    <ClCompile Include="Model point classes\Country model point classes\model_point_BL_RST_SWISS_01.cpp">
+      <Filter>Source Files\Model point classes\SWISS</Filter>
+    </ClCompile>
+    <ClCompile Include="Model point classes\Country model point classes\model_point_BL_LUX_01.cpp">
+      <Filter>Source Files\Model point classes\LUXEMBOURG</Filter>
+    </ClCompile>
+    <ClCompile Include="Model point classes\Country model point classes\model_point_BL_RS_CH_LIE_01.cpp">
+      <Filter>Source Files\Model point classes\LIE</Filter>
+    </ClCompile>
+    <ClCompile Include="Model point classes\Country model point classes\model_point_BL_RS_DE_LIE_01.cpp">
+      <Filter>Source Files\Model point classes\LIE</Filter>
+    </ClCompile>
+    <ClCompile Include="Model point classes\Country model point classes\model_point_BL_RST_CH_LIE_01.cpp">
+      <Filter>Source Files\Model point classes\LIE</Filter>
+    </ClCompile>
+    <ClCompile Include="Model point classes\Country model point classes\model_point_BL_RST_DEIT_LIE_01.cpp">
+      <Filter>Source Files\Model point classes\LIE</Filter>
+    </ClCompile>
+    <ClCompile Include="Utility classes\Scenario_manager.cpp">
+      <Filter>Source Files\Utility classes</Filter>
+    </ClCompile>
+    <ClCompile Include="Utility classes\Product_configuration.cpp">
+      <Filter>Source Files\Utility classes</Filter>
+    </ClCompile>
+    <ClCompile Include="Utility classes\Scenario_configuration.cpp">
+      <Filter>Source Files\Utility classes</Filter>
+    </ClCompile>
+    <ClCompile Include="back_ground_final.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Utility classes\stdafx.cpp">
+      <Filter>Source Files\Utility classes</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Interface_dll.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Model point classes\Model_Point.h">
+      <Filter>Header Files\Model point classes</Filter>
+    </ClInclude>
+    <ClInclude Include="Model point classes\Country model point classes\model_point_BL_RST_SWISS_01.h">
+      <Filter>Header Files\Model point classes\Country model point classes\SWISS</Filter>
+    </ClInclude>
+    <ClInclude Include="Model point classes\Country model point classes\model_point_BL_LUX_01.h">
+      <Filter>Header Files\Model point classes\Country model point classes\LUXEMBOURG</Filter>
+    </ClInclude>
+    <ClInclude Include="Model point classes\Country model point classes\model_point_BL_RST_CH_LIE_01.h">
+      <Filter>Header Files\Model point classes\Country model point classes\LIE</Filter>
+    </ClInclude>
+    <ClInclude Include="Projection classes\Country projection classes\head_BL_LUX.h">
+      <Filter>Header Files\Projection classes\Country projection classes\LUXEMBOURG</Filter>
+    </ClInclude>
+    <ClInclude Include="Projection classes\Country projection classes\Projection_BL_LUX_WBD_01.h">
+      <Filter>Header Files\Projection classes\Country projection classes\LUXEMBOURG</Filter>
+    </ClInclude>
+    <ClInclude Include="Projection classes\Country projection classes\Projection_BL_LUX_WBLD_01.h">
+      <Filter>Header Files\Projection classes\Country projection classes\LUXEMBOURG</Filter>
+    </ClInclude>
+    <ClInclude Include="Projection classes\Country projection classes\head_BL_CH.h">
+      <Filter>Header Files\Projection classes\Country projection classes\SWISS</Filter>
+    </ClInclude>
+    <ClInclude Include="Projection classes\Country projection classes\Projection_BL_CH_WB_01.h">
+      <Filter>Header Files\Projection classes\Country projection classes\SWISS</Filter>
+    </ClInclude>
+    <ClInclude Include="Projection classes\Country projection classes\head_BL_LIE.h">
+      <Filter>Header Files\Projection classes\Country projection classes\LIE</Filter>
+    </ClInclude>
+    <ClInclude Include="Projection classes\Country projection classes\Projection_BL_LIE_CH_WB_01.h">
+      <Filter>Header Files\Projection classes\Country projection classes\LIE</Filter>
+    </ClInclude>
+    <ClInclude Include="Utility classes\head.h">
+      <Filter>Header Files\Utility classes</Filter>
+    </ClInclude>
+    <ClInclude Include="Model point classes\Country model point classes\model_point_BL_RS_CH_LIE_01.h">
+      <Filter>Header Files\Model point classes\Country model point classes\LIE</Filter>
+    </ClInclude>
+    <ClInclude Include="Projection classes\Country projection classes\Projection_BL_LIE_CH_WBL_01.h">
+      <Filter>Header Files\Projection classes\Country projection classes\LIE</Filter>
+    </ClInclude>
+    <ClInclude Include="Projection classes\Country projection classes\Projection_BL_LIE_DEIT_WBD_01.h">
+      <Filter>Header Files\Projection classes\Country projection classes\LIE</Filter>
+    </ClInclude>
+    <ClInclude Include="Model point classes\Country model point classes\model_point_BL_RST_DEIT_LIE_01.h">
+      <Filter>Header Files\Model point classes\Country model point classes\LIE</Filter>
+    </ClInclude>
+    <ClInclude Include="Model point classes\Country model point classes\model_point_BL_RS_DE_LIE_01.h">
+      <Filter>Header Files\Model point classes\Country model point classes\LIE</Filter>
+    </ClInclude>
+    <ClInclude Include="Projection classes\Country projection classes\Projection_BL_LIE_DE_WBDL_01.h">
+      <Filter>Header Files\Projection classes\Country projection classes\LIE</Filter>
+    </ClInclude>
+    <ClInclude Include="Model point classes\Country model point classes\model_point_head_BL_LIE.h">
+      <Filter>Header Files\Model point classes\Country model point classes\LIE</Filter>
+    </ClInclude>
+    <ClInclude Include="Model point classes\Country model point classes\model_point_head_BL_LUX.h">
+      <Filter>Header Files\Model point classes\Country model point classes\LUXEMBOURG</Filter>
+    </ClInclude>
+    <ClInclude Include="Model point classes\Country model point classes\model_point_head_BL_SWISS.h">
+      <Filter>Header Files\Model point classes\Country model point classes\SWISS</Filter>
+    </ClInclude>
+    <ClInclude Include="Projection classes\Projection.h">
+      <Filter>Header Files\Projection classes</Filter>
+    </ClInclude>
+    <ClInclude Include="Utility classes\Scenario_manager.h">
+      <Filter>Header Files\Utility classes</Filter>
+    </ClInclude>
+    <ClInclude Include="Utility classes\Scenario_configuration.h">
+      <Filter>Header Files\Utility classes</Filter>
+    </ClInclude>
+    <ClInclude Include="Utility classes\Product_configuration.h">
+      <Filter>Header Files\Utility classes</Filter>
+    </ClInclude>
+    <ClInclude Include="Utility classes\Inforce_Manager.h">
+      <Filter>Header Files\Utility classes</Filter>
+    </ClInclude>
+    <ClInclude Include="Utility classes\Dispatch_Manager.h">
+      <Filter>Header Files\Utility classes</Filter>
+    </ClInclude>
+    <ClInclude Include="back_ground_final.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Utility classes\Write_results_manager.h">
+      <Filter>Header Files\Utility classes</Filter>
+    </ClInclude>
+    <ClInclude Include="Utility classes\stdafx.h">
+      <Filter>Header Files\Utility classes</Filter>
+    </ClInclude>
+    <ClInclude Include="Utility classes\targetver.h">
+      <Filter>Header Files\Utility classes</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="VTune\PRICER_GMXB_DLL.vpj" />
+  </ItemGroup>
+</Project>

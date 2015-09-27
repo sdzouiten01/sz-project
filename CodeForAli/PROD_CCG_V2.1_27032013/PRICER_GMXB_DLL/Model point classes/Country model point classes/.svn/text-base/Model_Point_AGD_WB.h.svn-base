@@ -1,0 +1,74 @@
+#pragma once
+
+#include "Model point classes/Model_Point.h"
+#include "Model point classes/Country model point classes/model_point_head_AGD_WB.h"
+
+using namespace std;
+
+class Model_Point_AGD_WB : public Model_Point
+{
+	public :
+			/*
+			* Implementation for Joint Life
+			* age_valn_2 the age at valuation for the second policy
+			* sex_2 the gender for the second policy
+			* age_exact_issue_2 the age at issue for the second policy
+			*/
+		
+			string joint_life_ind;
+			double age_valn_2;
+			string sex_2;
+			double age_exact_issue_2;
+			int birthday2;
+			char* date2;
+			int year2;
+			int month2;
+			int day2;
+
+			Model_Point_AGD_WB(vector<string>& row, int rank, Product_configuration& product_config, Scenario_configuration& scenario_config) : 
+			Model_Point (row, rank, product_config, scenario_config)
+			{
+				this->joint_life_ind = row[GMDB_IND];
+
+				if (joint_life_ind == "LS")
+				{
+					sex_2 = row[SEX_2];
+					age_valn_2 = atof(row[AGE_VALN_2].c_str());
+					age_exact_issue_2 = this->age_valn_2 - this->duration;
+					if (ceil(age_exact_issue_2) - (age_exact_issue_2) <= 0.005)
+						age_exact_issue_2 = ceil(age_exact_issue_2);
+					birthday2 = (int)(this->extraction_year + (this->extraction_month-1)/12. + (this->extraction_day-1)/365. - this->age_valn_2); 
+					
+					date2 = (char*) (row[GMXB_BIRTHDAY_DATE_2].c_str());
+					day2 = atoi(strtok(date2, "/"));
+					month2 = atoi(strtok(NULL, "/"));
+					year2 = atoi(strtok(NULL, "/"));
+
+				}
+				else
+					age_valn_2 = 0.;
+			}
+			Model_Point_AGD_WB(Model_Point * mp, int index_shock_size_in, int fund_shock_size_in) :
+			Model_Point(mp, index_shock_size_in, fund_shock_size_in)
+			{
+
+			Model_Point_AGD_WB *agd_wb_mp = dynamic_cast<Model_Point_AGD_WB *> (mp);
+
+			this->joint_life_ind = agd_wb_mp->joint_life_ind;
+
+			if (this->joint_life_ind == "LS")
+			{
+				this->sex_2 = agd_wb_mp->sex_2;
+				this->age_valn_2 = agd_wb_mp->age_valn_2;
+				this->age_exact_issue_2 = this->age_valn_2 - this->duration;
+
+				if (ceil(this->age_exact_issue_2) - (this->age_exact_issue_2) <= 0.005)
+					this->age_exact_issue_2 = ceil(this->age_exact_issue_2);
+
+				this->year2 = agd_wb_mp->year2;
+			}
+			else
+				this->age_valn_2 = 0.;
+
+		}
+};

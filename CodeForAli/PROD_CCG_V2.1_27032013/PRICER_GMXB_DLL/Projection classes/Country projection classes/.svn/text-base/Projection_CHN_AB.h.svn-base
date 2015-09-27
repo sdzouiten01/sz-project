@@ -1,0 +1,178 @@
+#pragma once
+#include "stdafx.h"
+#include "Projection classes/Guarantee projection classes/Projection.h"
+#include "Projection classes/Guarantee projection classes/Projection_AB.h"
+
+
+class Projection_CHN_AB : public Projection_AB
+{
+protected:
+	GMXB_Assumption_Table *actuarial_table;
+	double lapse_base_china;
+	double lapse_min_global;
+	double lapse_max_global;
+	double upfront_fee;
+	int gr_symbol;
+
+public:
+	Projection_CHN_AB(const vector<vector <int>>& i_s_a,const vector<vector <int>>& f_s_a,
+						const char* tables, bool generate_dbg_files,const string& dbg_file_path,
+						const int t_high_shorter, bool l_longevity_tables, int t_step):
+	Projection(i_s_a, f_s_a, tables, generate_dbg_files, dbg_file_path, t_high_shorter, l_longevity_tables,  t_step),
+	Projection_AB(i_s_a, f_s_a, tables, generate_dbg_files, dbg_file_path,  t_high_shorter, l_longevity_tables,  t_step)
+	{	
+
+
+		actuarial_table = new GMXB_Assumption_Table(tables, "actuarial_table");
+		lapse_base_china = atof(this->assump->search("lapse_base_china").c_str());
+		lapse_min_global = atof(this->assump->search("lapse_min").c_str());
+		lapse_max_global = atof(this->assump->search("lapse_max").c_str());
+		upfront_fee = atof(this->assump->search("Upfront_fee").c_str());
+		gr_symbol = atoi(this->assump->search("gr_symbol").c_str());
+
+	}
+
+	~Projection_CHN_AB()
+	{
+
+	}
+
+void populate_pvs(int t, double **pvs, int curr_shock_number)
+	{
+
+		if (!this->project_aging_policies)
+		{
+			double discount_factor = 0.;
+			if (t == 0)
+				discount_factor = 1.0;
+			else	 
+				discount_factor = this->get_rate(this->model_point->elapsed_mths_in_valn_yr + 1,t,MAXIMUM_NUMBER_OF_INDEXES + 1);  
+
+			if (t==1)
+				pvs[curr_shock_number][BEGINING_ACCOUNT_VALUE] += 
+						main_proj_array[1][AV_B_BEF];
+			
+			pvs[curr_shock_number][PV_GMAB] += 
+									(main_proj_array[t][GMAB_CLAIMS] * discount_factor);
+
+			pvs[curr_shock_number][PV_GMDB] += 
+									(main_proj_array[t][GMDB_CLAIMS]* discount_factor);
+
+			pvs[curr_shock_number][PV_GMWB] += 
+									(main_proj_array[t][GMWB_CLAIMS] * discount_factor);
+
+			pvs[curr_shock_number][PV_GMSB] += 
+									(main_proj_array[t][GMSB_CLAIMS]* discount_factor);
+
+			pvs[curr_shock_number][PV_GMIB] += (main_proj_array[t][GMIB_CLAIMS]* discount_factor);
+
+
+			pvs[curr_shock_number][PV_GMXB_REAL_CHG] += 
+									(main_proj_array[t][GMXB_CHARGE]* discount_factor);
+			
+			if (t == 1)
+			{
+				double first_chg = 0.;
+				if (this->gr_symbol == 1) 
+					first_chg = this->upfront_fee / 100. * this->model_point->prem_paid;
+
+				pvs[curr_shock_number][PV_GMAB] -= first_chg;
+			}
+
+			if (model_point->gmxb_g_c ==0)
+			{
+				pvs[curr_shock_number][PV_GMXB_EHC_CHG] = 0.;
+			}
+			else 
+				pvs[curr_shock_number][PV_GMXB_EHC_CHG] = 
+							(pvs[curr_shock_number][PV_GMXB_REAL_CHG] 
+								* adjusted_rate(model_point->gmxb_ehc_charge/100.0, this->time_step,-1) / adjusted_rate(model_point->gmxb_g_c /100.0, this->time_step,-1)
+							 );
+		
+			pvs[curr_shock_number][PV_DEP_FEE] += 
+									(main_proj_array[t][HC_PREM]* discount_factor);
+
+			this->main_proj_array[t][DISCOUNT_FACTOR] = discount_factor;
+		}
+	}
+
+	double dynamic_lapse_rate_axa(int t)
+	{
+		int pol_yr = this->timing_items[t][POL_YEAR];
+		double lapse_rate_base = this->lapse_rates->search((int)pol_yr, 1);
+		double a = this->lapse_rates->search((int)pol_yr, 2);
+		double b = this->lapse_rates->search((int)pol_yr, 3);
+		double c = this->lapse_rates->search((int)pol_yr, 4);
+		double d = this->lapse_rates->search((int)pol_yr, 5);
+		double e = this->lapse_rates->search((int)pol_yr, 6);
+		double rationality;
+
+		if ( t == 1 )
+		{
+			main_proj_array[t-1][GMAB_IF] =  this->model_point->gmab_rollup_valn;
+		}
+
+		if (main_proj_array[t-1][GMAB_IF] > SMALL_DOUBLE)
+		{
+			main_proj_array[t][ITM] = (main_proj_array[t][AV_E_BEF]-this->actuarial_table->search((int)pol_yr, 1)/100.0*main_proj_array[t][AV_E_BEF])
+										/main_proj_array[t-1][GMAB_IF] ;
+		}
+		else
+		{
+			main_proj_array[t][ITM] = 0.0;		
+		}
+		
+		double itm = main_proj_array[t][ITM];
+
+
+		rationality = this->actuarial_table->search((int)pol_yr, 2);
+
+
+		double dynamic_lapse_fct = lapse_rate_base / 100 * max(0,a*pow(itm,5)+b*pow(itm,4)+c*pow(itm,3)+d*pow(itm,2)+e*itm) / lapse_base_china;
+		if (itm>=1.70)
+		{
+			dynamic_lapse_fct = lapse_max_global;
+		}
+		else
+		{
+			dynamic_lapse_fct = max(lapse_min_global,min(lapse_max_global,dynamic_lapse_fct));
+		}
+		return dynamic_lapse_fct*rationality + (1-rationality) * lapse_rate_base / 100;
+
+	}
+
+	virtual double mortality_rate_calculation(int t)
+	{
+		int mort_table_high_ind = int(this->mort_table->get_row_high_index() - 1);
+		int pol_yr = min(int(this->timing_items[t][POL_YEAR]), mort_table_high_ind);
+		double table_age = (int)(this->timing_items[t][AGE_LAST]);
+		double coeff = this->actuarial_table->search((int)pol_yr, 3);
+		
+		return min(1.0, 
+				   this->mort_mult 
+				   * coeff * this->mort_table->quick_search((int)table_age,1) 
+					+ this->mort_adj 
+				   );
+	}
+
+
+	void project_t(int t, double **pvs, int curr_shock_nb, double lapse_mult, 
+							double mortality_mult, bool shock_av)
+	{
+		this->avBBef(t);
+		if (shock_av)
+		{
+			if(t==1)
+				this->delta_shock(t);
+		}
+		this->avBBefBis(t);
+		this->avB(t);
+		this->avEBef(t);
+		this->init_rates(t, lapse_mult, mortality_mult);
+		this->avEBefClaims(t);
+		this->avE(t);
+		this->project_gmab_bases_payments_claims(t);
+		this->finish_t(t);
+		this->populate_pvs(t, pvs, curr_shock_nb);
+	}
+};

@@ -1,0 +1,815 @@
+<?xml version="1.0"?>
+<?mso-application progid="Excel.Sheet"?>
+<Workbook xmlns="urn:schemas-microsoft-com:office:spreadsheet"
+ xmlns:o="urn:schemas-microsoft-com:office:office"
+ xmlns:x="urn:schemas-microsoft-com:office:excel"
+ xmlns:ss="urn:schemas-microsoft-com:office:spreadsheet"
+ xmlns:html="http://www.w3.org/TR/REC-html40">
+ <DocumentProperties xmlns="urn:schemas-microsoft-com:office:office">
+  <LastAuthor>h-mai</LastAuthor>
+  <Created>1996-10-14T23:33:28Z</Created>
+  <LastSaved>2010-12-08T10:33:36Z</LastSaved>
+  <Version>11.9999</Version>
+ </DocumentProperties>
+ <ExcelWorkbook xmlns="urn:schemas-microsoft-com:office:excel">
+  <WindowHeight>12810</WindowHeight>
+  <WindowWidth>10005</WindowWidth>
+  <WindowTopX>-15</WindowTopX>
+  <WindowTopY>-15</WindowTopY>
+  <TabRatio>798</TabRatio>
+  <RefModeR1C1/>
+  <ProtectStructure>False</ProtectStructure>
+  <ProtectWindows>False</ProtectWindows>
+ </ExcelWorkbook>
+ <Styles>
+  <Style ss:ID="Default" ss:Name="Normal">
+   <Alignment ss:Vertical="Bottom"/>
+   <Borders/>
+   <Font/>
+   <Interior/>
+   <NumberFormat/>
+   <Protection/>
+  </Style>
+  <Style ss:ID="s21">
+   <Borders>
+    <Border ss:Position="Bottom" ss:LineStyle="Continuous" ss:Weight="1"/>
+    <Border ss:Position="Left" ss:LineStyle="Continuous" ss:Weight="1"/>
+    <Border ss:Position="Right" ss:LineStyle="Continuous" ss:Weight="1"/>
+    <Border ss:Position="Top" ss:LineStyle="Continuous" ss:Weight="1"/>
+   </Borders>
+   <Font x:Family="Swiss" ss:Bold="1"/>
+   <Interior ss:Color="#99CC00" ss:Pattern="Solid"/>
+  </Style>
+  <Style ss:ID="s22">
+   <Alignment ss:Horizontal="Center" ss:Vertical="Bottom"/>
+   <Borders>
+    <Border ss:Position="Bottom" ss:LineStyle="Continuous" ss:Weight="1"/>
+    <Border ss:Position="Left" ss:LineStyle="Continuous" ss:Weight="1"/>
+    <Border ss:Position="Right" ss:LineStyle="Continuous" ss:Weight="1"/>
+    <Border ss:Position="Top" ss:LineStyle="Continuous" ss:Weight="1"/>
+   </Borders>
+  </Style>
+  <Style ss:ID="s23">
+   <Alignment ss:Horizontal="Center" ss:Vertical="Bottom"/>
+   <Borders>
+    <Border ss:Position="Left" ss:LineStyle="Continuous" ss:Weight="1"/>
+    <Border ss:Position="Right" ss:LineStyle="Continuous" ss:Weight="1"/>
+    <Border ss:Position="Top" ss:LineStyle="Continuous" ss:Weight="1"/>
+   </Borders>
+   <Interior ss:Color="#FFCC00" ss:Pattern="Solid"/>
+  </Style>
+  <Style ss:ID="s24">
+   <Alignment ss:Horizontal="Center" ss:Vertical="Bottom"/>
+   <Borders>
+    <Border ss:Position="Bottom" ss:LineStyle="Continuous" ss:Weight="1"/>
+    <Border ss:Position="Left" ss:LineStyle="Continuous" ss:Weight="1"/>
+    <Border ss:Position="Right" ss:LineStyle="Continuous" ss:Weight="1"/>
+    <Border ss:Position="Top" ss:LineStyle="Continuous" ss:Weight="1"/>
+   </Borders>
+   <Interior ss:Color="#FF6600" ss:Pattern="Solid"/>
+  </Style>
+  <Style ss:ID="s25">
+   <Borders/>
+   <Interior/>
+  </Style>
+  <Style ss:ID="s26">
+   <Alignment ss:Horizontal="Center" ss:Vertical="Bottom"/>
+   <Borders>
+    <Border ss:Position="Bottom" ss:LineStyle="Continuous" ss:Weight="1"/>
+    <Border ss:Position="Left" ss:LineStyle="Continuous" ss:Weight="1"/>
+    <Border ss:Position="Right" ss:LineStyle="Continuous" ss:Weight="1"/>
+    <Border ss:Position="Top" ss:LineStyle="Continuous" ss:Weight="1"/>
+   </Borders>
+   <Font x:Family="Swiss" ss:Bold="1"/>
+  </Style>
+  <Style ss:ID="s28">
+   <Alignment ss:Horizontal="Center" ss:Vertical="Bottom"/>
+   <Borders>
+    <Border ss:Position="Bottom" ss:LineStyle="Continuous" ss:Weight="1"/>
+    <Border ss:Position="Left" ss:LineStyle="Continuous" ss:Weight="1"/>
+    <Border ss:Position="Right" ss:LineStyle="Continuous" ss:Weight="1"/>
+    <Border ss:Position="Top" ss:LineStyle="Continuous" ss:Weight="1"/>
+   </Borders>
+   <NumberFormat ss:Format="@"/>
+  </Style>
+  <Style ss:ID="s29">
+   <Alignment ss:Horizontal="Center" ss:Vertical="Bottom"/>
+   <Borders>
+    <Border ss:Position="Bottom" ss:LineStyle="Continuous" ss:Weight="1"/>
+    <Border ss:Position="Left" ss:LineStyle="Continuous" ss:Weight="1"/>
+    <Border ss:Position="Right" ss:LineStyle="Continuous" ss:Weight="1"/>
+    <Border ss:Position="Top" ss:LineStyle="Continuous" ss:Weight="1"/>
+   </Borders>
+   <Font x:Family="Swiss" ss:Bold="1"/>
+   <Interior ss:Color="#FFCC00" ss:Pattern="Solid"/>
+  </Style>
+  <Style ss:ID="s30">
+   <Borders>
+    <Border ss:Position="Bottom" ss:LineStyle="Continuous" ss:Weight="1"/>
+    <Border ss:Position="Left" ss:LineStyle="Continuous" ss:Weight="1"/>
+    <Border ss:Position="Right" ss:LineStyle="Continuous" ss:Weight="1"/>
+    <Border ss:Position="Top" ss:LineStyle="Continuous" ss:Weight="1"/>
+   </Borders>
+   <Font x:Family="Swiss" ss:Bold="1"/>
+   <Interior ss:Color="#339966" ss:Pattern="Solid"/>
+  </Style>
+  <Style ss:ID="s31">
+   <Alignment ss:Horizontal="Center" ss:Vertical="Bottom"/>
+   <Borders>
+    <Border ss:Position="Bottom" ss:LineStyle="Continuous" ss:Weight="1"/>
+    <Border ss:Position="Left" ss:LineStyle="Continuous" ss:Weight="1"/>
+    <Border ss:Position="Right" ss:LineStyle="Continuous" ss:Weight="1"/>
+    <Border ss:Position="Top" ss:LineStyle="Continuous" ss:Weight="1"/>
+   </Borders>
+   <Font x:Family="Swiss" ss:Bold="1"/>
+   <Interior ss:Color="#99CCFF" ss:Pattern="Solid"/>
+  </Style>
+  <Style ss:ID="s32">
+   <Alignment ss:Horizontal="Center" ss:Vertical="Bottom"/>
+  </Style>
+  <Style ss:ID="s34">
+   <Alignment ss:Horizontal="Center" ss:Vertical="Bottom"/>
+   <Borders>
+    <Border ss:Position="Bottom" ss:LineStyle="Continuous" ss:Weight="1"/>
+    <Border ss:Position="Left" ss:LineStyle="Continuous" ss:Weight="1"/>
+    <Border ss:Position="Right" ss:LineStyle="Continuous" ss:Weight="1"/>
+    <Border ss:Position="Top" ss:LineStyle="Continuous" ss:Weight="1"/>
+   </Borders>
+   <Interior ss:Color="#99CCFF" ss:Pattern="Solid"/>
+  </Style>
+  <Style ss:ID="s35">
+   <Borders>
+    <Border ss:Position="Left" ss:LineStyle="Continuous" ss:Weight="1"/>
+    <Border ss:Position="Right" ss:LineStyle="Continuous" ss:Weight="1"/>
+    <Border ss:Position="Top" ss:LineStyle="Continuous" ss:Weight="1"/>
+   </Borders>
+   <Font x:Family="Swiss"/>
+   <Interior ss:Color="#808080" ss:Pattern="Solid"/>
+  </Style>
+  <Style ss:ID="s36">
+   <Borders>
+    <Border ss:Position="Right" ss:LineStyle="Continuous" ss:Weight="1"/>
+    <Border ss:Position="Top" ss:LineStyle="Continuous" ss:Weight="1"/>
+   </Borders>
+   <Font x:Family="Swiss" ss:Bold="1" ss:Italic="1"/>
+   <Interior ss:Color="#808080" ss:Pattern="Solid"/>
+  </Style>
+  <Style ss:ID="s37">
+   <Borders>
+    <Border ss:Position="Left" ss:LineStyle="Continuous" ss:Weight="1"/>
+    <Border ss:Position="Right" ss:LineStyle="Continuous" ss:Weight="1"/>
+   </Borders>
+   <Font x:Family="Swiss"/>
+   <Interior ss:Color="#808080" ss:Pattern="Solid"/>
+  </Style>
+  <Style ss:ID="s38">
+   <Borders>
+    <Border ss:Position="Right" ss:LineStyle="Continuous" ss:Weight="1"/>
+   </Borders>
+   <Font x:Family="Swiss" ss:Bold="1" ss:Italic="1"/>
+   <Interior ss:Color="#808080" ss:Pattern="Solid"/>
+  </Style>
+  <Style ss:ID="s39">
+   <Borders>
+    <Border ss:Position="Right" ss:LineStyle="Continuous" ss:Weight="1"/>
+   </Borders>
+   <Font x:Family="Swiss" ss:Italic="1"/>
+   <Interior ss:Color="#808080" ss:Pattern="Solid"/>
+  </Style>
+  <Style ss:ID="s40">
+   <Borders>
+    <Border ss:Position="Right" ss:LineStyle="Continuous" ss:Weight="1"/>
+   </Borders>
+   <Font x:Family="Swiss" ss:Bold="1"/>
+   <Interior ss:Color="#808080" ss:Pattern="Solid"/>
+  </Style>
+  <Style ss:ID="s41">
+   <Borders>
+    <Border ss:Position="Bottom" ss:LineStyle="Continuous" ss:Weight="1"/>
+    <Border ss:Position="Left" ss:LineStyle="Continuous" ss:Weight="1"/>
+    <Border ss:Position="Right" ss:LineStyle="Continuous" ss:Weight="1"/>
+   </Borders>
+   <Font x:Family="Swiss"/>
+   <Interior ss:Color="#808080" ss:Pattern="Solid"/>
+  </Style>
+  <Style ss:ID="s42">
+   <Borders>
+    <Border ss:Position="Bottom" ss:LineStyle="Continuous" ss:Weight="1"/>
+    <Border ss:Position="Right" ss:LineStyle="Continuous" ss:Weight="1"/>
+   </Borders>
+   <Font x:Family="Swiss" ss:Bold="1"/>
+   <Interior ss:Color="#808080" ss:Pattern="Solid"/>
+  </Style>
+  <Style ss:ID="s44">
+   <Alignment ss:Horizontal="Center" ss:Vertical="Bottom"/>
+   <Borders>
+    <Border ss:Position="Bottom" ss:LineStyle="Continuous" ss:Weight="1"/>
+    <Border ss:Position="Left" ss:LineStyle="Continuous" ss:Weight="1"/>
+    <Border ss:Position="Right" ss:LineStyle="Continuous" ss:Weight="1"/>
+    <Border ss:Position="Top" ss:LineStyle="Continuous" ss:Weight="1"/>
+   </Borders>
+   <Interior ss:Color="#FFCC00" ss:Pattern="Solid"/>
+  </Style>
+  <Style ss:ID="s46">
+   <Alignment ss:Horizontal="Center" ss:Vertical="Bottom"/>
+   <Borders>
+    <Border ss:Position="Bottom" ss:LineStyle="Continuous" ss:Weight="1"/>
+    <Border ss:Position="Left" ss:LineStyle="Continuous" ss:Weight="1"/>
+    <Border ss:Position="Right" ss:LineStyle="Continuous" ss:Weight="1"/>
+    <Border ss:Position="Top" ss:LineStyle="Continuous" ss:Weight="1"/>
+   </Borders>
+   <Interior ss:Color="#FF9900" ss:Pattern="Solid"/>
+  </Style>
+  <Style ss:ID="s47">
+   <Alignment ss:Horizontal="Center" ss:Vertical="Bottom"/>
+   <Borders>
+    <Border ss:Position="Bottom" ss:LineStyle="Continuous" ss:Weight="1"/>
+    <Border ss:Position="Left" ss:LineStyle="Continuous" ss:Weight="1"/>
+    <Border ss:Position="Right" ss:LineStyle="Continuous" ss:Weight="1"/>
+    <Border ss:Position="Top" ss:LineStyle="Continuous" ss:Weight="1"/>
+   </Borders>
+   <Font x:Family="Swiss" ss:Bold="1"/>
+   <Interior ss:Color="#FF6600" ss:Pattern="Solid"/>
+  </Style>
+  <Style ss:ID="s48">
+   <Alignment ss:Horizontal="Center" ss:Vertical="Bottom"/>
+   <Borders>
+    <Border ss:Position="Bottom" ss:LineStyle="Continuous" ss:Weight="1"/>
+    <Border ss:Position="Left" ss:LineStyle="Continuous" ss:Weight="1"/>
+    <Border ss:Position="Right" ss:LineStyle="Continuous" ss:Weight="1"/>
+    <Border ss:Position="Top" ss:LineStyle="Continuous" ss:Weight="1"/>
+   </Borders>
+   <Interior ss:Color="#FFCC99" ss:Pattern="Solid"/>
+  </Style>
+  <Style ss:ID="s49">
+   <Alignment ss:Horizontal="Center" ss:Vertical="Bottom"/>
+   <Borders>
+    <Border ss:Position="Bottom" ss:LineStyle="Continuous" ss:Weight="1"/>
+    <Border ss:Position="Left" ss:LineStyle="Continuous" ss:Weight="1"/>
+    <Border ss:Position="Right" ss:LineStyle="Continuous" ss:Weight="1"/>
+    <Border ss:Position="Top" ss:LineStyle="Continuous" ss:Weight="1"/>
+   </Borders>
+   <Font x:Family="Swiss"/>
+  </Style>
+ </Styles>
+ <Worksheet ss:Name="HE_asset">
+  <Table ss:ExpandedColumnCount="7" ss:ExpandedRowCount="25" x:FullColumns="1"
+   x:FullRows="1" ss:DefaultColumnWidth="60">
+   <Column ss:Width="258"/>
+   <Column ss:Width="424.5"/>
+   <Row>
+    <Cell ss:StyleID="s21"><Data ss:Type="String">nb_scenario</Data></Cell>
+    <Cell ss:StyleID="s22"><Data ss:Type="Number">1</Data></Cell>
+   </Row>
+   <Row>
+    <Cell ss:StyleID="s21"><Data ss:Type="String">nb_index_total</Data></Cell>
+    <Cell ss:StyleID="s23"><Data ss:Type="Number">2</Data></Cell>
+   </Row>
+   <Row>
+    <Cell ss:StyleID="s21"><Data ss:Type="String">index_to_hedge</Data></Cell>
+    <Cell ss:StyleID="s24"><Data ss:Type="Number">1</Data></Cell>
+    <Cell ss:StyleID="s25"><Data ss:Type="Number">2</Data></Cell>
+    <Cell ss:StyleID="s25"/>
+    <Cell ss:StyleID="s25"/>
+    <Cell ss:StyleID="s25"/>
+    <Cell ss:StyleID="s25"/>
+   </Row>
+   <Row>
+    <Cell ss:StyleID="s21"><Data ss:Type="String">hedgeff_path</Data></Cell>
+    <Cell ss:StyleID="s26" ss:Formula="=R[14]C&amp;R[15]C&amp;R[20]C"><Data
+      ss:Type="String">C:\20110401\PROD_V14.0\02_input\TG2010\Scn108_DEU_IDB05_mpout2.csv</Data></Cell>
+   </Row>
+   <Row>
+    <Cell ss:StyleID="s21"><Data ss:Type="String">rw_scn_path</Data></Cell>
+    <Cell ss:StyleID="s26" ss:Formula="=R[13]C&amp;R[15]C&amp;R[20]C"><Data
+      ss:Type="String">C:\20110401\PROD_V14.0\02_input\TG2010\TG10_Scen_108_renamed_1.csv</Data></Cell>
+   </Row>
+   <Row>
+    <Cell ss:StyleID="s21"><Data ss:Type="String">model_period</Data></Cell>
+    <Cell ss:StyleID="s22"><Data ss:Type="Number">142</Data></Cell>
+   </Row>
+   <Row>
+    <Cell ss:StyleID="s21"><Data ss:Type="String">rates_freq_ann</Data></Cell>
+    <Cell ss:StyleID="s28"><Data ss:Type="String" x:Ticked="1">TRUE</Data></Cell>
+   </Row>
+   <Row>
+    <Cell ss:StyleID="s21"><Data ss:Type="String">nb_steps_per_year</Data></Cell>
+    <Cell ss:StyleID="s22"><Data ss:Type="Number">12</Data></Cell>
+   </Row>
+   <Row>
+    <Cell ss:StyleID="s21"><Data ss:Type="String">nb_column_SKIP_between_CLAIMS_and_CHARGES</Data></Cell>
+    <Cell ss:StyleID="s29"><Data ss:Type="Number">4</Data></Cell>
+   </Row>
+   <Row>
+    <Cell ss:StyleID="s21"><Data ss:Type="String">nb_column_SKIP_between_CHARGES_and_AV</Data></Cell>
+    <Cell ss:StyleID="s29"><Data ss:Type="Number">0</Data></Cell>
+   </Row>
+   <Row>
+    <Cell ss:StyleID="s30"><Data ss:Type="String">output_intermediate_file</Data></Cell>
+    <Cell ss:StyleID="s31" ss:Formula="=R[7]C&amp;R[11]C&amp;R[12]C"><Data
+      ss:Type="String">C:\20110401\PROD_V14.0\03_output\tmp\Scn108_DEU_IDB05_mpout2_result_tmp</Data></Cell>
+    <Cell ss:Index="5" ss:StyleID="s32"/>
+   </Row>
+   <Row>
+    <Cell ss:StyleID="s30"><Data ss:Type="String">output_path</Data></Cell>
+    <Cell ss:StyleID="s31" ss:Formula="=R[6]C&amp;R[9]C"><Data ss:Type="String">C:\20110401\PROD_V14.0\03_output\</Data></Cell>
+   </Row>
+   <Row>
+    <Cell ss:StyleID="s30"><Data ss:Type="String">output_file_name</Data></Cell>
+    <Cell ss:StyleID="s31" ss:Formula="=&quot;HE_Asset_results_&quot;&amp;R[11]C"><Data
+      ss:Type="String">HE_Asset_results_Scn108_DEU_IDB05_mpout2.csv</Data></Cell>
+   </Row>
+   <Row>
+    <Cell ss:StyleID="s30"><Data ss:Type="String">output_futures_info</Data></Cell>
+    <Cell ss:StyleID="s34"><Data ss:Type="String" x:Ticked="1">TRUE</Data></Cell>
+   </Row>
+   <Row>
+    <Cell ss:StyleID="s30"><Data ss:Type="String">output_options_info</Data></Cell>
+    <Cell ss:StyleID="s34"><Data ss:Type="String" x:Ticked="1">TRUE</Data></Cell>
+   </Row>
+   <Row>
+    <Cell ss:StyleID="s30"><Data ss:Type="String">output_swaps_info</Data></Cell>
+    <Cell ss:StyleID="s34"><Data ss:Type="String" x:Ticked="1">TRUE</Data></Cell>
+   </Row>
+   <Row>
+    <Cell ss:StyleID="s30"><Data ss:Type="String">output_swaps_rho_info</Data></Cell>
+    <Cell ss:StyleID="s34"><Data ss:Type="String" x:Ticked="1">TRUE</Data></Cell>
+   </Row>
+   <Row>
+    <Cell ss:StyleID="s35"><Data ss:Type="String">Address_model</Data></Cell>
+    <Cell ss:StyleID="s36"><Data ss:Type="String">C:\20110401\PROD_V14.0\</Data></Cell>
+   </Row>
+   <Row>
+    <Cell ss:StyleID="s37"><Data ss:Type="String">Input_liab_folder</Data></Cell>
+    <Cell ss:StyleID="s38"><Data ss:Type="String">02_input\TG2010\</Data></Cell>
+   </Row>
+   <Row>
+    <Cell ss:StyleID="s37"><Data ss:Type="String">Input_scn_folder</Data></Cell>
+    <Cell ss:StyleID="s38"><Data ss:Type="String">02_input\TG2010\</Data></Cell>
+   </Row>
+   <Row>
+    <Cell ss:StyleID="s37"><Data ss:Type="String">Output_folder</Data></Cell>
+    <Cell ss:StyleID="s38"><Data ss:Type="String">03_output\</Data></Cell>
+   </Row>
+   <Row>
+    <Cell ss:StyleID="s37"><Data ss:Type="String">Output_tmp_folder</Data></Cell>
+    <Cell ss:StyleID="s38"><Data ss:Type="String">03_output\tmp\</Data></Cell>
+   </Row>
+   <Row>
+    <Cell ss:StyleID="s37"><Data ss:Type="String">Output_tmp_name</Data></Cell>
+    <Cell ss:StyleID="s39" ss:Formula="=LEFT(R[1]C, LEN(R[1]C)-4)&amp;&quot;_result_tmp&quot;"><Data
+      ss:Type="String">Scn108_DEU_IDB05_mpout2_result_tmp</Data></Cell>
+   </Row>
+   <Row>
+    <Cell ss:StyleID="s37"><Data ss:Type="String">Liability_output_name</Data></Cell>
+    <Cell ss:StyleID="s40"><Data ss:Type="String">Scn108_DEU_IDB05_mpout2.csv</Data></Cell>
+   </Row>
+   <Row>
+    <Cell ss:StyleID="s41"><Data ss:Type="String">Real_world_scenario_name</Data></Cell>
+    <Cell ss:StyleID="s42"><Data ss:Type="String">TG10_Scen_108_renamed_1.csv</Data></Cell>
+   </Row>
+  </Table>
+  <WorksheetOptions xmlns="urn:schemas-microsoft-com:office:excel">
+   <PageSetup>
+    <Header x:Margin="0.4921259845"/>
+    <Footer x:Margin="0.4921259845"/>
+    <PageMargins x:Bottom="0.984251969" x:Left="0.78740157499999996"
+     x:Right="0.78740157499999996" x:Top="0.984251969"/>
+   </PageSetup>
+   <Print>
+    <ValidPrinterInfo/>
+    <PaperSizeIndex>9</PaperSizeIndex>
+    <HorizontalResolution>600</HorizontalResolution>
+    <VerticalResolution>600</VerticalResolution>
+   </Print>
+   <Selected/>
+   <Panes>
+    <Pane>
+     <Number>3</Number>
+     <ActiveRow>17</ActiveRow>
+     <ActiveCol>1</ActiveCol>
+    </Pane>
+   </Panes>
+   <ProtectObjects>False</ProtectObjects>
+   <ProtectScenarios>False</ProtectScenarios>
+  </WorksheetOptions>
+  <DataValidation xmlns="urn:schemas-microsoft-com:office:excel">
+   <Range>R14C2:R17C2,R7C2</Range>
+   <Type>List</Type>
+   <CellRangeList/>
+   <Value>&quot;'TRUE, 'FALSE&quot;</Value>
+  </DataValidation>
+  <DataValidation xmlns="urn:schemas-microsoft-com:office:excel">
+   <Range>R8C2</Range>
+   <Type>List</Type>
+   <CellRangeList/>
+   <Value>&quot;12&quot;</Value>
+  </DataValidation>
+  <ConditionalFormatting xmlns="urn:schemas-microsoft-com:office:excel">
+   <Range>R3C3:R3C15</Range>
+   <Condition>
+    <Value1>R2C2&gt;COLUMN()-2</Value1>
+    <Format Style='color:windowtext;border:.5pt solid windowtext;background:
+     #FF6600'/>
+   </Condition>
+  </ConditionalFormatting>
+ </Worksheet>
+ <Worksheet ss:Name="Delta_hedging">
+  <Table ss:ExpandedColumnCount="2" ss:ExpandedRowCount="8" x:FullColumns="1"
+   x:FullRows="1" ss:DefaultColumnWidth="60">
+   <Column ss:Width="132.75"/>
+   <Row>
+    <Cell ss:StyleID="s21"><Data ss:Type="String">hedge_delta</Data></Cell>
+    <Cell ss:StyleID="s28"><Data ss:Type="String" x:Ticked="1">TRUE</Data></Cell>
+   </Row>
+   <Row>
+    <Cell ss:StyleID="s21"><Data ss:Type="String">reb_freq_delta</Data></Cell>
+    <Cell ss:StyleID="s22"><Data ss:Type="Number">1</Data></Cell>
+   </Row>
+   <Row>
+    <Cell ss:StyleID="s21"><Data ss:Type="String">delta_transaction_cost</Data></Cell>
+    <Cell ss:StyleID="s22"><Data ss:Type="Number">1</Data></Cell>
+   </Row>
+   <Row>
+    <Cell ss:StyleID="s21"><Data ss:Type="String">length_of_futures_contract</Data></Cell>
+    <Cell ss:StyleID="s22"><Data ss:Type="Number">1</Data></Cell>
+   </Row>
+   <Row>
+    <Cell ss:StyleID="s21"><Data ss:Type="String">sheduled_futures</Data></Cell>
+    <Cell ss:StyleID="s44"><Data ss:Type="String" x:Ticked="1">FALSE</Data></Cell>
+   </Row>
+   <Row>
+    <Cell ss:StyleID="s21"><Data ss:Type="String">next_time_step_sheduled</Data></Cell>
+    <Cell ss:StyleID="s22"><Data ss:Type="Number">1</Data></Cell>
+   </Row>
+   <Row>
+    <Cell ss:StyleID="s21"><Data ss:Type="String">index_bases</Data></Cell>
+    <Cell ss:StyleID="s22"><Data ss:Type="Number">1000</Data></Cell>
+   </Row>
+   <Row>
+    <Cell ss:StyleID="s21"><Data ss:Type="String">delta_per_cont</Data></Cell>
+    <Cell ss:StyleID="s22"><Data ss:Type="Number">1</Data></Cell>
+   </Row>
+  </Table>
+  <WorksheetOptions xmlns="urn:schemas-microsoft-com:office:excel">
+   <PageSetup>
+    <Header x:Margin="0.4921259845"/>
+    <Footer x:Margin="0.4921259845"/>
+    <PageMargins x:Bottom="0.984251969" x:Left="0.78740157499999996"
+     x:Right="0.78740157499999996" x:Top="0.984251969"/>
+   </PageSetup>
+   <Print>
+    <ValidPrinterInfo/>
+    <PaperSizeIndex>9</PaperSizeIndex>
+    <HorizontalResolution>600</HorizontalResolution>
+    <VerticalResolution>600</VerticalResolution>
+   </Print>
+   <Panes>
+    <Pane>
+     <Number>3</Number>
+     <ActiveRow>4</ActiveRow>
+     <ActiveCol>1</ActiveCol>
+    </Pane>
+   </Panes>
+   <ProtectObjects>False</ProtectObjects>
+   <ProtectScenarios>False</ProtectScenarios>
+  </WorksheetOptions>
+  <DataValidation xmlns="urn:schemas-microsoft-com:office:excel">
+   <Range>R1C2</Range>
+   <Type>List</Type>
+   <CellRangeList/>
+   <Value>&quot;'TRUE, 'FALSE&quot;</Value>
+  </DataValidation>
+  <DataValidation xmlns="urn:schemas-microsoft-com:office:excel">
+   <Range>R5C2</Range>
+   <Type>List</Type>
+   <CellRangeList/>
+   <Value>&quot;'FALSE&quot;</Value>
+  </DataValidation>
+  <ConditionalFormatting xmlns="urn:schemas-microsoft-com:office:excel">
+   <Range>R2C2:R8C2</Range>
+   <Condition>
+    <Value1>TEXT(R1C2,0)=TEXT(FALSE, 0)</Value1>
+    <Format Style='color:white;background:white;mso-pattern:black thin-diag-stripe'/>
+   </Condition>
+  </ConditionalFormatting>
+ </Worksheet>
+ <Worksheet ss:Name="Gamma_hedging">
+  <Table ss:ExpandedColumnCount="2" ss:ExpandedRowCount="12" x:FullColumns="1"
+   x:FullRows="1" ss:DefaultColumnWidth="60">
+   <Column ss:Width="135.75"/>
+   <Row>
+    <Cell ss:StyleID="s21"><Data ss:Type="String">hedge_gamma</Data></Cell>
+    <Cell ss:StyleID="s22"><Data ss:Type="String" x:Ticked="1">FALSE</Data></Cell>
+   </Row>
+   <Row>
+    <Cell ss:StyleID="s21"><Data ss:Type="String">reb_freq_gamma</Data></Cell>
+    <Cell ss:StyleID="s22"><Data ss:Type="Number">1</Data></Cell>
+   </Row>
+   <Row>
+    <Cell ss:StyleID="s21"><Data ss:Type="String">option_transaction_cost</Data></Cell>
+    <Cell ss:StyleID="s22"><Data ss:Type="Number">10</Data></Cell>
+   </Row>
+   <Row>
+    <Cell ss:StyleID="s21"><Data ss:Type="String">moneyness</Data></Cell>
+    <Cell ss:StyleID="s22"><Data ss:Type="Number">1</Data></Cell>
+   </Row>
+   <Row>
+    <Cell ss:StyleID="s21"><Data ss:Type="String">volatility</Data></Cell>
+    <Cell ss:StyleID="s22"><Data ss:Type="Number">0.2</Data></Cell>
+   </Row>
+   <Row>
+    <Cell ss:StyleID="s21"><Data ss:Type="String">length_of_option_contract</Data></Cell>
+    <Cell ss:StyleID="s22"><Data ss:Type="Number">24</Data></Cell>
+   </Row>
+   <Row>
+    <Cell ss:StyleID="s21"><Data ss:Type="String">sell_at_time_to_expiry</Data></Cell>
+    <Cell ss:StyleID="s22"><Data ss:Type="Number">12</Data></Cell>
+   </Row>
+   <Row>
+    <Cell ss:StyleID="s21"><Data ss:Type="String">net_gamma_lower_bound</Data></Cell>
+    <Cell ss:StyleID="s22"><Data ss:Type="Number">0</Data></Cell>
+   </Row>
+   <Row>
+    <Cell ss:StyleID="s21"><Data ss:Type="String">net_gamma_upper_bound</Data></Cell>
+    <Cell ss:StyleID="s22"><Data ss:Type="Number">0</Data></Cell>
+   </Row>
+   <Row>
+    <Cell ss:StyleID="s21"><Data ss:Type="String">liab_gamma_lower_bound</Data></Cell>
+    <Cell ss:StyleID="s22"><Data ss:Type="Number">0</Data></Cell>
+   </Row>
+   <Row>
+    <Cell ss:StyleID="s21"><Data ss:Type="String">liab_gamma_upper_bound</Data></Cell>
+    <Cell ss:StyleID="s22"><Data ss:Type="Number">0</Data></Cell>
+   </Row>
+   <Row>
+    <Cell ss:StyleID="s21"><Data ss:Type="String">gamma_per_cont</Data></Cell>
+    <Cell ss:StyleID="s46"><Data ss:Type="Number">1</Data></Cell>
+   </Row>
+  </Table>
+  <WorksheetOptions xmlns="urn:schemas-microsoft-com:office:excel">
+   <PageSetup>
+    <Header x:Margin="0.4921259845"/>
+    <Footer x:Margin="0.4921259845"/>
+    <PageMargins x:Bottom="0.984251969" x:Left="0.78740157499999996"
+     x:Right="0.78740157499999996" x:Top="0.984251969"/>
+   </PageSetup>
+   <Panes>
+    <Pane>
+     <Number>3</Number>
+     <ActiveRow>42</ActiveRow>
+     <ActiveCol>3</ActiveCol>
+    </Pane>
+   </Panes>
+   <ProtectObjects>False</ProtectObjects>
+   <ProtectScenarios>False</ProtectScenarios>
+  </WorksheetOptions>
+  <DataValidation xmlns="urn:schemas-microsoft-com:office:excel">
+   <Range>R1C2</Range>
+   <Type>List</Type>
+   <CellRangeList/>
+   <Value>&quot;'TRUE, 'FALSE&quot;</Value>
+  </DataValidation>
+  <ConditionalFormatting xmlns="urn:schemas-microsoft-com:office:excel">
+   <Range>R2C2:R12C2</Range>
+   <Condition>
+    <Value1>TEXT(R1C2,0)=TEXT(FALSE,0)</Value1>
+    <Format Style='color:white;background:white;mso-pattern:thin-diag-stripe'/>
+   </Condition>
+  </ConditionalFormatting>
+ </Worksheet>
+ <Worksheet ss:Name="Rho_hedging">
+  <Table ss:ExpandedColumnCount="2" ss:ExpandedRowCount="5" x:FullColumns="1"
+   x:FullRows="1" ss:DefaultColumnWidth="60">
+   <Column ss:Width="132.75"/>
+   <Row>
+    <Cell ss:StyleID="s21"><Data ss:Type="String">hedge_rho</Data></Cell>
+    <Cell ss:StyleID="s22"><Data ss:Type="String" x:Ticked="1">TRUE</Data></Cell>
+   </Row>
+   <Row>
+    <Cell ss:StyleID="s21"><Data ss:Type="String">reb_freq_rho</Data></Cell>
+    <Cell ss:StyleID="s22"><Data ss:Type="Number">1</Data></Cell>
+   </Row>
+   <Row>
+    <Cell ss:StyleID="s21"><Data ss:Type="String">unwind_swap</Data></Cell>
+    <Cell ss:StyleID="s22"><Data ss:Type="String" x:Ticked="1">FALSE</Data></Cell>
+   </Row>
+   <Row>
+    <Cell ss:StyleID="s21"><Data ss:Type="String">unwind_swap_lower_seuil</Data></Cell>
+    <Cell ss:StyleID="s22"><Data ss:Type="Number">0.01</Data></Cell>
+   </Row>
+   <Row>
+    <Cell ss:StyleID="s21"><Data ss:Type="String">unwind_swap_upper_seuil</Data></Cell>
+    <Cell ss:StyleID="s22"><Data ss:Type="String">MAX</Data></Cell>
+   </Row>
+  </Table>
+  <WorksheetOptions xmlns="urn:schemas-microsoft-com:office:excel">
+   <PageSetup>
+    <Header x:Margin="0.4921259845"/>
+    <Footer x:Margin="0.4921259845"/>
+    <PageMargins x:Bottom="0.984251969" x:Left="0.78740157499999996"
+     x:Right="0.78740157499999996" x:Top="0.984251969"/>
+   </PageSetup>
+   <Print>
+    <ValidPrinterInfo/>
+    <PaperSizeIndex>9</PaperSizeIndex>
+    <HorizontalResolution>600</HorizontalResolution>
+    <VerticalResolution>600</VerticalResolution>
+   </Print>
+   <Panes>
+    <Pane>
+     <Number>3</Number>
+     <ActiveRow>27</ActiveRow>
+     <ActiveCol>9</ActiveCol>
+    </Pane>
+   </Panes>
+   <ProtectObjects>False</ProtectObjects>
+   <ProtectScenarios>False</ProtectScenarios>
+  </WorksheetOptions>
+  <DataValidation xmlns="urn:schemas-microsoft-com:office:excel">
+   <Range>R3C2</Range>
+   <Type>List</Type>
+   <CellRangeList/>
+   <Value>&quot;'TRUE,'FALSE&quot;</Value>
+  </DataValidation>
+  <DataValidation xmlns="urn:schemas-microsoft-com:office:excel">
+   <Range>R1C2</Range>
+   <Type>List</Type>
+   <CellRangeList/>
+   <Value>&quot;'TRUE, 'FALSE&quot;</Value>
+  </DataValidation>
+  <ConditionalFormatting xmlns="urn:schemas-microsoft-com:office:excel">
+   <Range>R4C2</Range>
+   <Condition>
+    <Value1>TEXT(R1C2,0)=TEXT(FALSE,0)</Value1>
+    <Format Style='color:white;background:white;mso-pattern:thin-diag-stripe'/>
+   </Condition>
+   <Condition>
+    <Value1>TEXT(R3C2,0)=TEXT(FALSE,0)</Value1>
+    <Format Style='mso-pattern:thin-reverse-diag-stripe'/>
+   </Condition>
+  </ConditionalFormatting>
+  <ConditionalFormatting xmlns="urn:schemas-microsoft-com:office:excel">
+   <Range>R2C2:R3C2</Range>
+   <Condition>
+    <Value1>TEXT(R1C2,0)=TEXT(FALSE,0)</Value1>
+    <Format Style='color:white;background:white;mso-pattern:thin-diag-stripe'/>
+   </Condition>
+  </ConditionalFormatting>
+  <ConditionalFormatting xmlns="urn:schemas-microsoft-com:office:excel">
+   <Range>R5C2</Range>
+   <Condition>
+    <Value1>TEXT(R1C2,0)=TEXT(FALSE,0)</Value1>
+    <Format Style='color:white;background:white;mso-pattern:thin-diag-stripe'/>
+   </Condition>
+   <Condition>
+    <Value1>TEXT(R3C2,0)=TEXT(FALSE,0)</Value1>
+    <Format Style='mso-pattern:thin-reverse-diag-stripe'/>
+   </Condition>
+   <Condition>
+    <Qualifier>Equal</Qualifier>
+    <Value1>&quot;MAX&quot;</Value1>
+    <Format Style='font-weight:700;background:#339966'/>
+   </Condition>
+  </ConditionalFormatting>
+ </Worksheet>
+ <Worksheet ss:Name="Scenario">
+  <Table ss:ExpandedColumnCount="9" ss:ExpandedRowCount="6" x:FullColumns="1"
+   x:FullRows="1" ss:DefaultColumnWidth="60">
+   <Column ss:Width="134.25"/>
+   <Row>
+    <Cell ss:StyleID="s21"><Data ss:Type="String">start_rate</Data></Cell>
+    <Cell ss:StyleID="s22"><Data ss:Type="Number">20</Data></Cell>
+    <Cell ss:StyleID="s22"><Data ss:Type="Number">15</Data></Cell>
+    <Cell ss:StyleID="s22"><Data ss:Type="Number">10</Data></Cell>
+    <Cell ss:StyleID="s22"><Data ss:Type="Number">7</Data></Cell>
+    <Cell ss:StyleID="s22"><Data ss:Type="Number">5</Data></Cell>
+    <Cell ss:StyleID="s22"><Data ss:Type="Number">3</Data></Cell>
+    <Cell ss:StyleID="s47"><Data ss:Type="Number">1</Data></Cell>
+    <Cell ss:StyleID="s47"><Data ss:Type="Number">0</Data></Cell>
+   </Row>
+   <Row>
+    <Cell ss:StyleID="s21"><Data ss:Type="String">key_rate</Data></Cell>
+    <Cell ss:StyleID="s48"><Data ss:Type="Number">30</Data></Cell>
+    <Cell ss:StyleID="s48"><Data ss:Type="Number">20</Data></Cell>
+    <Cell ss:StyleID="s48"><Data ss:Type="Number">15</Data></Cell>
+    <Cell ss:StyleID="s48"><Data ss:Type="Number">10</Data></Cell>
+    <Cell ss:StyleID="s48"><Data ss:Type="Number">7</Data></Cell>
+    <Cell ss:StyleID="s48"><Data ss:Type="Number">5</Data></Cell>
+    <Cell ss:StyleID="s48"><Data ss:Type="Number">3</Data></Cell>
+    <Cell ss:StyleID="s48"><Data ss:Type="Number">1</Data></Cell>
+   </Row>
+   <Row>
+    <Cell ss:StyleID="s21"><Data ss:Type="String">end_rate</Data></Cell>
+    <Cell ss:StyleID="s47"><Data ss:Type="Number">100</Data></Cell>
+    <Cell ss:StyleID="s22"><Data ss:Type="Number">30</Data></Cell>
+    <Cell ss:StyleID="s22"><Data ss:Type="Number">20</Data></Cell>
+    <Cell ss:StyleID="s49"><Data ss:Type="Number">15</Data></Cell>
+    <Cell ss:StyleID="s49"><Data ss:Type="Number">10</Data></Cell>
+    <Cell ss:StyleID="s49"><Data ss:Type="Number">7</Data></Cell>
+    <Cell ss:StyleID="s22"><Data ss:Type="Number">5</Data></Cell>
+    <Cell ss:StyleID="s22"><Data ss:Type="Number">3</Data></Cell>
+   </Row>
+   <Row>
+    <Cell ss:StyleID="s21"><Data ss:Type="String">shocks_to_apply</Data></Cell>
+    <Cell ss:StyleID="s22"><Data ss:Type="Number">0.1</Data></Cell>
+    <Cell ss:StyleID="s22"><Data ss:Type="Number">0.1</Data></Cell>
+    <Cell ss:StyleID="s22"><Data ss:Type="Number">0.1</Data></Cell>
+    <Cell ss:StyleID="s22"><Data ss:Type="Number">0.1</Data></Cell>
+    <Cell ss:StyleID="s22"><Data ss:Type="Number">0.1</Data></Cell>
+    <Cell ss:StyleID="s22"><Data ss:Type="Number">0.1</Data></Cell>
+    <Cell ss:StyleID="s22"><Data ss:Type="Number">0.1</Data></Cell>
+    <Cell ss:StyleID="s22"><Data ss:Type="Number">0.1</Data></Cell>
+   </Row>
+   <Row>
+    <Cell ss:StyleID="s21"><Data ss:Type="String">compounding_frequencies</Data></Cell>
+    <Cell ss:StyleID="s22"><Data ss:Type="Number">6</Data></Cell>
+    <Cell ss:StyleID="s22"><Data ss:Type="Number">6</Data></Cell>
+    <Cell ss:StyleID="s22"><Data ss:Type="Number">6</Data></Cell>
+    <Cell ss:StyleID="s22"><Data ss:Type="Number">6</Data></Cell>
+    <Cell ss:StyleID="s22"><Data ss:Type="Number">6</Data></Cell>
+    <Cell ss:StyleID="s22"><Data ss:Type="Number">6</Data></Cell>
+    <Cell ss:StyleID="s22"><Data ss:Type="Number">6</Data></Cell>
+    <Cell ss:StyleID="s22"><Data ss:Type="Number">6</Data></Cell>
+   </Row>
+   <Row>
+    <Cell ss:StyleID="s21"><Data ss:Type="String">rho_transaction_cost</Data></Cell>
+    <Cell ss:StyleID="s48"><Data ss:Type="Number">2</Data></Cell>
+    <Cell ss:StyleID="s48"><Data ss:Type="Number">1.5</Data></Cell>
+    <Cell ss:StyleID="s48"><Data ss:Type="Number">1.5</Data></Cell>
+    <Cell ss:StyleID="s48"><Data ss:Type="Number">1.25</Data></Cell>
+    <Cell ss:StyleID="s48"><Data ss:Type="Number">1.25</Data></Cell>
+    <Cell ss:StyleID="s48"><Data ss:Type="Number">1.25</Data></Cell>
+    <Cell ss:StyleID="s48"><Data ss:Type="Number">1.25</Data></Cell>
+    <Cell ss:StyleID="s48"><Data ss:Type="Number">1.25</Data></Cell>
+   </Row>
+  </Table>
+  <WorksheetOptions xmlns="urn:schemas-microsoft-com:office:excel">
+   <PageSetup>
+    <Header x:Margin="0.4921259845"/>
+    <Footer x:Margin="0.4921259845"/>
+    <PageMargins x:Bottom="0.984251969" x:Left="0.78740157499999996"
+     x:Right="0.78740157499999996" x:Top="0.984251969"/>
+   </PageSetup>
+   <Print>
+    <ValidPrinterInfo/>
+    <PaperSizeIndex>9</PaperSizeIndex>
+    <HorizontalResolution>600</HorizontalResolution>
+    <VerticalResolution>600</VerticalResolution>
+   </Print>
+   <Panes>
+    <Pane>
+     <Number>3</Number>
+     <ActiveRow>12</ActiveRow>
+     <ActiveCol>9</ActiveCol>
+    </Pane>
+   </Panes>
+   <ProtectObjects>False</ProtectObjects>
+   <ProtectScenarios>False</ProtectScenarios>
+  </WorksheetOptions>
+ </Worksheet>
+ <Worksheet ss:Name="RhoConvexity_hedging">
+  <Table ss:ExpandedColumnCount="2" ss:ExpandedRowCount="2" x:FullColumns="1"
+   x:FullRows="1" ss:DefaultColumnWidth="60">
+   <Column ss:Width="132.75"/>
+   <Row>
+    <Cell ss:StyleID="s21"><Data ss:Type="String">hedge_rho_convexity</Data></Cell>
+    <Cell ss:StyleID="s22"><Data ss:Type="String" x:Ticked="1">FALSE</Data></Cell>
+   </Row>
+   <Row>
+    <Cell ss:StyleID="s21"><Data ss:Type="String">ToBeDefined</Data></Cell>
+    <Cell ss:StyleID="s22"/>
+   </Row>
+  </Table>
+  <WorksheetOptions xmlns="urn:schemas-microsoft-com:office:excel">
+   <PageSetup>
+    <Header x:Margin="0.4921259845"/>
+    <Footer x:Margin="0.4921259845"/>
+    <PageMargins x:Bottom="0.984251969" x:Left="0.78740157499999996"
+     x:Right="0.78740157499999996" x:Top="0.984251969"/>
+   </PageSetup>
+   <Panes>
+    <Pane>
+     <Number>3</Number>
+     <ActiveRow>40</ActiveRow>
+     <ActiveCol>8</ActiveCol>
+    </Pane>
+   </Panes>
+   <ProtectObjects>False</ProtectObjects>
+   <ProtectScenarios>False</ProtectScenarios>
+  </WorksheetOptions>
+  <DataValidation xmlns="urn:schemas-microsoft-com:office:excel">
+   <Range>R1C2</Range>
+   <Type>List</Type>
+   <CellRangeList/>
+   <Value>&quot;'TRUE, 'FALSE&quot;</Value>
+  </DataValidation>
+  <ConditionalFormatting xmlns="urn:schemas-microsoft-com:office:excel">
+   <Range>R2C2</Range>
+   <Condition>
+    <Value1>TEXT(R1C2,0)=TEXT(FALSE,0)</Value1>
+    <Format Style='color:white;background:white;mso-pattern:thin-diag-stripe'/>
+   </Condition>
+  </ConditionalFormatting>
+ </Worksheet>
+</Workbook>

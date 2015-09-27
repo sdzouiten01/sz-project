@@ -1,0 +1,76 @@
+#pragma once
+#include "Model point classes/Model_Point.h"
+#include "Model point classes/Country model point classes/model_point_AUS_head.h"
+
+using namespace std;
+
+class Model_Point_AUS : public Model_Point
+{
+	public :
+
+		
+		double au_ves_def;
+		double au_ves_ter;
+		double au_adv_per;
+		double au_adv_amt;
+		double au_tax_lia;
+		double au_min_wdwl;
+		double au_prem_paid_this_year;
+		string joint_life_ind; 
+		string sex_2;
+		double age_valn_2;
+		char * date_2;
+		int day_2;
+		int month_2;
+		int year_2;
+		double age_exact_issue_2;
+		double upfront_fee_rp;
+		
+
+		
+	Model_Point_AUS(vector<string>& row, int rank, Product_configuration& product_config, Scenario_configuration& scenario_config)://Model_Point()
+		Model_Point(row, rank, product_config, scenario_config,TOTAL_OUTPUT_COLUMNS_AUS)
+		//before Model_Point(row, rank, product_config, scenario_config)
+		{	
+
+			this->au_ves_def = atof(row[AU_VES_DEF].c_str());
+			this->au_ves_ter = atof(row[AU_VES_TER].c_str());
+			this->au_adv_per = atof(row[AU_ADV_PER].c_str());
+			this->au_adv_amt = atof(row[AU_ADV_AMT].c_str());
+			this->au_tax_lia = atof(row[AU_TAX_LIA].c_str());
+			this->au_min_wdwl = atof(row[AU_MIN_WDWL].c_str());			
+			this->upfront_fee_rp = atof(row[FEE_RP].c_str());	
+			this->au_prem_paid_this_year = atof(row[AU_PREM_PAID_THIS_YEAR].c_str());
+			this->joint_life_ind = row[GMDB_IND];
+			this->sex_2 = row[SEX_2];
+			this->age_valn_2 = atof(row[AGE_VALN_2].c_str());
+			this->date_2 = (char*) (row[GMXB_BIRTHDAY_DATE2].c_str());
+			
+			if(this->joint_life_ind == "LS")
+			{
+ 				this->day_2 = atoi(strtok(date_2, "/"));
+				this->month_2 = atoi(strtok(NULL, "/"));
+				this->year_2 = atoi(strtok(NULL, "/"));
+			}
+			else
+			{
+				this->day_2 = 0;
+				this->month_2 = 0;
+				this->year_2 = 0;
+			}
+
+			this->age_exact_issue_2 = this->age_valn_2 - this->duration;
+			// TO DO remove this (dbf round in Moses)
+			if (ceil(age_exact_issue_2) - (age_exact_issue_2) <= 0.005)
+				age_exact_issue_2 = ceil(age_exact_issue_2);
+
+	}
+
+	int get_total_pv_columns_number()
+		{
+		return TOTAL_OUTPUT_COLUMNS_AUS;
+		}
+
+	virtual ~Model_Point_AUS(){}
+
+};

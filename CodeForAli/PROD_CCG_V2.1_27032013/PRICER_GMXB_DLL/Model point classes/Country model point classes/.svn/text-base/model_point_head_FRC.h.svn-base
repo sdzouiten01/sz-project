@@ -1,0 +1,4 @@
+#pragma once
+//New macro define for the new field for FRANCE
+#define OLD_DATE 99
+#define FRC_COUPON 54

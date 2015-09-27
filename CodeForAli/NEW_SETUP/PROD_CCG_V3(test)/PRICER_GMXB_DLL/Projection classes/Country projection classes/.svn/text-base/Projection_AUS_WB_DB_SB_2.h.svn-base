@@ -1,0 +1,458 @@
+#pragma once
+#include "stdafx.h"
+#include "Projection classes/Country projection classes/Projection_AUS.h"
+using namespace std;
+
+class Projection_AUS_WB_DB_SB_2 : virtual public Projection_AUS
+{
+public:
+	//Jerome - LSM - May 2001 - Read parameters in AUS
+	//double acc_phase_base_lapse;
+	//double wdwl_phase_base_lapse;
+	//double max_wdwl_rate;
+
+
+
+	Projection_AUS_WB_DB_SB_2(const vector<vector <int>>& i_s_a,const vector<vector <int>>& f_s_a,
+						    const char* tables, bool generate_dbg_files, const string& dbg_file_path,
+							const int t_high_shorter, bool l_longevity_tables, int t_step):
+		Projection(i_s_a, f_s_a, tables, generate_dbg_files, dbg_file_path, t_high_shorter, l_longevity_tables,  t_step),
+		Projection_AUS(i_s_a, f_s_a, tables, generate_dbg_files, dbg_file_path, t_high_shorter, l_longevity_tables,  t_step)
+
+	{
+		//Jerome - LSM - May 2001 - Read parameters in AUS
+		//acc_phase_base_lapse = atof(this->assump->search("acc_phase_base_lapse").c_str());
+		//wdwl_phase_base_lapse = atof(this->assump->search("wdwl_phase_base_lapse").c_str());
+		//max_wdwl_rate = atof(this->assump->search("max_wdwl_rate").c_str());
+
+
+	}
+
+	double dynamic_lapse_rate_axa(int t)
+	{
+
+		int phase;
+		double MP_DynFactor1;
+		double MP_DynFactor2;
+		double au_gmwb_if_bef; 
+		double au_result;
+		double base_lapse_rate;
+
+		 au_gmwb_if_bef = main_proj_array[t][GMWB_IF_BEF] - main_proj_array[t][GMWB_PAYMENT];
+
+		if (this->timing_items[t][POL_YEAR] <= aus_mp->gmxb_deferral_period)
+			phase = 1;
+		else
+			phase = 2;    
+
+		//ml if ( abs(au_main_proj_array[t][AU_CUM_BP]) > SMALL_DOUBLE ) //mehdi changed (abs(au_cumBP)>MOSES_SMALL_DOUBLE) (av_e_bef_sub[CALC_TOT_INDEX] < MOSES_SMALL_DOUBLE)   
+			  if ( main_proj_array[t][AV_E_BEF] < SMALL_DOUBLE ) // ML Modif case AV=0
+
+				{
+					MP_DynFactor1 = 1 ;
+					if (au_gmwb_if_bef < SMALL_DOUBLE) 
+					   MP_DynFactor2 = 1 ;
+					else
+					   MP_DynFactor2 = (-au_main_proj_array[t][AU_CUM_BP]+ au_main_proj_array[t][AU_GMWB_VESTING_PERC]
+										*max(au_gmwb_if_bef + au_main_proj_array[t][AU_CUM_BP] , 0)) / au_gmwb_if_bef ;	
+				}   
+       		else if (au_gmwb_if_bef < SMALL_DOUBLE) 
+				{ 
+					MP_DynFactor1 = 1;
+					MP_DynFactor2 = 1;      
+				} 
+			else
+			{             
+				MP_DynFactor1 = main_proj_array[t][AV_E_BEF]/ (main_proj_array[t][AV_E_BEF] + au_main_proj_array[t][AU_GMWB_VESTING_PERC] * max(au_gmwb_if_bef - main_proj_array[t][AV_E_BEF] , 0)) ;
+				MP_DynFactor2 = (main_proj_array[t][AV_E_BEF] + au_main_proj_array[t][AU_GMWB_VESTING_PERC] * max(au_gmwb_if_bef - main_proj_array[t][AV_E_BEF] , 0)) / au_gmwb_if_bef ;
+			}   
+		
+		int is_DynLapse1=1; 
+		int is_DynLapse2=1; 
+
+		double DynFactor1; 
+		double DynFactor2;
+
+		if (is_DynLapse1 == 1)
+		{             
+			if (MP_DynFactor1 >= 1) 
+				DynFactor1 = 1;
+        
+			else if (MP_DynFactor1 >= 0.5)
+				DynFactor1 = 1 * exp(-2.77259 * (MP_DynFactor1 - 1));
+        
+			else
+				DynFactor1 = 4;
+		}   
+		else
+			DynFactor1 = 1;
+ 
+            
+		if (is_DynLapse2 == 1) 
+		{                      
+           if (MP_DynFactor2 >= 1)
+				DynFactor2 = 1;
+                    
+           else if (MP_DynFactor2 >= 0.75) 
+                DynFactor2 = 1 * exp(9.21034 * (MP_DynFactor2 - 1));
+                    
+           else if (MP_DynFactor2 >= 0.5) 
+                DynFactor2 = 1 * 0.1 * exp(2.772259 * (MP_DynFactor2 - 0.75));
+                    
+           else
+                DynFactor2 = 1 * 0.1 * exp(2.772259 * (-0.25));
+		}
+		else
+          DynFactor2 = 1;
+		
+		if(phase == 1)
+			base_lapse_rate = acc_phase_base_lapse;
+		else
+			base_lapse_rate = wdwl_phase_base_lapse;
+
+		au_result = (base_lapse_rate/100)* DynFactor1 * DynFactor2 ;
+
+		if (this->timing_items[t][POL_YEAR] > au_pension_term + aus_mp->gmxb_deferral_period)
+ 			return 0;
+		else     
+ 			return au_result;
+	}
+
+	
+//ML: Model Changes February 2010: use gmxb_yr_payt instead of prorata
+//Delete prorata
+
+	void calculate_gmwb_annuity(int t)
+	{
+		if (this->timing_items[t][POL_YEAR] > aus_mp->gmxb_deferral_period)
+		{
+	         
+	        au_main_proj_array[t][AU_POL_WDWL_RATE] = au_fpw_limit;    //ML Delete Prorata
+
+            au_main_proj_array[t][AU_TOT_WDWL_RATE] =  min(au_wdwl_rate->search(this->timing_items[t][AGE_LAST], 1) 
+						+ aus_mp->au_min_wdwl 
+						+ au_main_proj_array[t][AU_ADVISORY_CHARGE_TOTAL] , au_main_proj_array[t][AU_POL_WDWL_RATE]);          
+	    
+		}
+		else 
+			{
+				au_main_proj_array[t][AU_POL_WDWL_RATE] = 0.0;
+			
+				au_main_proj_array[t][AU_TOT_WDWL_RATE] = min(au_main_proj_array[t][AU_ADVISORY_CHARGE_TOTAL] , au_main_proj_array[t][AU_POL_WDWL_RATE]) ; 
+
+			}	
+
+		if (t == 1) //use gmwb_payt_yr instead of prorata at t=1
+		{
+			main_proj_array[t][GMWB_PAYMENT] = max(0., au_main_proj_array[t][AU_VESTED_AMOUNT] * (au_main_proj_array[t][AU_TOT_WDWL_RATE]/ 100.)-aus_mp->gmwb_payt_yr) ;
+		}
+		else
+		{
+			main_proj_array[t][GMWB_PAYMENT] = max(0., au_main_proj_array[t][AU_VESTED_AMOUNT] * (au_main_proj_array[t][AU_TOT_WDWL_RATE]/ 100.)) ;
+		}
+	}
+
+	void project_gmwb_payments_claims_beg(int t)
+	{
+		int wdwl_stage;
+
+		if (this->timing_items[t][POL_YEAR] > aus_mp->gmxb_deferral_period) 
+			wdwl_stage = 1;
+		else
+			wdwl_stage = 0;
+
+		if (t == 1)
+		{
+			main_proj_array[t][GMWB_AV_IF_BEF] = aus_mp->gmwb_ratchet_valn + main_proj_array[t][PREMIUM] +  max(-aus_mp->au_tax_lia,0.);
+		}
+		else if (this->timing_items[t][POL_YEAR] <= aus_mp->prem_durr)
+			main_proj_array[t][GMWB_AV_IF_BEF] = main_proj_array[t-1][GMWB_AV_IF] + main_proj_array[t][PREMIUM];
+		else
+			main_proj_array[t][GMWB_AV_IF_BEF] = main_proj_array[t-1][GMWB_AV_IF];
+
+		main_proj_array[t][GMWB_IF_BEF] = main_proj_array[t][GMWB_AV_IF_BEF];
+		
+		if (aus_mp->au_ves_def == 0)
+		{
+			au_main_proj_array[t][AU_GMWB_VESTING_PERC] = max(this->timing_items[t][POL_YEAR]- aus_mp->au_ves_def - 1, 0)/aus_mp->au_ves_ter;
+		}
+		else
+		{
+			if (this->timing_items[t][POL_YEAR] > max(aus_mp->au_ves_def , aus_mp->gmxb_deferral_period))
+				au_main_proj_array[t][AU_GMWB_VESTING_PERC] = max(this->timing_items[t][POL_YEAR] - max(aus_mp->au_ves_def , aus_mp->gmxb_deferral_period) - 1 , 0)/aus_mp->au_ves_ter;
+			else 
+    			au_main_proj_array[t][AU_GMWB_VESTING_PERC] = 0. ;	
+		}
+	}
+
+	//Jerome - LSM - May 2001 - Method deleted
+	/*double lapse_rate_calc(int t)
+	{
+		double lapse_rate = 0.0;
+		lapse_rate = this->timing_items[t][PRORATA] * dynamic_lapse_rate_axa(t);
+		return lapse_rate;
+	}*/
+
+		//LSM - Jerome - Start - May 2011
+	double lapse_rate_calc(int t)
+	{
+		double lapse_rate = 0.0;
+		int phase = 1;
+		//double lapse_rate_base = 0.0;
+		//if (main_proj_array[t][AV_E_BEF]>= SMALL_DOUBLE)
+		//{
+			if (this->lapse_is_dynamic)
+			{
+				lapse_rate = this->timing_items[t][PRORATA] * dynamic_lapse_rate_axa(t);
+			}
+			else
+			{
+				if (this->timing_items[t][POL_YEAR] <= aus_mp->gmxb_deferral_period)
+					phase = 1;
+				else
+					phase = 2;
+
+				// base lapse rate
+				if(phase == 1)
+					lapse_rate = this->acc_phase_base_lapse / 100. ;
+				else
+					lapse_rate = this->wdwl_phase_base_lapse / 100.;
+		
+				//return lapse_rate_base;
+
+				//return 0.05;
+
+			}
+		//}
+		if (this->longstaff_ind == "Y")
+			lapse_rate = 0;
+		return lapse_rate;
+	}
+	//LSM - Jerome - End - May 2011
+
+	void project_gmwb_payments_claims_aft(int t)// ML: February 2011 Model Change, Hedging Only to take into account gmwb_payt_yr
+	{	
+		double fpw_BP;
+		double lapses_BP;
+		double death_BP;
+
+		if (this->timing_items[t][POL_YEAR] > aus_mp->gmxb_deferral_period + au_pension_term)
+			main_proj_array[t][GMWB_AV_IF] = 0.;
+		else 
+		{      
+			if (au_fpw_capped=="Y") // Hedging: Advisor fees during deferral reduce dollar for dollar the BB
+			{
+				main_proj_array[t][GMWB_AV_IF] = max((main_proj_array[t][GMWB_AV_IF_BEF]- main_proj_array[t][GMWB_PAYMENT]) * this->surv_mth_calc(t)
+							-au_main_proj_array[t][AU_FPW_AMT] , main_proj_array[t][AV_E]);
+				fpw_BP     = 0;  
+			}
+
+			else // Pricing: Traitment of the Advisor fees durring deferral period? Methodology??? Proportional or dollar for dollar??? To be done!!!!!
+			{
+			if ( main_proj_array[t][AV_E_BEF] <= (main_proj_array[t][GMWB_AV_IF_BEF] - main_proj_array[t][GMWB_PAYMENT]))
+			{
+				main_proj_array[t][GMWB_AV_IF] = max((main_proj_array[t][GMWB_AV_IF_BEF] - main_proj_array[t][GMWB_PAYMENT])
+					* this->surv_mth_calc(t) * (1 - au_main_proj_array[t][AU_FPW_RATE] / 100.)
+						, main_proj_array[t][AV_E]);
+				
+				fpw_BP = au_main_proj_array[t][AU_GMWB_VESTING_PERC] * 
+					max(-au_main_proj_array[t][AU_FPW_AMT] + (main_proj_array[t][GMWB_AV_IF_BEF]
+					- main_proj_array[t][GMWB_PAYMENT]) * this->surv_mth_calc(t)*(au_main_proj_array[t][AU_FPW_RATE]  / 100.),0 );
+			}
+			else           
+				{
+					main_proj_array[t][GMWB_AV_IF] = max((main_proj_array[t][GMWB_AV_IF_BEF]- main_proj_array[t][GMWB_PAYMENT]) * this->surv_mth_calc(t)
+							-au_main_proj_array[t][AU_FPW_RATE]/100 * main_proj_array[t][AV_E_BEF] * this->surv_mth_calc(t) , main_proj_array[t][AV_E]);
+					fpw_BP     = 0;  
+				}    //END
+			}
+		}
+
+		main_proj_array[t][GMWB_IF] = main_proj_array[t][GMWB_AV_IF];
+
+		if (t == 1) 
+			main_proj_array[t][GMWB_CLAIMS] = 0.0;
+		else if (main_proj_array[t][AV_E] >= SMALL_DOUBLE)
+		{
+			main_proj_array[t][GMWB_CLAIMS] = 0.0;
+		}
+		else
+		{
+	
+			double au_vested_amount;
+			au_vested_amount = ((main_proj_array[t][GMWB_AV_IF_BEF] - main_proj_array[t][GMWB_PAYMENT]) + au_main_proj_array[t][AU_CUM_BP])
+				*  au_main_proj_array[t][AU_GMWB_VESTING_PERC] - au_main_proj_array[t][AU_CUM_BP];
+		         
+			double gmwb_annual_wdl_amt = main_proj_array[t][GMWB_PAYMENT];
+
+			if (main_proj_array[t-1][AV_E] > SMALL_DOUBLE && main_proj_array[t][AV_B_BEF_BIS] <= SMALL_DOUBLE)
+			{	
+					main_proj_array[t][GMWB_CLAIMS] = -(main_proj_array[t-1][AV_E] - gmwb_annual_wdl_amt);
+			}			
+			// in periods when the AV has expired, the full withdrawal amount is counted as a GMWB claim
+			else
+			{
+				main_proj_array[t][GMWB_CLAIMS] = gmwb_annual_wdl_amt;
+			}
+		}
+
+		//setting cum_bp considering lapses and death
+		au_main_proj_array[t][AU_CUM_BP] = au_main_proj_array[t][AU_CUM_BP] * (1-main_proj_array[t][DEATH_RATE])*(1-main_proj_array[t][LAPSE_RATE]);
+
+		//Lapse and death BP (and FPW_BP)
+		death_BP  = main_proj_array[t][DEATH_RATE] * au_main_proj_array[t][AU_GMWB_VESTING_PERC] 
+				* max(main_proj_array[t][GMWB_AV_IF_BEF] - main_proj_array[t][GMWB_PAYMENT] - main_proj_array[t][AV_E_BEF] , 0);               
+		lapses_BP = main_proj_array[t][LAPSE_RATE] * au_main_proj_array[t][AU_GMWB_VESTING_PERC] 
+				* max((main_proj_array[t][GMWB_AV_IF_BEF] - main_proj_array[t][GMWB_PAYMENT])*( 1 - main_proj_array[t][DEATH_RATE])- main_proj_array[t][AV_E_BEF]*(1 - main_proj_array[t][DEATH_RATE]),0);
+
+		//death claims and surr claims
+		main_proj_array[t][GMDB_CLAIMS] = death_BP;
+		main_proj_array[t][GMSB_CLAIMS] = lapses_BP+fpw_BP;
+
+		if (this->timing_items[t][POL_YEAR] == aus_mp->gmxb_deferral_period + au_pension_term)
+		{
+			  main_proj_array[t][GMWB_CLAIMS]+=max(main_proj_array[t][GMWB_IF]- main_proj_array[t][AV_E],0);
+			  main_proj_array[t][AV_E]=0;
+			  main_proj_array[t][GMWB_IF]=0;
+			  au_main_proj_array[t][AU_CUM_BP] = 0;
+		}
+		else if (this->timing_items[t][POL_YEAR] > aus_mp->gmxb_deferral_period + au_pension_term)
+		{
+			  main_proj_array[t][GMWB_CLAIMS] = 0;
+			  main_proj_array[t][AV_E] = 0;
+			  main_proj_array[t][GMWB_IF] = 0;
+			  au_main_proj_array[t][AU_CUM_BP] = 0;
+		}
+
+	}
+
+	void avBBefBis(int t)
+	{
+		calculate_advisory_charge_total(t);
+		if (t == 1)
+		{
+			au_main_proj_array[t-1][AU_CUM_BP] = 0.;
+			main_proj_array[t-1][GMWB_IF] = aus_mp->gmwb_ratchet_valn + max(-aus_mp->au_tax_lia,0.);
+			//main_proj_array[t-1][GMWB_IF] = aus_mp->gmwb_ratchet_valn; Model Change MAY2011
+		}
+		
+		if(t==1)
+			au_main_proj_array[t][AU_VESTED_AMOUNT] = 
+				max(main_proj_array[t-1][AV_E] - aus_mp->au_tax_lia + main_proj_array[t][PREMIUM],
+					main_proj_array[t-1][AV_E] - aus_mp->au_tax_lia + main_proj_array[t][PREMIUM] - au_main_proj_array[t-1][AU_CUM_BP]
+						+ au_main_proj_array[t][AU_GMWB_VESTING_PERC] 
+							* max( 0 , main_proj_array[t-1][GMWB_IF] - (main_proj_array[t-1][AV_E] - aus_mp->au_tax_lia - au_main_proj_array[t-1][AU_CUM_BP]))
+					);
+		else
+			au_main_proj_array[t][AU_VESTED_AMOUNT] = 
+				max(main_proj_array[t-1][AV_E] + main_proj_array[t][PREMIUM],
+					main_proj_array[t-1][AV_E] + main_proj_array[t][PREMIUM] - au_main_proj_array[t-1][AU_CUM_BP]
+						+ au_main_proj_array[t][AU_GMWB_VESTING_PERC] 
+							* max( 0 , main_proj_array[t-1][GMWB_IF] - (main_proj_array[t-1][AV_E] - au_main_proj_array[t-1][AU_CUM_BP]))
+					);
+		
+		calculate_gmwb_annuity(t);
+		
+		au_main_proj_array[t][AU_CUM_BP] = au_main_proj_array[t-1][AU_CUM_BP] - 
+										min(0 , main_proj_array[t][AV_B_BEF] - main_proj_array[t][GMWB_PAYMENT]);
+		
+		main_proj_array[t][AV_B_BEF_BIS] = max(0 , main_proj_array[t][AV_B_BEF] - main_proj_array[t][GMWB_PAYMENT]);
+	}
+
+	void avEBefClaims(int t)
+	{
+		Projection::avEBefClaims(t);
+
+
+		if (au_fpw_capped=="Y") //Hedging no fpw expect in case of advisor fees during deferral
+		{
+
+			if (this->timing_items[t][POL_YEAR] > aus_mp->gmxb_deferral_period) //After Deferral
+			{
+				au_main_proj_array[t][AU_FPW_RATE] = 0;
+				au_main_proj_array[t][AU_FPW_AMT] =  0;
+			}
+			else
+			{
+			au_main_proj_array[t][AU_FPW_RATE] = min(au_fpw_limit,au_main_proj_array[t][AU_FPW_RATE]);
+			}
+
+			if (t==1)//use gmwb_payt_yr
+			au_main_proj_array[t][AU_FPW_AMT] =  max(0.,main_proj_array[t][AV_E_BEF_CLAIMS] 
+						* au_main_proj_array[t][AU_FPW_RATE] / 100-aus_mp->gmwb_payt_yr);
+			else
+			au_main_proj_array[t][AU_FPW_AMT] =  main_proj_array[t][AV_E_BEF_CLAIMS] 
+						* au_main_proj_array[t][AU_FPW_RATE] / 100;
+
+		}
+		else //Pricing to be revised
+			au_main_proj_array[t][AU_FPW_AMT] =  main_proj_array[t][AV_E_BEF_CLAIMS] 
+						* au_main_proj_array[t][AU_FPW_RATE] / 100;
+		
+			main_proj_array[t][AV_E_BEF_CLAIMS] -=  au_main_proj_array[t][AU_FPW_AMT];
+		
+	}
+	// Account value Rollforward
+	void project_t(int t, double **pvs, int curr_shock_nb, double lapse_mult, 
+							double mortality_mult, bool shock_av)
+	{
+		if (shock_av)
+		{
+			if(t==1)
+				this->delta_shock(t);
+		}
+		this->avBBef(t);
+		this->project_gmwb_payments_claims_beg(t);
+		this->avBBefBis(t);
+		this->avB(t);
+		this->avEBef(t);
+		this->init_rates(t, lapse_mult, mortality_mult);
+		this->calculate_fpw(t);
+		this->avEBefClaims(t);
+		this->avE(t);
+		this->project_gmwb_payments_claims_aft(t);
+		this->finish_t(t);
+		this->populate_pvs(t, pvs, curr_shock_nb);
+	}
+	virtual void set_recup_ITM_RA(int t, int scn_number, int mp_number)
+
+      {
+
+            vector<double> tmp;
+
+            double base;
+
+            
+
+            base=this->au_main_proj_array[t][AU_VESTED_AMOUNT];
+
+            //base=max(base,this->main_proj_array[t][GMWB_AV_IF]);
+
+            //base=max(base,this->main_proj_array[t][GMWB_PREM_IF]);
+
+            if (this->ITM_type==1)  //AV/BB may be overrided by different products
+
+            { 
+
+                  tmp.push_back(this->main_proj_array[t][AV_E]/base);
+
+            } //ITM
+
+            else
+
+            { 
+                  tmp.push_back(this->main_proj_array[t][AV_E]);
+            }
+            tmp.push_back(this->main_proj_array[t][AV_E]);
+        tmp.push_back(this->main_proj_array[t][GMAB_RATCHET_BASE]);
+            tmp.push_back(this->main_proj_array[t][GMAB_ROLLUP_BASE]);
+            tmp.push_back(this->main_proj_array[t][GMDB_AV_IF]);
+            tmp.push_back(this->main_proj_array[t][GMDB_PREM_IF]);
+            tmp.push_back(this->main_proj_array[t][GMWB_AV_IF]);
+            tmp.push_back(this->main_proj_array[t][GMWB_PREM_IF]);
+        tmp.push_back(this->main_proj_array[t][SURV_INDEX]);
+            tmp.push_back((double)(scn_number)); //scn number
+        tmp.push_back((double)(mp_number)); //mp number
+            this->recup_ITM_RA.push_back(tmp);        
+      }
+};

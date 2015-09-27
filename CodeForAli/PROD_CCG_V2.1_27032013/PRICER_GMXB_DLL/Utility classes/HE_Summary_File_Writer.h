@@ -1,0 +1,834 @@
+#pragma once
+#include "stdafx.h"
+#include <sstream>
+#include "Utility classes/head.h"
+#include "Utility classes/HE_configuration.h"
+#include <string>
+
+const double Cap_Delta = 2;
+const double Floor_Delta = -2;
+
+class HE_Summary_File_Writer
+{
+
+public:
+	HE_Summary_File_Writer(void){};
+
+	virtual ~HE_Summary_File_Writer(void){};
+	
+
+	//Read an output file (main_proj_array) and transform on a main_proj_array 
+	virtual double** create_main_proj_array_from_files(const char* output_path, const char* output_file_name,
+		const char* product_name, int nb_mp_outer, int nb_scenario_outer, int nb_of_columns, int nb_of_lines)
+	{
+	
+		//initialize main_proj_array
+		double** main_proj_array = new double*[nb_of_lines];
+		for (int col=0; col<nb_of_lines; col++)
+		{
+			main_proj_array[col] = new double[nb_of_columns];
+		}
+
+		char address[1000];
+		sprintf(address, "%s%s_mp%d_scn%d.csv", output_path, output_file_name, nb_mp_outer+1 , nb_scenario_outer+1);
+		ifstream main_array_file;
+		main_array_file.open(address, ios::in);
+		
+		char *retPtr;
+		string firstline, row;
+		int line = 0;
+
+		if (main_array_file)
+		{
+			//skip the first line
+			getline(main_array_file, firstline);
+
+			while( !main_array_file.eof())
+			{
+				//read a line
+				getline(main_array_file, row);
+				if (row.length() >0)
+				{
+					retPtr = new char[row.length()+1];
+					strcpy(retPtr, row.c_str());
+					retPtr[row.length()]='\0';
+
+					double value;
+					int column = 0;
+					
+					//copy the values for the line into main_proj_array
+					value = atof(strtok(retPtr, ","));
+					while ((column <MAIN_PROJ_NUM_COLS) && (line<SUBACCT_MAX_PERIOD_MTH +1) 
+						 &&(column <nb_of_columns) && (line<nb_of_lines))
+					{
+						main_proj_array[line][column] = value;
+						value = atof(strtok(NULL, ","));
+						column++;
+					}
+
+					delete[] retPtr;
+
+				}
+
+				
+				line++;
+			}
+		}
+
+		main_array_file.close();
+		return main_proj_array;
+	};
+
+	//read a series of output files (index_shock_pvs)
+	//to fill vector_of index_shock_pvs
+	//and to get the number of inner scenarios
+	virtual void set_vector_of_index_shock_pvs_from_files(
+		const char* output_path, const char* output_file_name, const char* product_name, 
+		int nb_scenario_outer, int nb_bucket, int nb_mp_outer, 
+		int nb_of_shocks_of_index_shock_pvs, int nb_of_columns_of_index_shock_pvs,
+		int& nb_of_scen_inner,
+		vector<double**>& vector_of_index_shock_pvs)
+	{		
+		//read files and fill the tables
+		for (int shock_number = 0; shock_number<nb_of_shocks_of_index_shock_pvs; shock_number++)
+		{
+			char address[1000];
+			sprintf(address, "%s%s_%s_scen%d_b%d_mpout%d_s%d_.csv", output_path, output_file_name, 
+						product_name, nb_scenario_outer+1, nb_bucket+1, nb_mp_outer+1, shock_number+1);
+			ifstream inner_pvs_file;
+			inner_pvs_file.open(address, ios::in);
+			
+			char *retPtr;
+			string row;
+			
+
+			if (inner_pvs_file)
+			{
+				int nb_mp_inner = 0;
+
+				while (!inner_pvs_file.eof())
+				{
+					getline(inner_pvs_file, row);
+					if (row.length() >0)
+					{
+						//For the first shock, create an index_shock_pvs for each inner model point 
+						if (shock_number ==0)
+						{
+							double** index_shock_pvs = new double* [nb_of_shocks_of_index_shock_pvs];
+							for (int j=0; j<nb_of_shocks_of_index_shock_pvs; j++)
+							{
+								index_shock_pvs[j] = new double[nb_of_columns_of_index_shock_pvs];
+							}
+							vector_of_index_shock_pvs.push_back(index_shock_pvs);
+						}
+						
+						
+						retPtr = new char[row.length()+1];
+						strcpy(retPtr, row.c_str());
+						retPtr[row.length()]='\0';
+
+						//skip the first column
+						double value = atof(strtok(retPtr, ","));
+						
+						//The second column is the number of inner scenarios
+						nb_of_scen_inner = atoi(strtok(NULL, ","));
+
+						//From the third column on, are the columns of the index_shock_pvs
+						for (int col=0; col<nb_of_columns_of_index_shock_pvs; col++)
+						{
+							value = atof(strtok(NULL, ","));
+							vector_of_index_shock_pvs[nb_mp_inner][shock_number][col] = value;
+						}
+
+						delete [] retPtr;
+					}
+
+					nb_mp_inner++;
+				}
+			}
+		}
+	};
+
+	//read a series of output files (inner inforces)
+	//to fill the vector_of_AV and the vector_of_av_if_array
+	virtual void set_vector_of_AV_and_vector_of_av_if_array_from_files(
+		const char* output_path, const char* output_file_name, const char* product_name, 
+		int nb_scenario_outer, int nb_mp_outer,
+		vector<double>& vector_of_AV,
+		vector<double*>& vector_of_av_if_array)
+	{
+
+
+		char address[1000];
+		sprintf(address, "%s%s_%s_scen%d_mp%d.csv", output_path, output_file_name, 
+					product_name, nb_scenario_outer+1, nb_mp_outer+1);
+		ifstream inforce_file;
+		inforce_file.open(address, ios::in);
+		
+		//char *retPtr;
+		string row;
+	
+		if (inforce_file)
+		{
+			while (!inforce_file.eof())
+			{
+				getline(inforce_file, row);
+
+				if (row.length() >0)
+				{
+
+
+					istringstream row_streamed;
+
+					row_streamed.str(row);
+				
+					string element; 
+					
+					for (int k = 0; k < 12; k++)
+					{
+						getline(row_streamed, element, ',');
+					}
+					//double AV = atof(element.c_str());
+					double AV =0.;
+					getline(row_streamed, element, ',');
+
+					double* av_if_array = new double[MAXIMUM_NUMBER_OF_INDEXES];
+					for (int index=0; index<MAXIMUM_NUMBER_OF_INDEXES; index++)
+					{
+						getline(row_streamed, element, ',');
+						av_if_array[index] = atof(element.c_str());
+						AV += av_if_array[index];
+					}
+
+					vector_of_AV.push_back(AV);
+					vector_of_av_if_array.push_back(av_if_array);
+					
+				}
+			}
+		}
+	};
+
+	virtual void calculate_vector_of_delta_gamma_OV( vector<double> vector_of_AV,
+		vector<double*> vector_of_av_if_array,
+		vector<double**> vector_of_index_shock_pvs,
+		vector<vector <int>> index_shock_array,
+		double Rrc,
+		int nb_of_scen_inner,
+		vector<vector<double>>& vector_of_delta , //vecotr_of_delta[nb_mp_inner][shock]
+		vector<vector<double>>& vector_of_gamma ,  //vecotr_of_delta[nb_mp_inner][shock]
+		vector<double>& vector_of_OV, double Ehc
+		)
+	{
+		//Remark: vector_of_av_if_array and vector_of_index_shock_pvs are of the same size
+
+		int nb_of_model_points = vector_of_av_if_array.size();
+		for (int nb_mp_inner = 0; nb_mp_inner<nb_of_model_points; nb_mp_inner++)
+		{
+			vector<double> delta_of_mp_inner;
+			vector<double> gamma_of_mp_inner;
+			vector_of_delta.push_back(delta_of_mp_inner);
+			vector_of_gamma.push_back(gamma_of_mp_inner);
+			vector_of_OV.push_back(0);
+		}
+
+		if (nb_of_model_points >0)
+		{
+			//calculate Ehc at first
+		//	double** index_shock_pvs_0 = vector_of_index_shock_pvs[0];
+		//	double Ehc = calculate_Ehc(index_shock_pvs_0, RRC, nb_of_scen_inner);
+			
+			//calculate delta and gamma for each shock
+			for (unsigned int shock_number=1; shock_number<index_shock_array.size()-1; shock_number+=2)
+			{
+				//get the index on which the shock is done
+				int index = index_shock_array[shock_number][0];
+				
+
+				/*
+				Two possible situations: 
+				1. index between 1 and 12
+				2. index = 13, which signifies shocks on all indexes
+				*/
+
+				if ((index >=1) && (index<=12))
+				{
+					//verify that two shocks should be done for the same index
+					//one positive shock and one negetive shock
+					if (	(index == index_shock_array[shock_number+1][0])						
+						&&	(index_shock_array[shock_number][index] ==-index_shock_array[shock_number+1][index])
+						)
+					{
+						//Get the shock
+						double shock = (double)index_shock_array[shock_number][index]/100.0;
+
+						//Loop on inner model points
+						for (int nb_mp_in = 0; nb_mp_in < nb_of_model_points; nb_mp_in++)
+						{
+							double** index_shock_pvs = vector_of_index_shock_pvs[nb_mp_in];
+							
+							//Calculate option value, option value after a positive shock and option value after a negative shock
+							double OV	= calculate_OV(index_shock_pvs, 0, nb_of_scen_inner, Rrc, Ehc);
+							double OV_p = calculate_OV(index_shock_pvs, shock_number, nb_of_scen_inner, Rrc, Ehc);
+							double OV_m = calculate_OV(index_shock_pvs, shock_number+1, nb_of_scen_inner, Rrc, Ehc);
+							
+							//Get the av_index
+							double av_index;
+							av_index = vector_of_av_if_array[nb_mp_in][index-1];
+							
+							//Calculate delta and gamma
+							double delta = calculate_delta(OV_p, OV_m, av_index, shock);
+							double gamma = calculate_gamma(OV_p, OV_m, OV, av_index, shock);
+
+							//Add delta in vector_of_delta, gamma in vector_of_gamma
+							vector_of_delta[nb_mp_in].push_back(delta);
+							vector_of_gamma[nb_mp_in].push_back(gamma);
+							vector_of_OV[nb_mp_in] = OV;
+						}
+					}
+				}
+				else // situation when index = 13 
+				{
+					//Get the shock	
+					double shock = (double)index_shock_array[shock_number][1]/100.0;
+					//Loop on inner model points
+					for (int nb_mp_in = 0; nb_mp_in < nb_of_model_points; nb_mp_in++)
+					{
+						double** index_shock_pvs = vector_of_index_shock_pvs[nb_mp_in];
+							
+						//Calculate option value, option value after a positive shock and option value after a negative shock
+						double OV	= calculate_OV(index_shock_pvs, 0, nb_of_scen_inner, Rrc, Ehc);
+						double OV_p = calculate_OV(index_shock_pvs, shock_number, nb_of_scen_inner, Rrc, Ehc);
+						double OV_m = calculate_OV(index_shock_pvs, shock_number+1, nb_of_scen_inner, Rrc, Ehc);
+						
+						//Get the AV
+						//double AV = index_shock_pvs[0][BEGINING_ACCOUNT_VALUE]/ double(nb_of_scen_inner);
+						double AV=	vector_of_AV[nb_mp_in];
+						//Calculate delta and gamma
+						double delta = calculate_delta(OV_p, OV_m, AV, shock);
+						double gamma = calculate_gamma(OV_p, OV_m, OV, AV, shock);
+
+						//Add delta in vector_of_delta, gamma in vector_of_gamma
+						vector_of_delta[nb_mp_in].push_back(delta);
+						vector_of_gamma[nb_mp_in].push_back(gamma);
+						vector_of_OV[nb_mp_in] = OV;
+					}
+				}
+			}
+		}	
+	}
+
+	virtual void calculate_vector_of_rho(
+		vector<double*>& vector_of_av_if_array,
+		map<int ,vector<double**>>& map_of_index_shock_pvs,
+		vector<Scenario_configuration>& vector_of_scenario_configuration_in,
+		double Rrc,
+		int nb_of_scen_inner,
+		vector<vector<double>>& vector_of_rho, double Ehc //vector_of_rho[nb_mp_in][bucket]
+		)
+	{
+		//Get the number of buckets and the number of inner model points
+		int size_of_vector_of_scenario_configuration_in = vector_of_scenario_configuration_in.size();
+		int nb_of_inner_model_points = vector_of_av_if_array.size();
+
+		//Fill vector_of_rho with nb_of_inner_model_points vectors
+		for (int nb_mp_in=0; nb_mp_in<nb_of_inner_model_points; nb_mp_in++)
+		{
+			vector<double> rho_of_nb_mp_in;
+			vector_of_rho.push_back(rho_of_nb_mp_in);
+		}
+
+		//Calculate Ehc
+	//	double** index_shock_pvs_0	= map_of_index_shock_pvs[0][0];
+	//	double Ehc = calculate_EHC(index_shock_pvs_0, Rrc, nb_of_scen_inner);
+
+		//Loop on inner model points
+		for (int nb_mp_in = 0; nb_mp_in < nb_of_inner_model_points; nb_mp_in++)
+		{//YANN explain the number 3 
+			if( size_of_vector_of_scenario_configuration_in>=3)
+			{
+				//Rho Global
+				Scenario_configuration scen_config_p = vector_of_scenario_configuration_in[1];
+				double shock = scen_config_p.getBucketShockSize();
+				
+				double** index_shock_pvs = map_of_index_shock_pvs[0][nb_mp_in];
+				double** index_shock_pvs_plus	= map_of_index_shock_pvs[1][nb_mp_in];
+				double** index_shock_pvs_minus	= map_of_index_shock_pvs[2][nb_mp_in];
+
+				//Calculate OV_p and OV_m
+				//double OV	= calculate_OV(index_shock_pvs, 0, nb_of_scen_inner, Rrc, Ehc);
+				double OV_p = calculate_OV(index_shock_pvs_plus,  0, nb_of_scen_inner, Rrc, Ehc);
+				double OV_m = calculate_OV(index_shock_pvs_minus, 0, nb_of_scen_inner, Rrc, Ehc);
+				
+				//Calculate rho
+				double rho = calculate_rho(OV_p, OV_m, shock);
+				//double rho_convexity = calculate_rho_convexity(OV_p, OV_m, OV, shock);
+				//Add rho in vector_of_rho
+				vector_of_rho[nb_mp_in].push_back(rho);
+				//vector_of_rho_convexity[nb_mp_in].push_back(rho_convexity);
+			}
+			//Loop on buckets
+			for (int nb_bucket = 3; nb_bucket < size_of_vector_of_scenario_configuration_in; nb_bucket++)
+			{
+				/*TO DO Verify that two buckets have the same type, bucket start, bucket end, bucket size
+				One positive bucket size and one negative bucket size */
+				
+
+				//Get shock, pMP_plus, pMP_minus, index_shock_pvs_plus, index_shock_pvs_minus
+				Scenario_configuration scen_config_p = vector_of_scenario_configuration_in[nb_bucket];
+				double shock = scen_config_p.getBucketShockSize();
+				double** index_shock_pvs_plus	= map_of_index_shock_pvs[nb_bucket][nb_mp_in];
+				double** index_shock_pvs_minus	= map_of_index_shock_pvs[0][nb_mp_in];
+
+				//Calculate OV_p and OV_m
+				double OV_p = calculate_OV(index_shock_pvs_plus,  0, nb_of_scen_inner, Rrc, Ehc);
+				double OV_m = calculate_OV(index_shock_pvs_minus, 0, nb_of_scen_inner, Rrc, Ehc);
+				
+				//Calculate rho
+				double rho = calculate_rho(OV_p, OV_m, shock/2.);
+
+				//Add rho in vector_of_rho
+				vector_of_rho[nb_mp_in].push_back(rho);
+			}
+		}
+	}
+
+	virtual double pv_real_claims(double** index_shock_pvs, int shock_number, int nb_of_scen_inner)
+	{
+		return (index_shock_pvs[shock_number][PV_GMAB] + index_shock_pvs[shock_number][PV_GMDB] + index_shock_pvs[shock_number][PV_GMWB] 
+				+ index_shock_pvs[shock_number][PV_GMIB] + index_shock_pvs[shock_number][PV_GMSB])/(double)nb_of_scen_inner;
+	}
+
+	
+	virtual double calculate_EHC(double** index_shock_pvs ,double Rrc, int nb_of_scen_inner)
+	{
+		// Rrc is gmxb_g_c of a model point
+		double Ehc = this->pv_real_claims(index_shock_pvs, 0, nb_of_scen_inner) / (index_shock_pvs[0][PV_GMXB_REAL_CHG] / (double)nb_of_scen_inner) * Rrc;
+		return Ehc;
+	}
+
+	virtual double calculate_OV(double** index_shock_pvs, int shock_number, int nb_of_scen_inner, double Rrc, double Ehc)
+	{
+		double OV = pv_real_claims(index_shock_pvs, shock_number, nb_of_scen_inner) - Ehc / Rrc * ( index_shock_pvs[shock_number][PV_GMXB_REAL_CHG]/ (double)nb_of_scen_inner);
+		return OV;
+	}
+
+	virtual double calculate_delta(double OV_p, double OV_m, double av_index, double shock)
+	{
+		if (av_index ==0.0)
+			return 0.0;
+		else
+		{
+			double delta = (OV_p - OV_m) / (2 * shock * av_index);
+			if ( abs(delta)> Cap_Delta)
+			{
+				if ( delta>0.) delta = Cap_Delta;
+				else delta = Floor_Delta;
+			}
+			return delta;
+		}
+	}
+
+	virtual double calculate_gamma(double OV_p, double OV_m, double OV, double av_index, double shock)
+	{
+		if (av_index ==0.0)
+			return 0.0;
+		else
+		{
+			double gamma = (OV_p + OV_m - 2*OV) / (shock * shock * av_index * av_index) ;
+			return gamma;
+		}
+	}
+
+	virtual double calculate_rho(double OV_p, double OV_m, double shock)
+	{
+		double rho = (OV_p - OV_m) / (2 * shock) ;
+		return rho;
+	}
+	virtual double calculate_rho_convexity(double OV_p, double OV_m, double OV, double shock)
+	{
+		double rho_convexity = (OV_p + OV_m-2*OV) / (shock * shock) ;
+		return rho_convexity;
+	}
+
+	virtual void HE_summerize(
+		vector<Product_configuration> vector_of_product_config_out,
+		vector<Product_configuration> vector_of_product_config_in,
+		HE_configuration* he_conf, const string& he_output_file_path, const string& he_file_name)
+	{
+		int number_of_outer_scenarios = vector_of_product_config_out[0].get_number_of_scenarios_to_run();
+		int number_of_inner_scenarios; // The number of inner scenarios will  be known later
+
+		/*
+		* write the head line of summarise file
+		*/
+		//Loop on outer products
+		
+		for (unsigned int nb_product_out=0; nb_product_out<vector_of_product_config_out.size(); nb_product_out++)
+		{
+			//Get the product name
+			Product_configuration product_out = vector_of_product_config_out[nb_product_out];
+			string product_name = product_out.get_prod_code_key();
+			//Create inforce mgr out
+			Inforce_Manager* inforce_mgr_out = new Inforce_Manager(',', 1, 1, product_out, product_out.get_scenario_list()[0], true,false,false);
+
+			//Loop on outer model points
+			for (unsigned int nb_mp_outer=0; nb_mp_outer<inforce_mgr_out->get_model_points_vector().size(); nb_mp_outer++)
+			{
+				char address[1000];
+				sprintf(address, "%s\\%s_%s_mpout%d.csv",
+					he_output_file_path.c_str(),
+					he_file_name.c_str(),
+					product_name.c_str(),
+					nb_mp_outer+1);
+				ofstream HE_summarise_file;
+				HE_summarise_file.open(address);
+				
+				//scenario (outer)
+				HE_summarise_file << "Scen" <<",";
+
+				//period
+				HE_summarise_file << "Period" <<",";
+
+				//OV
+				HE_summarise_file << "liab_ov" <<",";				
+				
+				//claims
+				HE_summarise_file << "claims" <<",";
+
+				//charges
+				HE_summarise_file << "Total_charges" <<",";
+
+				//AV
+				HE_summarise_file << "av" <<",";
+				for (int av_index = 1; av_index <= 12; av_index++)
+				{
+					HE_summarise_file << "av_index_" << av_index <<",";
+				}
+
+				//different delta and gamma
+				vector<vector<int>> index_shock_array = vector_of_product_config_in[0].get_scenario_list()[0].get_index_shock_array();
+				for (unsigned int shock_number=1; 
+					shock_number<index_shock_array.size()-1; 
+					shock_number+=2)
+				{
+					int index = index_shock_array[shock_number][0];
+					if ((index>=1)&(index<=12))
+						HE_summarise_file << "delta_" << index << "_lb" << ",";
+					else if (index==13)
+						HE_summarise_file << "delta_lb" <<",";
+				}
+
+				for (unsigned int shock_number=1; 
+					shock_number<index_shock_array.size()-1; 
+					shock_number+=2)
+				{
+					int index = index_shock_array[shock_number][0];
+					if ((index>=1)&(index<=12))
+						HE_summarise_file << "gamma_" << index << "_lb" << ",";
+					else if (index==13)
+						HE_summarise_file << "gamma_lb" <<",";
+				}
+
+				//different rho
+				vector<Scenario_configuration> vector_scen_conf = vector_of_product_config_in[0].get_scenario_list();
+				for (unsigned int nb_bucket = 2; nb_bucket < vector_scen_conf.size(); nb_bucket++)
+				{
+					double keydate = vector_scen_conf[nb_bucket].getBucketKeyDate();
+					HE_summarise_file << "rho_" << keydate << "_lb" << ",";
+				}
+
+				HE_summarise_file << endl;
+
+				HE_summarise_file.close();
+			}
+
+			delete inforce_mgr_out;
+
+		}
+
+		
+		
+		/*
+		*  Calculate the greeks, at write into the summarise file 
+		*/
+		//Loop on outer products
+		for (unsigned int nb_product_out=0; nb_product_out<vector_of_product_config_out.size(); nb_product_out++)
+		{
+			//Get the product name
+			Product_configuration product_out = vector_of_product_config_out[nb_product_out];
+			string product_name = product_out.get_prod_code_key();
+			//Create inforce mgr out
+			Inforce_Manager* inforce_mgr_out = new Inforce_Manager(',', 1, 1, product_out, product_out.get_scenario_list()[0], true,false,false);
+
+			//Loop on outer model points
+			for (unsigned int nb_mp_outer=0; nb_mp_outer<inforce_mgr_out->get_model_points_vector().size(); nb_mp_outer++)
+			{
+				//Loop on outer scenarios
+				for (int nb_scenario_outer = 0; nb_scenario_outer < number_of_outer_scenarios; nb_scenario_outer++)
+				{
+					vector<double**> vector_of_index_shock_pvs;
+
+					//Fill vector_of index_shock_pvs by reading inner pvs files (for bucket 0)
+					//and get the number of inner scenarios
+					this->set_vector_of_index_shock_pvs_from_files(
+											he_conf->get_inner_pvs_file_path().c_str(),
+											he_conf->get_inner_pvs_file_name().c_str(),
+											product_name.c_str(),
+											nb_scenario_outer,
+											0, nb_mp_outer,
+											vector_of_product_config_in[0].get_scenario_list()[0].get_index_shock_array().size(), 
+											inforce_mgr_out->get_model_points_vector()[nb_mp_outer]->get_total_pv_columns_number(),
+											number_of_inner_scenarios, 
+											vector_of_index_shock_pvs);
+					
+					//Read inner inforce files to fill vector_of_AV and vector_of_av_if_array
+					vector<double> vector_of_AV;
+					vector<double*> vector_of_av_if_array;
+					
+					
+
+					this->set_vector_of_AV_and_vector_of_av_if_array_from_files(
+											he_conf->get_inforce_in_path_file().c_str(),
+											he_conf->get_inforce_in_file_name().c_str(),
+											product_name.c_str(),
+											nb_scenario_outer,
+											nb_mp_outer,
+											vector_of_AV,
+											vector_of_av_if_array);
+
+					//Calculate vector_of_delta and vector_of_gamma and vector_of_OV
+					double Rrc = inforce_mgr_out->get_model_points_vector()[nb_mp_outer]->gmxb_g_c;
+					double Ehc = inforce_mgr_out->get_model_points_vector()[nb_mp_outer]->gmxb_ehc_charge;
+					vector<vector<double>> vector_of_delta;
+					vector<vector<double>> vector_of_gamma;
+					vector<double> vector_of_OV;
+
+					this->calculate_vector_of_delta_gamma_OV(vector_of_AV,
+						vector_of_av_if_array,
+						vector_of_index_shock_pvs,
+						vector_of_product_config_in[0].get_scenario_list()[0].get_index_shock_array(),
+						Rrc,
+						number_of_inner_scenarios,
+						vector_of_delta,
+						vector_of_gamma,
+						vector_of_OV,Ehc);
+
+					//Calculate vector of rho
+					vector<vector<double>>  vector_of_rho;
+					
+					map<int ,vector<double**>> map_of_index_shock_pvs;
+					int number_of_buckets = vector_of_product_config_in[0].get_scenario_list().size();
+
+					map_of_index_shock_pvs[0] = vector_of_index_shock_pvs;
+					for (int nb_bucket=1; nb_bucket < number_of_buckets; nb_bucket++)
+					{
+						vector<double**> vector_of_index_shock_pvs_i;
+						this->set_vector_of_index_shock_pvs_from_files(
+											he_conf->get_inner_pvs_file_path().c_str(),
+											he_conf->get_inner_pvs_file_name().c_str(),
+											product_name.c_str(),
+											nb_scenario_outer,
+											nb_bucket, nb_mp_outer,
+											vector_of_product_config_in[0].get_scenario_list()[nb_bucket].get_index_shock_array().size(), 
+											inforce_mgr_out->get_model_points_vector()[nb_mp_outer]->get_total_pv_columns_number(),
+											number_of_inner_scenarios, 
+											vector_of_index_shock_pvs_i);
+						map_of_index_shock_pvs[nb_bucket] = vector_of_index_shock_pvs_i;
+					}
+					
+					this->calculate_vector_of_rho(
+						vector_of_av_if_array,
+						map_of_index_shock_pvs,
+						vector_of_product_config_in[0].get_scenario_list(),
+						Rrc,
+						number_of_inner_scenarios,
+						vector_of_rho, Ehc);
+
+
+					//Calculate vector_of_claimns_paid (outer) and vector_of_charges_received (outer)
+					double** main_proj_array = this->create_main_proj_array_from_files(
+										product_out.get_debug_file_path().c_str(),
+										"main_array",
+										product_name.c_str(),
+										nb_mp_outer,
+										nb_scenario_outer,
+										MAIN_PROJ_NUM_COLS,
+										vector_of_av_if_array.size() +1
+										);
+					vector<double> vector_of_claims_paid;
+					vector<double> vector_of_charges_received;
+
+					double AV_tot=0.;
+					this->calculate_vector_of_claimns_paid_and_charges_received(
+										main_proj_array,
+										vector_of_av_if_array.size(),
+										vector_of_claims_paid,
+										vector_of_charges_received, AV_tot);
+
+					//Write vector_of_av_if_array, vector_of_delta, vector_of_gamma, vector_of_rho
+					char address[1000];
+					sprintf(address, "%s%s_%s_mpout%d.csv",
+						he_output_file_path.c_str(),
+						he_file_name.c_str(),
+						product_name.c_str(),
+						nb_mp_outer+1,
+						nb_scenario_outer+1);
+					ofstream HE_summarise_file;
+					HE_summarise_file.open(address, ios::app);
+				
+					for (unsigned int nb_mp_inner =0; nb_mp_inner < vector_of_av_if_array.size(); nb_mp_inner++)
+					{
+						//output scenario number
+						HE_summarise_file << nb_scenario_outer+1 <<",";
+
+						//output period
+						HE_summarise_file << nb_mp_inner <<",";
+
+						//output OV
+						HE_summarise_file << vector_of_OV[nb_mp_inner] <<",";
+
+						//output claims paid and charged received
+						if(nb_mp_inner==0){
+							HE_summarise_file << setprecision(15)<<0. <<","<<0. <<",";	
+						}
+						else{
+						HE_summarise_file << vector_of_claims_paid[nb_mp_inner-1] <<",";
+						HE_summarise_file << vector_of_charges_received[nb_mp_inner-1] <<",";}
+
+						//output AV
+						HE_summarise_file << vector_of_AV[nb_mp_inner] <<",";
+						
+						//output av_index
+						double* av_if_array = vector_of_av_if_array[nb_mp_inner];
+						for (int index = 0; index < 12; index++)
+						{
+							HE_summarise_file << av_if_array[index] <<",";
+						}
+						
+						//output delta
+						for (unsigned int nb_delta = 0; nb_delta < vector_of_delta[nb_mp_inner].size(); nb_delta++)
+						{
+							HE_summarise_file << vector_of_delta[nb_mp_inner][nb_delta] <<",";
+						}
+
+						//output gamma
+						for (unsigned int nb_gamma = 0; nb_gamma < vector_of_gamma[nb_mp_inner].size(); nb_gamma++)
+						{
+							HE_summarise_file << vector_of_gamma[nb_mp_inner][nb_gamma] <<",";
+						}
+
+						//output rho
+						for (unsigned int nb_rho = 0; nb_rho < vector_of_rho[nb_mp_inner].size(); nb_rho++)
+						{
+							HE_summarise_file << vector_of_rho[nb_mp_inner][nb_rho]*100 <<",";
+						}
+
+						HE_summarise_file << endl;
+						if(nb_mp_inner == vector_of_av_if_array.size()-1)
+						{
+							//output scenario number
+							HE_summarise_file << nb_scenario_outer+1 <<",";
+							//output period
+							HE_summarise_file << nb_mp_inner+1 <<",";
+							//output OV
+							HE_summarise_file << setprecision(15)<<0. <<",";
+							//output claims paid and charged received
+							HE_summarise_file << setprecision(15)<<vector_of_claims_paid[nb_mp_inner] <<",";
+							HE_summarise_file << setprecision(15)<<vector_of_charges_received[nb_mp_inner] <<",";
+							//HE_summarise_file << setprecision(15)<<vector_of_charges_received_prem[nb_mp_inner] <<",";
+							//HE_summarise_file << setprecision(15)<<vector_of_charges_received_sum_prem[nb_mp_inner] <<",";
+							//HE_summarise_file << setprecision(15)<<vector_of_charges_received_sum_prem[nb_mp_inner]+vector_of_charges_received_prem[nb_mp_inner]+ vector_of_charges_received[nb_mp_inner]<<",";
+
+							//output AV
+							HE_summarise_file << setprecision(15)<<0. <<",";
+							//output av_index
+							for (int index = 0; index < 12; index++)
+								HE_summarise_file << setprecision(15)<<AV_tot *inforce_mgr_out->get_model_points_vector()[nb_mp_outer]->av_split_prop_array[index]/100.<<",";
+							//output delta
+							for (unsigned int nb_delta = 0; nb_delta < vector_of_delta[nb_mp_inner].size(); nb_delta++)
+								HE_summarise_file << setprecision(15)<<0. <<",";
+							//output gamma
+							for (unsigned int nb_gamma = 0; nb_gamma < vector_of_gamma[nb_mp_inner].size(); nb_gamma++)
+								HE_summarise_file << setprecision(15)<<0. <<",";
+							//output rho
+							for (unsigned int nb_rho = 0; nb_rho < vector_of_rho[nb_mp_inner].size(); nb_rho++)
+								HE_summarise_file << setprecision(15)<<0. <<",";
+							//HE_summarise_file << setprecision(15)<<0. <<",";
+							HE_summarise_file << endl;
+						}
+
+					}
+
+					HE_summarise_file.close();
+					//delete map_of_index_shock_pvs
+					for (map<int ,vector<double**>>::iterator it_map_of_index_shock_pvs = map_of_index_shock_pvs.begin();
+						it_map_of_index_shock_pvs != map_of_index_shock_pvs.end();
+						++it_map_of_index_shock_pvs)
+					{
+						int nb_bucket = it_map_of_index_shock_pvs->first;
+						vector<double**> vector_of_index_shock_pvs_i = it_map_of_index_shock_pvs->second;
+						for (unsigned int i=0; i< vector_of_index_shock_pvs_i.size(); i++)
+						{
+							for (unsigned int shock_number = 0; 
+								shock_number < vector_of_product_config_in[0].get_scenario_list()[nb_bucket].get_index_shock_array().size();
+								shock_number++)
+								{
+									delete []vector_of_index_shock_pvs_i[i][shock_number];
+								}
+							delete [] vector_of_index_shock_pvs_i[i];
+						}
+					}
+
+					
+					//delete main_proj_array
+				
+					for (unsigned int i=0; i<vector_of_av_if_array.size(); i++)
+					{
+						delete [] main_proj_array[i];
+					}
+
+					delete [] main_proj_array;
+
+					//delete vector_of_av_if_array
+					for (unsigned int i=0; i<vector_of_av_if_array.size(); i++)
+					{
+						delete [] vector_of_av_if_array[i];
+					}
+
+					
+				}
+			}
+			
+			//delete inforce_mgr_out
+			delete inforce_mgr_out;
+		}
+	}
+
+	virtual void calculate_vector_of_claimns_paid_and_charges_received(
+		double** main_proj_array,
+		int nb_of_mp_inner,
+		vector<double>& vector_of_claims_paid,
+		vector<double>& vector_of_charges_received, double& AV_tot)
+	{
+		double claims_paid = main_proj_array[0][GMAB_CLAIMS]+ main_proj_array[0][GMDB_CLAIMS]
+				+ main_proj_array[0][GMWB_CLAIMS]+ main_proj_array[0][GMIB_CLAIMS]
+				+ main_proj_array[0][GMSB_CLAIMS];
+		
+		double charges_received = main_proj_array[0][GMXB_CHARGE];
+		
+		for (int t=1; t<=nb_of_mp_inner; t++)
+		{
+			claims_paid = main_proj_array[t][GMAB_CLAIMS]+ main_proj_array[t][GMDB_CLAIMS]
+				+ main_proj_array[t][GMWB_CLAIMS]+ main_proj_array[t][GMIB_CLAIMS]
+				+ main_proj_array[t][GMSB_CLAIMS];
+			charges_received = main_proj_array[t][GMXB_CHARGE];
+			
+			vector_of_claims_paid.push_back(claims_paid);
+			vector_of_charges_received.push_back(charges_received);
+			if (t==nb_of_mp_inner)
+			{
+				AV_tot=main_proj_array[t][AV_E];
+			}
+		}
+	}
+};

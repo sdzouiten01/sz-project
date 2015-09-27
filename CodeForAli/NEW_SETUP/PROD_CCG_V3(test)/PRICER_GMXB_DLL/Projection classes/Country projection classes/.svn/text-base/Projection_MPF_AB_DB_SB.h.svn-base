@@ -1,0 +1,143 @@
+#pragma once
+#include "stdafx.h"
+#include "Projection classes/Guarantee projection classes/Projection.h"
+#include "Projection classes/Guarantee projection classes/Projection_AB_DB_SB.h"
+#include "Utility classes/Normal.h"
+#include "Utility classes/Interpolation.h"
+
+#define EXITSURR 1
+#define SURR 2
+
+class Projection_MPF_AB_DB_SB : public Projection_AB_DB_SB
+{
+public:
+
+	GMXB_Assumption_Table *itm_factor_table;
+
+
+	Projection_MPF_AB_DB_SB(const vector<vector <int>>& i_s_a,const vector<vector <int>>& f_s_a,
+							const char* tables, bool generate_dbg_files, const string& dbg_file_path, 
+							const int t_high_shorter, bool l_longevity_tables, int time_step):
+		Projection(i_s_a, f_s_a, tables, generate_dbg_files, dbg_file_path, t_high_shorter, l_longevity_tables, time_step),
+		Projection_AB_DB_SB(i_s_a, f_s_a, tables, generate_dbg_files, dbg_file_path,  t_high_shorter, l_longevity_tables, time_step)
+	{	
+
+		this->itm_factor_table = new GMXB_Assumption_Table(tables, "itm_factor_table");
+
+	}
+
+	~Projection_MPF_AB_DB_SB()
+	{
+		delete this->itm_factor_table;
+	
+	}
+	
+	/* Dynamic lapses computation */
+	double dynamic_lapse_rate_axa(int t)
+	{
+
+		main_proj_array[t][ITM] = 0.0;
+		int pol_yr = int(this->timing_items[t][POL_YEAR]);
+		double atm_for_lapses = 0.0;
+
+		double years_to_maturity = 0.0;
+		double correlation = 0.5;
+		double vol_tot = 10.0;
+		double F = 0.0;
+		double disc_factor = 0.0;
+		double short_rate_factor = 0.0;
+		double price_call = 0.0;
+		double vol_index = 0.0;
+		double PV_of_guarantee = 0.0;
+
+		if (t == 1)
+			return 0.0;
+		
+		int column_index;
+		if (this->model_point->gmxb_type2 == "MPF_ADB_10" || this->model_point->gmxb_type2 == "10yr")
+			column_index = 2;
+		else 
+			column_index = 1;
+
+		if (t == 1) 
+			main_proj_array[t-1][GMAB_IF] = model_point->gmab_rollup_valn;
+
+		short_rate_factor = this->afmr[this->model_point->elapsed_mths_in_valn_yr + 1] [t] [MAXIMUM_NUMBER_OF_INDEXES] / 100.0;
+		main_proj_array[t][BOND_RATE_FOR_LAPSES] = short_rate_factor;// for audit-tool debugging purpose
+		
+		int index_num;
+		
+		for(int i = 0; i<index_map_size; i++)
+		{
+			index_num = index_map_2[i];
+			vol_index += pow(this->volatility->quick_search(index_num - 1, 1)/100  , 2.0)* pow(model_point->av_split_prop_array[index_num-1]/100.0, 2.0) ;
+		}
+
+		vol_tot = pow(vol_index,0.5);
+		years_to_maturity = model_point->gmab_period - this->timing_items[t][POL_YEAR] + 1;
+		disc_factor = short_rate_factor * years_to_maturity;
+		
+		if (years_to_maturity > 0.0)
+		{
+			F = main_proj_array[t][AV_B_BEF] * exp((short_rate_factor + log(1.0 - model_point->gmxb_g_c/100.0)) 
+								 * years_to_maturity);
+			
+			double d1_local;
+	       
+			if (main_proj_array[t-1][GMAB_IF] <= SMALL_DOUBLE)
+       			d1_local = 0.0;
+			else
+				d1_local = (log(F /main_proj_array[t-1][GMAB_IF]) + ((pow(vol_tot,2.0) / 2.0) * years_to_maturity))
+					/ (vol_tot * pow(years_to_maturity, 0.5));
+
+			double d2_local = d1_local - vol_tot * pow(years_to_maturity,0.5);
+			
+			Normal StdNorm(0,1);
+
+            //TODO: Choose the best function of cumulativeDensity
+			double n1 = StdNorm.cumulativeDensity_3(d1_local);
+			double n2 = StdNorm.cumulativeDensity_3(d2_local);
+			
+			price_call = exp(-disc_factor) * (F*n1 - main_proj_array[t-1][GMAB_IF]*n2);		
+		}
+		else
+			price_call = max(F - main_proj_array[t-1][GMAB_IF],0.0) ;
+
+		
+		// calcul PV of guarantee
+		PV_of_guarantee = main_proj_array[t-1][GMAB_IF] * exp (-disc_factor);
+		
+		/* Calcul ITM
+		The cumulative distribution is approximed by a polynome function so the computation of itm could be inaccurate to match the Moses value
+		his approximation can give errors in order of 10-6 on the global results per scenario and per model point
+		*/ 
+		double temp_pol_yr = min((int)(this->timing_items[t][POL_YEAR]), 0.0);
+		double tax_pct = this->taxes_new_contract/100.0;
+		double gmsb = model_point->prem_paid * this->gmsb_guarantee_level->search((int)(this->timing_items[t][POL_YEAR]),column_index)/100 * surv_cumul[t-1];
+
+		if ((PV_of_guarantee + price_call)< SMALL_DOUBLE)
+			main_proj_array[t][ITM] = 0.0;	
+		else
+		{
+			if (years_to_maturity > 5.0)
+				main_proj_array[t][ITM] = (((1.0-tax_pct)* max(main_proj_array[t][AV_B_BEF], gmsb)) / (PV_of_guarantee + price_call))* 100.0;
+			else 
+				main_proj_array[t][ITM] = (max(main_proj_array[t][AV_B_BEF] , gmsb) / (PV_of_guarantee + price_call))*100.0 ;	
+		}
+
+		double lapse_function;
+		//Interpolation Interp(this->itm_factor_table, 1);
+		////double v = I.linear_interpolation(main_proj_array_2[ITM][t]);
+
+		lapse_function = this->itm_factor_table->search((int)main_proj_array[t][ITM], 1);
+		
+		return max(this->lapse_min_pa_perc/100,
+					min (this->lapse_max_pa_perc/100., 
+					(this->lapse_rates->search((int)pol_yr, column_index) + lapse_function) /100.));
+
+	
+	}
+
+	
+
+};

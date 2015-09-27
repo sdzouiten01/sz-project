@@ -1,0 +1,223 @@
+#pragma once
+#include "stdafx.h"
+#include "Projection classes/Guarantee projection classes/Projection.h"
+#include "Projection classes/Guarantee projection classes/Projection_WB.h"
+#define INF 0
+#define BEF 1
+#define SUP 1
+#define AFT 2
+
+class Projection_FRA_WB : public Projection_WB
+{
+	public:
+
+	int gr_symbol;
+	GMXB_Assumption_Table *gmwb_max_annual_wdl_pct_table;
+
+
+		Projection_FRA_WB(const vector<vector <int>>& i_s_a,const vector<vector <int>>& f_s_a,
+						 const char* tables, bool generate_dbg_files, const string& dbg_file_path,
+						 const int t_high_shorter, bool l_longevity_tables, int time_step):
+		Projection(i_s_a, f_s_a, tables, generate_dbg_files, dbg_file_path, t_high_shorter, l_longevity_tables, time_step),
+		Projection_WB(i_s_a, f_s_a,  tables, generate_dbg_files, dbg_file_path, t_high_shorter, l_longevity_tables, time_step)
+	{	
+	
+		gmwb_max_annual_wdl_pct_table = new GMXB_Assumption_Table(tables, "gmwb_max_annual_wdl_pct_table");
+		this->gr_symbol = atoi(this->assump->search("gr_symbol").c_str());
+		
+	};
+
+
+	~Projection_FRA_WB()
+	{
+		delete gmwb_max_annual_wdl_pct_table;
+	}
+
+	double dynamic_lapse_rate_axa(int t) 
+	{
+		double withdrawal_cumul = 0.0;
+		main_proj_array[t][ITM] = 0.0;
+
+		/* 1st year initialization */
+		if (t == 1)
+			main_proj_array[t][GMWB_IF]  = this->model_point->gmwb_ratchet_valn ;
+		
+		else
+			main_proj_array[t][GMWB_IF] = main_proj_array[t-1][GMWB_IF];
+			
+		/* ITM calculation */
+		if (main_proj_array[t][AV_E_BEF] > SMALL_DOUBLE)
+		 {
+ 			for (int i = (int)this->timing_items[t][POL_YEAR]; i<= product_charging_duration_s(); i++)
+ 				{   
+ 					this->policy_wdlw_year = (int)(i - model_point->gmxb_deferral_period);
+					if (this->policy_wdlw_year > 0)
+					{
+						withdrawal_cumul += this->gmwb_max_annual_wdl_pct_table->search(this->policy_wdlw_year, 1)/100; //->_to2D_array[this->policy_wdlw_year][0]/100.0;
+					}
+				}
+ 			main_proj_array[t][ITM] = (main_proj_array[t][AV_E_BEF]- withdrawal_cumul * main_proj_array[t][GMWB_IF])/main_proj_array[t][AV_E_BEF];
+		}
+		 else 
+ 			return 0.0;
+		 
+		this->policy_wdlw_year = (int)(this->timing_items[t][POL_YEAR] - model_point->gmxb_deferral_period); // for France Capital ressource MSV withdrawal table 
+		/*  Lapses determination */
+		/* 8 and 0.15 hard code values found in MOSES */
+		 if (int(this->timing_items[t][POL_YEAR]) <= 8)
+ 			{
+				if (main_proj_array[t][ITM] <= 0.15) 
+				{
+					
+					return this->lapse_rates->quick_search(INF, BEF)/100;
+				}
+				else  
+				{
+					return this->lapse_rates->quick_search(SUP, BEF)/100;
+				}
+			} 
+		  
+		 else 
+ 			{
+				if (main_proj_array[t][ITM] <= 0.15)
+				{
+					return this->lapse_rates->quick_search(INF, AFT)/100; 
+				}
+				else
+				{
+					return this->lapse_rates->quick_search(SUP, AFT)/100; 
+				}
+			}	
+	} 
+
+	double guarantee_charge_calculation(int t)
+	{
+		if (t == 1)
+			return 0.0;
+		else
+			return min( main_proj_array[t][AV_B_BEF_BIS] - main_proj_array[t][M_AND_E_FEE] , (this->model_point->gmxb_g_c / 100.0) * main_proj_array[t-1][GMWB_IF]);	
+			
+	}
+
+	void gmxbCharge(int t)
+	{
+		if (this->timing_items[t][POL_YEAR] <= this->product_charging_duration)		
+		{	
+			main_proj_array[t][GMXB_CHARGE] = this->timing_items[t][PRORATA] * guarantee_charge_calculation(t);
+		}
+		else
+		{
+			main_proj_array[t][GMXB_CHARGE] = 0.0;
+		}
+	}
+	
+	void populate_pvs(int t, double **pvs, int curr_shock_number)
+	{
+		if (!this->project_aging_policies)
+		{
+			double discount_factor = 0.;
+			if (t == 0)
+				discount_factor = 1.0;
+			else	
+				discount_factor = this->afmr[this->model_point->elapsed_mths_in_valn_yr + 1][t][MAXIMUM_NUMBER_OF_INDEXES + 1]; 
+			main_proj_array[t][DISCOUNT_FACTOR] = discount_factor;
+
+			if (t==1)
+				pvs[curr_shock_number][BEGINING_ACCOUNT_VALUE] += 
+						main_proj_array[1][AV_B_BEF];
+				
+			pvs[curr_shock_number][PV_GMAB] += 
+									(main_proj_array[t][GMAB_CLAIMS] * discount_factor);
+
+			pvs[curr_shock_number][PV_GMDB] += 
+									(main_proj_array[t][GMDB_CLAIMS] * discount_factor);
+
+			pvs[curr_shock_number][PV_GMWB] += 
+									(main_proj_array[t][GMWB_CLAIMS] * discount_factor);
+
+			pvs[curr_shock_number][PV_GMSB] += 
+									(main_proj_array[t][GMSB_CLAIMS]* discount_factor);
+
+			pvs[curr_shock_number][PV_DEP_FEE] += 
+									(main_proj_array[t][HC_PREM]* discount_factor);
+
+			//Specific to FRANCE
+			pvs[curr_shock_number][PV_GMXB_REAL_CHG] += 
+									(main_proj_array[t][GMXB_CHARGE]* this->afmr[this->model_point->elapsed_mths_in_valn_yr + 1][t-1][MAXIMUM_NUMBER_OF_INDEXES + 1]);
+
+			if (t == 1)
+			{
+				double first_chg = 0.;
+				if (this->gr_symbol == 1) 
+					first_chg = this->model_point->gmwb_ratchet_valn * this->model_point->gmxb_g_c/100.;
+
+				pvs[curr_shock_number][PV_GMXB_REAL_CHG] += first_chg;
+			}
+
+			if (model_point->gmxb_g_c ==0)
+			{
+				pvs[curr_shock_number][PV_GMXB_EHC_CHG] = 0.;
+			}
+			else 
+				pvs[curr_shock_number][PV_GMXB_EHC_CHG] = 
+							(pvs[curr_shock_number][PV_GMXB_REAL_CHG] 
+								* model_point->gmxb_ehc_charge / model_point->gmxb_g_c
+							 );
+		}
+
+	}
+
+
+	void gmwb_specific_end_claims_calculation(int t)
+	{
+		if (this->main_proj_array[t][AV_E_BEF_CLAIMS]- this->gmwb_max_annual_wdl_pct_table->search(this->policy_wdlw_year, 1)/100.0 
+					* this->main_proj_array[t][GMWB_IF] > SMALL_DOUBLE)
+       	{
+			this->main_proj_array[t][GMWB_PAYMENT]= this->gmwb_max_annual_wdl_pct_table->search(this->policy_wdlw_year, 1)/100.0 
+														* this->main_proj_array[t][GMWB_IF];
+
+       	} 
+		else       
+		{  
+		  	double withdrawal_cumul = 0.0; 
+			for (int i = int(this->timing_items[t][POL_YEAR]); i<= this->product_charging_duration; i++)
+ 			{   
+				this->policy_wdlw_year = int(i - this->model_point->gmxb_deferral_period);
+ 				withdrawal_cumul += this->gmwb_max_annual_wdl_pct_table->search(this->policy_wdlw_year, 1)/100.0;  	  	 
+ 	    	}
+		    this->main_proj_array[t][GMWB_PAYMENT] = withdrawal_cumul * this->main_proj_array[t][GMWB_IF];
+
+
+		 }
+
+		this->main_proj_array[t][GMWB_CLAIMS] = max(0.0, this->main_proj_array[t][GMWB_PAYMENT] 
+													- this->main_proj_array[t][AV_E_BEF_CLAIMS]);     
+		
+		if(( this->main_proj_array[t][AV_B_BEF] < SMALL_DOUBLE ) && (t > 1))
+		{
+		   	this->main_proj_array[t][GMWB_PAYMENT] = 0.0;
+		   	this->main_proj_array[t][GMWB_CLAIMS] = 0.0;
+		}    
+	}
+	
+	void project_t(int t, double **pvs, int surr_shock_nb, double lapse_mult, 
+							double mortality_mult, bool shock_av)
+	{
+		this->avBBef(t);
+		if (shock_av)
+		{
+			if(t==1)
+				this->delta_shock(t);
+		}
+		this->avBBefBis(t);
+		this->avB(t);
+		this->avEBef(t);
+		this->init_rates(t, lapse_mult, mortality_mult);
+		this->avEBefClaims(t);
+		this->project_gmwb_bases_payments_claims(t);
+		this->avE(t);
+		this->finish_t(t);
+		this->populate_pvs(t, pvs, surr_shock_nb);
+	}
+};
+

@@ -1,0 +1,28 @@
+﻿Build started 14.01.2015 12:27:29.
+     1>Project "C:\Users\b029735\NoBackupData\10_C++ Code New Version2013(working version)\NEW_SETUP\PROD_CCG_V3(test)\AHS_PARSER\AHS_PARSER.vcxproj" on node 2 (Rebuild target(s)).
+     1>ClCompile:
+         C:\Program Files\Microsoft Visual Studio 11.0\VC\bin\CL.exe /c /Zi /nologo /W3 /WX- /Od /Oi /Oy- /GL /D WIN32 /D _DEBUG /D _LIB /D _UNICODE /D UNICODE /Gm- /EHsc /MTd /GS /Gy /fp:precise /Zc:wchar_t /Zc:forScope /Fo"Debug\\" /Fd"Debug\vc110.pdb" /Gd /TP /analyze- /errorReport:prompt GMXB_Assumption_Table.cpp GMXBExcelXMLReader.cpp GMXBException.cpp GMXBParameters.cpp tinystr.cpp tinyxml.cpp tinyxmlerror.cpp tinyxmlparser.cpp
+         GMXB_Assumption_Table.cpp
+         GMXBExcelXMLReader.cpp
+         GMXBException.cpp
+         GMXBParameters.cpp
+         tinystr.cpp
+         tinyxml.cpp
+         tinyxmlerror.cpp
+         tinyxmlparser.cpp
+       Lib:
+         C:\Program Files\Microsoft Visual Studio 11.0\VC\bin\Lib.exe /OUT:"C:\Users\b029735\NoBackupData\10_C++ Code New Version2013(working version)\NEW_SETUP\PROD_CCG_V3(test)\Debug\AHS_PARSER.lib" /NOLOGO Debug\GMXB_Assumption_Table.obj
+         Debug\GMXBExcelXMLReader.obj
+         Debug\GMXBException.obj
+         Debug\GMXBParameters.obj
+         Debug\tinystr.obj
+         Debug\tinyxml.obj
+         Debug\tinyxmlerror.obj
+         Debug\tinyxmlparser.obj
+         tinyxmlparser.obj : MSIL .netmodule or module compiled with /GL found; restarting link with /LTCG; add /LTCG to the link command line to improve linker performance
+         AHS_PARSER.vcxproj -> C:\Users\b029735\NoBackupData\10_C++ Code New Version2013(working version)\NEW_SETUP\PROD_CCG_V3(test)\Debug\AHS_PARSER.lib
+     1>Done Building Project "C:\Users\b029735\NoBackupData\10_C++ Code New Version2013(working version)\NEW_SETUP\PROD_CCG_V3(test)\AHS_PARSER\AHS_PARSER.vcxproj" (Rebuild target(s)).
+
+Build succeeded.
+
+Time Elapsed 00:00:04.91

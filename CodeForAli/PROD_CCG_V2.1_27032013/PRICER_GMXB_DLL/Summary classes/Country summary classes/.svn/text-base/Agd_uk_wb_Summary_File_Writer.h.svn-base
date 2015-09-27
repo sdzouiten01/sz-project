@@ -1,0 +1,774 @@
+#pragma once
+
+class AGD_UK_WB_Summary_File_Writer : public Summary_File_Writer
+{
+
+public:
+
+	AGD_UK_WB_Summary_File_Writer(int nb_workers, Summary_configuration *summary, 
+					const map<string, vector<string>>& map_scenario_names, 
+					const map<string, vector<string>>& map_index_shock_names,
+					Dispatch_Manager* dispatch_manager_ip):
+	Summary_File_Writer(nb_workers, summary, map_scenario_names, 
+					map_index_shock_names, dispatch_manager_ip)
+	{
+	}
+
+	void write_pol_by_pol(const map<string, vector<Model_Point*>>& mps, 
+											const map<string, map<int,map<int, vector<vector<double>>>>>& index_results_map,
+											const map<string, map<int,map<int, vector<vector<double>>>>>& fund_results_map,
+											const map<string, map<int,map<string, vector<vector<double>>>>>& results_lapse,
+											const map<string, map<int,map<string, vector<vector<double>>>>>& results_mort,
+											const map<string, map<int, vector<vector<double>>>>& results_longevity,
+											const map<string, map<int,map<string, vector<vector<double>>>>>& results_paidup
+											)
+	{
+		for (map<int, vector<vector<int>>>::const_iterator iter_scen_pass_num = this->index_map_shocks.begin(); 
+				iter_scen_pass_num != this->index_map_shocks.end(); ++iter_scen_pass_num)
+		{
+			int scen_pass_n = iter_scen_pass_num->first;
+			vector<vector<int>> index_shock_array = iter_scen_pass_num->second;
+			int index_size_of_shock_array = index_shock_array.size();
+			for(int s = 0; s < index_size_of_shock_array; s++ )
+			{
+				int shock_number = this->get_shock_number(index_shock_array, s, MAX_DELTA_SHOCKS_PER_INDEX, MAXIMUM_NUMBER_OF_INDEXES);
+
+				char pol_by_pol_file_name[MAX_LENGTH_FILE_NAME];
+				sprintf(pol_by_pol_file_name, "%s%s_%d_%d.csv", this->summary_configuration->get_policy_by_policy_file_directory().c_str(), 
+					this->summary_configuration->get_policy_by_policy_file_name().c_str(), scen_pass_n, shock_number);
+
+				ofstream pol_by_pol_file(pol_by_pol_file_name);
+
+				pol_by_pol_file  << "Version,Country,Product,Group,prod_type,POL_ID,1,1,GMXB_G_C,GMXB_H_C,agg_real_charges,agg_claims,agg_dep_fee,PV_GMAB,PV_GMDB,PV_GMIB,PV_GMWB,PV_GMSB,AGE_VALN,DURATION,GMXB_TYPE2,AX_GENDER,PREM_PAID,SPLIT_IDX0,SPLIT_IDX1,SPLIT_IDX2,SPLIT_IDX3,SPLIT_IDX4,SPLIT_IDX5,SPLIT_IDX6,SPLIT_IDX7,SPLIT_IDX8,SPLIT_IDX9,SPLIT_IDX10,SPLIT_IDX11,GMAB1_VALN,GMAB2_VALN,GMDB1_VALN,GMDB2_VALN,GMWB1_VALN,GMWB2_VALN,GMWB_DEF_P,GMWB_RAT_P,GMXB_M_C,GMXB_A_C,AXA_ROLL_R,GMWB_WDL_RATE,";
+				pol_by_pol_file << "DB_IND,JOINT_LIFE_IND,AGE_2,SEX_2,TAX_WRAPPER" << endl;
+
+				// Loop on the products
+				for(map<string, map<int, map<int, vector<vector<double>>>>>::const_iterator iter_products = index_results_map.begin();
+						iter_products != index_results_map.end(); ++iter_products)
+				{
+					for(map<string, vector<Model_Point*>>::const_iterator iter_mp = mps.begin();
+						iter_mp != mps.end(); ++iter_mp)
+					{
+						string pCK = iter_mp->first;
+						vector<Model_Point*> model_points = iter_mp->second;
+						vector<vector<double>> index_pvs = this->get_pvs_vector(pCK, scen_pass_n, shock_number, index_results_map);
+						int number_of_mps = model_points.size();
+						for(int i = 0; i < number_of_mps ; i++)
+						{
+							double agg_real_charges = 0.;
+							double agg_claims = 0.;
+							double agg_dep_fee = 0.;
+							//Model_Point *model_p = model_points[i];
+							Model_Point_AGD_UK_WB *model_p = dynamic_cast<Model_Point_AGD_UK_WB*>(model_points[i]);
+							vector<double> index_pv = index_pvs[i];
+							pol_by_pol_file << "V1.0" << ",";
+							string country_code = pCK.substr(0,pCK.find("_"));
+							pol_by_pol_file << country_code.c_str() << ",";
+							pol_by_pol_file << model_p->product.c_str() << ",";
+							pol_by_pol_file << model_p->group.c_str() << ",";
+							pol_by_pol_file << pCK.c_str() << ",";
+							pol_by_pol_file << model_p->policy_id.c_str() << ",";
+							pol_by_pol_file << "1" << ",";
+							pol_by_pol_file << "1" << ",";
+							pol_by_pol_file << model_p->gmxb_g_c << ",";
+							pol_by_pol_file << model_p->gmxb_ehc_charge << ",";
+							agg_real_charges = index_pv[PV_GMXB_REAL_CHG];
+							agg_claims = index_pv[PV_GMAB]+ index_pv[PV_GMDB]+ index_pv[PV_GMIB] + index_pv[PV_GMWB] + index_pv[PV_GMSB];
+							agg_dep_fee = index_pv[PV_DEP_FEE];
+							pol_by_pol_file << setprecision(15) << agg_real_charges << ",";		
+							pol_by_pol_file << setprecision(15) << agg_claims << ",";				
+							pol_by_pol_file << setprecision(15) << agg_dep_fee << ",";
+							pol_by_pol_file << setprecision(15) << index_pv[PV_GMAB] << ",";
+							pol_by_pol_file << setprecision(15) << index_pv[PV_GMDB] << ",";
+							pol_by_pol_file << setprecision(15) << index_pv[PV_GMIB] << ",";
+							pol_by_pol_file << setprecision(15) << index_pv[PV_GMWB] << ",";
+							pol_by_pol_file << setprecision(15) << index_pv[PV_GMSB] << ",";
+							pol_by_pol_file << model_p->age_valn << ",";
+							pol_by_pol_file << model_p->duration << ",";
+							pol_by_pol_file << model_p->gmxb_type2 << ",";
+							pol_by_pol_file << model_p->sex << ",";
+							pol_by_pol_file << model_p->prem_paid << ",";
+							pol_by_pol_file << model_p->av_split_prop_array[0] << ",";
+							pol_by_pol_file << model_p->av_split_prop_array[1] << ",";
+							pol_by_pol_file << model_p->av_split_prop_array[2] << ",";
+							pol_by_pol_file << model_p->av_split_prop_array[3] << ",";
+							pol_by_pol_file << model_p->av_split_prop_array[4] << ",";
+							pol_by_pol_file << model_p->av_split_prop_array[5] << ",";
+							pol_by_pol_file << model_p->av_split_prop_array[6] << ",";
+							pol_by_pol_file << model_p->av_split_prop_array[7] << ",";
+							pol_by_pol_file << model_p->av_split_prop_array[8] << ",";
+							pol_by_pol_file << model_p->av_split_prop_array[9] << ",";
+							pol_by_pol_file << model_p->av_split_prop_array[10] << ",";
+							pol_by_pol_file << model_p->av_split_prop_array[11] << ",";
+							pol_by_pol_file << model_p->gmab_ratchet_valn << ",";
+							pol_by_pol_file << model_p->gmab_rollup_valn << ",";
+							pol_by_pol_file << model_p->gmdb_ratchet_valn << ",";
+							pol_by_pol_file << model_p->gmdb_rollup_valn << ",";
+							pol_by_pol_file << model_p->gmwb_ratchet_valn << ",";
+							pol_by_pol_file << model_p->gmwb_rollup_valn  << ",";
+							pol_by_pol_file << model_p->gmxb_deferral_period << ",";
+							pol_by_pol_file << model_p->gmwb_ratchet_period << ",";
+							pol_by_pol_file << model_p->gmxb_m_c << ",";
+							pol_by_pol_file << model_p->gmxb_a_c << ",";
+							pol_by_pol_file << model_p->axa_roll_r << ",";
+							pol_by_pol_file << model_p->gmwb_wdl_rate << ",";
+							pol_by_pol_file << model_p->db_indicator << ",";
+							pol_by_pol_file << model_p->joint_life_ind << ",";
+							pol_by_pol_file << model_p->age_valn_2 << ",";
+							pol_by_pol_file << model_p->sex_2 << ",";
+							pol_by_pol_file << model_p->tax_wrapper << ",";
+							pol_by_pol_file << endl;
+						}
+				}
+			}
+			pol_by_pol_file.close();
+			}
+		}
+
+		// fund 
+		for (map<int, vector<vector<int>>>::const_iterator iter_scen_pass_num = this->fund_map_shocks.begin(); 
+				iter_scen_pass_num != this->fund_map_shocks.end(); ++iter_scen_pass_num)
+		{
+			int scen_pass_n = iter_scen_pass_num->first;
+			vector<vector<int>> fund_shock_array = iter_scen_pass_num->second;
+			int fund_size_of_shock_array = fund_shock_array.size();
+			int number_of_funds = 0;
+			if (fund_size_of_shock_array > 0)
+				number_of_funds = fund_shock_array[0].size();	
+
+
+			for(int s = 0; s < fund_size_of_shock_array; s++ )
+			{
+				int shock_number = this->get_shock_number(fund_shock_array, s, MAX_DELTA_SHOCKS_PER_INDEX, number_of_funds);
+
+				char pol_by_pol_file_name[MAX_LENGTH_FILE_NAME];
+				sprintf(pol_by_pol_file_name, "%s%s_fund_%d_%d.csv", this->summary_configuration->get_policy_by_policy_file_directory().c_str(), 
+					this->summary_configuration->get_policy_by_policy_file_name().c_str(), scen_pass_n, shock_number);
+
+				ofstream pol_by_pol_file(pol_by_pol_file_name);
+
+				pol_by_pol_file  << "Version,Country,Product,Group,prod_type,POL_ID,1,1,GMXB_G_C,GMXB_H_C,agg_real_charges,agg_claims,agg_dep_fee,PV_GMAB,PV_GMDB,PV_GMIB,PV_GMWB,PV_GMSB,AGE_VALN,DURATION,GMXB_TYPE2,AX_GENDER,PREM_PAID,SPLIT_IDX0,SPLIT_IDX1,SPLIT_IDX2,SPLIT_IDX3,SPLIT_IDX4,SPLIT_IDX5,SPLIT_IDX6,SPLIT_IDX7,SPLIT_IDX8,SPLIT_IDX9,SPLIT_IDX10,SPLIT_IDX11,GMAB1_VALN,GMAB2_VALN,GMDB1_VALN,GMDB2_VALN,GMWB1_VALN,GMWB2_VALN,GMWB_DEF_P,GMWB_RAT_P,GMXB_M_C,GMXB_A_C,AXA_ROLL_R,GMWB_WDL_RATE,";
+				pol_by_pol_file << "DB_IND,JOINT_LIFE_IND,AGE_2,SEX_2,TAX_WRAPPER" << endl;
+				// Loop on the products
+				for(map<string, map<int, map<int, vector<vector<double>>>>>::const_iterator iter_products = fund_results_map.begin();
+						iter_products != fund_results_map.end(); ++iter_products)
+				{
+					// string pCK = iter_products->first;
+					//vector<vector<double>> fund_pvs = this->get_pvs_vector(pCK, scen_pass_n, shock_number, fund_results_map);
+
+					for(map<string, vector<Model_Point*>>::const_iterator iter_mp = mps.begin();
+						iter_mp != mps.end(); ++iter_mp)
+					{
+						string pCK = iter_mp->first;
+						vector<Model_Point*> model_points = iter_mp->second;
+						vector<vector<double>> fund_pvs = this->get_pvs_vector(pCK, scen_pass_n, shock_number, fund_results_map);
+						int number_of_mps = model_points.size();
+						for(int i = 0; i < number_of_mps ; i++)
+						{
+							double agg_real_charges = 0.;
+							double agg_claims = 0.;
+							double agg_dep_fee = 0.;
+						
+							Model_Point_AGD_UK_WB *model_p = dynamic_cast<Model_Point_AGD_UK_WB*>(model_points[i]);
+
+							vector<double> fund_pv = fund_pvs[i];
+							pol_by_pol_file << "V1.0" << ",";
+							string country_code = pCK.substr(0,pCK.find("_"));
+							pol_by_pol_file << country_code.c_str() << ",";
+							pol_by_pol_file << model_p->product.c_str() << ",";
+							pol_by_pol_file << model_p->group.c_str() << ",";
+							pol_by_pol_file << pCK.c_str() << ",";
+							pol_by_pol_file << model_p->policy_id.c_str() << ",";
+							pol_by_pol_file << "1" << ",";
+							pol_by_pol_file << "1" << ",";
+							pol_by_pol_file << model_p->gmxb_g_c << ",";
+							pol_by_pol_file << model_p->gmxb_ehc_charge << ",";
+							agg_real_charges = fund_pv[PV_GMXB_REAL_CHG];
+							agg_claims = fund_pv[PV_GMAB]+ fund_pv[PV_GMDB]+ fund_pv[PV_GMIB] + fund_pv[PV_GMWB] + fund_pv[PV_GMSB];
+							agg_dep_fee = fund_pv[PV_DEP_FEE];
+							pol_by_pol_file << setprecision(15) << agg_real_charges << ",";		
+							pol_by_pol_file << setprecision(15) << agg_claims << ",";				
+							pol_by_pol_file << setprecision(15) << agg_dep_fee << ",";
+							pol_by_pol_file << setprecision(15) << fund_pv[PV_GMAB] << ",";
+							pol_by_pol_file << setprecision(15) << fund_pv[PV_GMDB] << ",";
+							pol_by_pol_file << setprecision(15) << fund_pv[PV_GMIB] << ",";
+							pol_by_pol_file << setprecision(15) << fund_pv[PV_GMWB] << ",";
+							pol_by_pol_file << setprecision(15) << fund_pv[PV_GMSB] << ",";
+							pol_by_pol_file << model_p->age_valn << ",";
+							pol_by_pol_file << model_p->duration << ",";
+							pol_by_pol_file << model_p->gmxb_type2 << ",";
+							pol_by_pol_file << model_p->sex << ",";
+							pol_by_pol_file << model_p->prem_paid << ",";
+							pol_by_pol_file << model_p->av_split_prop_array[0] << ",";
+							pol_by_pol_file << model_p->av_split_prop_array[1] << ",";
+							pol_by_pol_file << model_p->av_split_prop_array[2] << ",";
+							pol_by_pol_file << model_p->av_split_prop_array[3] << ",";
+							pol_by_pol_file << model_p->av_split_prop_array[4] << ",";
+							pol_by_pol_file << model_p->av_split_prop_array[5] << ",";
+							pol_by_pol_file << model_p->av_split_prop_array[6] << ",";
+							pol_by_pol_file << model_p->av_split_prop_array[7] << ",";
+							pol_by_pol_file << model_p->av_split_prop_array[8] << ",";
+							pol_by_pol_file << model_p->av_split_prop_array[9] << ",";
+							pol_by_pol_file << model_p->av_split_prop_array[10] << ",";
+							pol_by_pol_file << model_p->av_split_prop_array[11] << ",";
+							pol_by_pol_file << model_p->gmab_ratchet_valn << ",";
+							pol_by_pol_file << model_p->gmab_rollup_valn << ",";
+							pol_by_pol_file << model_p->gmdb_ratchet_valn << ",";
+							pol_by_pol_file << model_p->gmdb_rollup_valn << ",";
+							pol_by_pol_file << model_p->gmwb_ratchet_valn << ",";
+							pol_by_pol_file << model_p->gmwb_rollup_valn  << ",";
+							pol_by_pol_file << model_p->gmxb_deferral_period << ",";
+							pol_by_pol_file << model_p->gmwb_ratchet_period << ",";
+							pol_by_pol_file << model_p->gmxb_m_c << ",";
+							pol_by_pol_file << model_p->gmxb_a_c << ",";
+							pol_by_pol_file << model_p->axa_roll_r << ",";
+							pol_by_pol_file << model_p->gmwb_wdl_rate << ",";
+							pol_by_pol_file << model_p->db_indicator << ",";
+							pol_by_pol_file << model_p->joint_life_ind << ",";
+							pol_by_pol_file << model_p->age_valn_2 << ",";
+							pol_by_pol_file << model_p->sex_2 << ",";
+							pol_by_pol_file << model_p->tax_wrapper << ",";
+							pol_by_pol_file << endl;
+						}
+					}
+				}
+				pol_by_pol_file.close();
+			}
+		}
+
+		// lapse
+		vector<Product_configuration> v_p_c = this->summary_configuration->get_product_configurations();
+		if (v_p_c.size() > 0)
+		{
+			for(unsigned int pC = 0; pC < v_p_c.size(); pC++)
+			{
+				Product_configuration p = v_p_c[pC];
+				vector<Scenario_configuration> v_scen_conf = p.get_scenario_list();
+				for(unsigned int sc_n = 0; sc_n < v_scen_conf.size(); sc_n++)
+				{
+					Scenario_configuration s = v_scen_conf[sc_n];
+					vector<GMXB_Assumption_Table *> v_lapse = s.get_lapse_mult();
+					int scen_pass_n = s.get_scenario_pass_number();
+					for (unsigned int l = 0 ; l < v_lapse.size(); l++)
+					//if (v_lapse.size() > 0)
+					{
+					GMXB_Assumption_Table *tab = v_lapse[l];
+
+					string sheet_name = tab->get_sheet_name();
+					
+					char pol_by_pol_file_name[MAX_LENGTH_FILE_NAME];
+					
+					sprintf(pol_by_pol_file_name, "%s%s_%d_%s.csv", this->summary_configuration->get_policy_by_policy_file_directory().c_str(), 
+						this->summary_configuration->get_policy_by_policy_file_name().c_str(), scen_pass_n, tab->get_sheet_name().c_str());
+
+					ofstream pol_by_pol_file(pol_by_pol_file_name);
+					pol_by_pol_file  << "Version,Country,Product,Group,prod_type,POL_ID,1,1,GMXB_G_C,GMXB_H_C,agg_real_charges,agg_claims,agg_dep_fee,PV_GMAB,PV_GMDB,PV_GMIB,PV_GMWB,PV_GMSB,AGE_VALN,DURATION,GMXB_TYPE2,AX_GENDER,PREM_PAID,SPLIT_IDX0,SPLIT_IDX1,SPLIT_IDX2,SPLIT_IDX3,SPLIT_IDX4,SPLIT_IDX5,SPLIT_IDX6,SPLIT_IDX7,SPLIT_IDX8,SPLIT_IDX9,SPLIT_IDX10,SPLIT_IDX11,GMAB1_VALN,GMAB2_VALN,GMDB1_VALN,GMDB2_VALN,GMWB1_VALN,GMWB2_VALN,GMWB_DEF_P,GMWB_RAT_P,GMXB_M_C,GMXB_A_C,AXA_ROLL_R,GMWB_WDL_RATE,";
+					pol_by_pol_file << "DB_IND,JOINT_LIFE_IND,AGE_2,SEX_2,TAX_WRAPPER" << endl;
+					
+					for(map<string, vector<Model_Point*>>::const_iterator iter_mp = mps.begin();
+						iter_mp != mps.end(); ++iter_mp)
+					{
+						string pCK = iter_mp->first;
+						vector<Model_Point*> model_points = iter_mp->second;
+
+						vector<vector<double>> pvs;
+
+						for(map<string, map<int,map<string, vector<vector<double>>>>>::const_iterator iter_pvs = results_lapse.begin();
+							iter_pvs != results_lapse.end(); ++iter_pvs)
+						{
+							string prod_code_k = iter_pvs->first;
+							if (prod_code_k == pCK)
+							{
+								map<int,map<string, vector<vector<double>>>> map_scen_pass_num = iter_pvs->second;
+								for(map<int,map<string, vector<vector<double>>>>::const_iterator iter_scen_pass_num = map_scen_pass_num.begin();
+									iter_scen_pass_num != map_scen_pass_num.end(); ++iter_scen_pass_num)
+									{
+										if (iter_scen_pass_num->first == scen_pass_n)
+										{
+											map<string, vector<vector<double>>> map_lapses = iter_scen_pass_num->second;
+
+											for (map<string, vector<vector<double>>>::const_iterator iter_lapse = map_lapses.begin();
+												iter_lapse != map_lapses.end(); ++iter_lapse)
+											{
+												string s_name = iter_lapse->first;
+												if (sheet_name == s_name)
+												{
+													pvs = iter_lapse->second;
+												}
+											}
+										}
+									}
+							}
+						}
+						int number_of_mps = model_points.size();
+						for(int i = 0; i < number_of_mps ; i++)
+						{
+							double agg_real_charges = 0.;
+							double agg_claims = 0.;
+							double agg_dep_fee = 0.;
+							Model_Point_AGD_UK_WB *model_p = dynamic_cast<Model_Point_AGD_UK_WB*>(model_points[i]);
+							vector<double> pv = pvs[i];
+							pol_by_pol_file << "V1.0" << ",";
+							string country_code = pCK.substr(0,pCK.find("_"));
+							pol_by_pol_file << country_code.c_str() << ",";
+							pol_by_pol_file << model_p->product.c_str() << ",";
+							pol_by_pol_file << model_p->group.c_str() << ",";
+							pol_by_pol_file << pCK.c_str() << ",";
+							pol_by_pol_file << model_p->policy_id.c_str() << ",";
+							pol_by_pol_file << "1" << ",";
+							pol_by_pol_file << "1" << ",";
+							pol_by_pol_file << model_p->gmxb_g_c << ",";
+							pol_by_pol_file << model_p->gmxb_ehc_charge << ",";
+							agg_real_charges = pv[PV_GMXB_REAL_CHG];
+							agg_claims = pv[PV_GMAB]+ pv[PV_GMDB]+ pv[PV_GMIB] + pv[PV_GMWB] + pv[PV_GMSB];
+							agg_dep_fee = pv[PV_DEP_FEE];
+							pol_by_pol_file << setprecision(15) << agg_real_charges << ",";		
+							pol_by_pol_file << setprecision(15) << agg_claims << ",";				
+							pol_by_pol_file << setprecision(15) << agg_dep_fee << ",";
+							pol_by_pol_file << setprecision(15) << pv[PV_GMAB] << ",";
+							pol_by_pol_file << setprecision(15) << pv[PV_GMDB] << ",";
+							pol_by_pol_file << setprecision(15) << pv[PV_GMIB] << ",";
+							pol_by_pol_file << setprecision(15) << pv[PV_GMWB] << ",";
+							pol_by_pol_file << setprecision(15) << pv[PV_GMSB] << ",";
+							pol_by_pol_file << model_p->age_valn << ",";
+							pol_by_pol_file << model_p->duration << ",";
+							pol_by_pol_file << model_p->gmxb_type2 << ",";
+							pol_by_pol_file << model_p->sex << ",";
+							pol_by_pol_file << model_p->prem_paid << ",";
+							pol_by_pol_file << model_p->av_split_prop_array[0] << ",";
+							pol_by_pol_file << model_p->av_split_prop_array[1] << ",";
+							pol_by_pol_file << model_p->av_split_prop_array[2] << ",";
+							pol_by_pol_file << model_p->av_split_prop_array[3] << ",";
+							pol_by_pol_file << model_p->av_split_prop_array[4] << ",";
+							pol_by_pol_file << model_p->av_split_prop_array[5] << ",";
+							pol_by_pol_file << model_p->av_split_prop_array[6] << ",";
+							pol_by_pol_file << model_p->av_split_prop_array[7] << ",";
+							pol_by_pol_file << model_p->av_split_prop_array[8] << ",";
+							pol_by_pol_file << model_p->av_split_prop_array[9] << ",";
+							pol_by_pol_file << model_p->av_split_prop_array[10] << ",";
+							pol_by_pol_file << model_p->av_split_prop_array[11] << ",";
+							pol_by_pol_file << model_p->gmab_ratchet_valn << ",";
+							pol_by_pol_file << model_p->gmab_rollup_valn << ",";
+							pol_by_pol_file << model_p->gmdb_ratchet_valn << ",";
+							pol_by_pol_file << model_p->gmdb_rollup_valn << ",";
+							pol_by_pol_file << model_p->gmwb_ratchet_valn << ",";
+							pol_by_pol_file << model_p->gmwb_rollup_valn  << ",";
+							pol_by_pol_file << model_p->gmxb_deferral_period << ",";
+							pol_by_pol_file << model_p->gmwb_ratchet_period << ",";
+							pol_by_pol_file << model_p->gmxb_m_c << ",";
+							pol_by_pol_file << model_p->gmxb_a_c << ",";
+							pol_by_pol_file << model_p->axa_roll_r << ",";
+							pol_by_pol_file << model_p->gmwb_wdl_rate << ",";
+							pol_by_pol_file << model_p->db_indicator << ",";
+							pol_by_pol_file << model_p->joint_life_ind << ",";
+							pol_by_pol_file << model_p->age_valn_2 << ",";
+							pol_by_pol_file << model_p->sex_2 << ",";
+							pol_by_pol_file << model_p->tax_wrapper << ",";
+							pol_by_pol_file << endl;
+						}
+					  }
+					pol_by_pol_file.close();
+
+					}
+				}
+			}
+		}
+
+		//mortality
+		if (v_p_c.size() > 0)
+		{
+			for(unsigned int pC = 0; pC < v_p_c.size(); pC++)
+			{
+				Product_configuration p = v_p_c[pC];
+				vector<Scenario_configuration> v_scen_conf = p.get_scenario_list();
+				for(unsigned int sc_n = 0; sc_n < v_scen_conf.size(); sc_n++)
+				{
+					Scenario_configuration s = v_scen_conf[sc_n];
+					vector<GMXB_Assumption_Table *> v_mort = s.get_mortality_mult();
+					int scen_pass_n = s.get_scenario_pass_number();
+					for(unsigned int m = 0; m < v_mort.size(); m++)
+					// if (v_mort.size() > 0)
+					{
+					GMXB_Assumption_Table *tab = v_mort[m];
+
+					string sheet_name = tab->get_sheet_name();
+					
+					char pol_by_pol_file_name[MAX_LENGTH_FILE_NAME];
+					
+					sprintf(pol_by_pol_file_name, "%s%s_%d_%s.csv", this->summary_configuration->get_policy_by_policy_file_directory().c_str(), 
+						this->summary_configuration->get_policy_by_policy_file_name().c_str(), scen_pass_n, tab->get_sheet_name().c_str());
+
+					ofstream pol_by_pol_file(pol_by_pol_file_name);
+					pol_by_pol_file  << "Version,Country,Product,Group,prod_type,POL_ID,1,1,GMXB_G_C,GMXB_H_C,agg_real_charges,agg_claims,agg_dep_fee,PV_GMAB,PV_GMDB,PV_GMIB,PV_GMWB,PV_GMSB,AGE_VALN,DURATION,GMXB_TYPE2,AX_GENDER,PREM_PAID,SPLIT_IDX0,SPLIT_IDX1,SPLIT_IDX2,SPLIT_IDX3,SPLIT_IDX4,SPLIT_IDX5,SPLIT_IDX6,SPLIT_IDX7,SPLIT_IDX8,SPLIT_IDX9,SPLIT_IDX10,SPLIT_IDX11,GMAB1_VALN,GMAB2_VALN,GMDB1_VALN,GMDB2_VALN,GMWB1_VALN,GMWB2_VALN,GMWB_DEF_P,GMWB_RAT_P,GMXB_M_C,GMXB_A_C,AXA_ROLL_R,GMWB_WDL_RATE,";
+					pol_by_pol_file << "DB_IND,JOINT_LIFE_IND,AGE_2,SEX_2,TAX_WRAPPER" << endl;
+					
+					for(map<string, vector<Model_Point*>>::const_iterator iter_mp = mps.begin();
+						iter_mp != mps.end(); ++iter_mp)
+					{
+						string pCK = iter_mp->first;
+						vector<Model_Point*> model_points = iter_mp->second;
+
+						vector<vector<double>> pvs;
+
+						for(map<string, map<int,map<string, vector<vector<double>>>>>::const_iterator iter_pvs = results_mort.begin();
+							iter_pvs != results_mort.end(); ++iter_pvs)
+						{
+							string prod_code_k = iter_pvs->first;
+							if (prod_code_k == pCK)
+							{
+								map<int,map<string, vector<vector<double>>>> map_scen_pass_num = iter_pvs->second;
+								for(map<int,map<string, vector<vector<double>>>>::const_iterator iter_scen_pass_num = map_scen_pass_num.begin();
+									iter_scen_pass_num != map_scen_pass_num.end(); ++iter_scen_pass_num)
+									{
+										if (iter_scen_pass_num->first == scen_pass_n)
+										{
+											map<string, vector<vector<double>>> map_morts = iter_scen_pass_num->second;
+
+											for (map<string, vector<vector<double>>>::const_iterator iter_mort = map_morts.begin();
+												iter_mort != map_morts.end(); ++iter_mort)
+											{
+												string s_name = iter_mort->first;
+												if (sheet_name == s_name)
+												{
+													pvs = iter_mort->second;
+												}
+											}
+										}
+									}
+							}
+						}
+						int number_of_mps = model_points.size();
+						for(int i = 0; i < number_of_mps ; i++)
+						{
+							double agg_real_charges = 0.;
+							double agg_claims = 0.;
+							double agg_dep_fee = 0.;
+							Model_Point_AGD_UK_WB *model_p = dynamic_cast<Model_Point_AGD_UK_WB*>(model_points[i]);
+							vector<double> pv = pvs[i];
+							pol_by_pol_file << "V1.0" << ",";
+							string country_code = pCK.substr(0,pCK.find("_"));
+							pol_by_pol_file << country_code.c_str() << ",";
+							pol_by_pol_file << model_p->product.c_str() << ",";
+							pol_by_pol_file << model_p->group.c_str() << ",";
+							pol_by_pol_file << pCK.c_str() << ",";
+							pol_by_pol_file << model_p->policy_id.c_str() << ",";
+							pol_by_pol_file << "1" << ",";
+							pol_by_pol_file << "1" << ",";
+							pol_by_pol_file << model_p->gmxb_g_c << ",";
+							pol_by_pol_file << model_p->gmxb_ehc_charge << ",";
+							agg_real_charges = pv[PV_GMXB_REAL_CHG];
+							agg_claims = pv[PV_GMAB]+ pv[PV_GMDB]+ pv[PV_GMIB] + pv[PV_GMWB] + pv[PV_GMSB];
+							agg_dep_fee = pv[PV_DEP_FEE];
+							pol_by_pol_file << setprecision(15) << agg_real_charges << ",";		
+							pol_by_pol_file << setprecision(15) << agg_claims << ",";				
+							pol_by_pol_file << setprecision(15) << agg_dep_fee << ",";
+							pol_by_pol_file << setprecision(15) << pv[PV_GMAB] << ",";
+							pol_by_pol_file << setprecision(15) << pv[PV_GMDB] << ",";
+							pol_by_pol_file << setprecision(15) << pv[PV_GMIB] << ",";
+							pol_by_pol_file << setprecision(15) << pv[PV_GMWB] << ",";
+							pol_by_pol_file << setprecision(15) << pv[PV_GMSB] << ",";
+							pol_by_pol_file << model_p->age_valn << ",";
+							pol_by_pol_file << model_p->duration << ",";
+							pol_by_pol_file << model_p->gmxb_type2 << ",";
+							pol_by_pol_file << model_p->sex << ",";
+							pol_by_pol_file << model_p->prem_paid << ",";
+							pol_by_pol_file << model_p->av_split_prop_array[0] << ",";
+							pol_by_pol_file << model_p->av_split_prop_array[1] << ",";
+							pol_by_pol_file << model_p->av_split_prop_array[2] << ",";
+							pol_by_pol_file << model_p->av_split_prop_array[3] << ",";
+							pol_by_pol_file << model_p->av_split_prop_array[4] << ",";
+							pol_by_pol_file << model_p->av_split_prop_array[5] << ",";
+							pol_by_pol_file << model_p->av_split_prop_array[6] << ",";
+							pol_by_pol_file << model_p->av_split_prop_array[7] << ",";
+							pol_by_pol_file << model_p->av_split_prop_array[8] << ",";
+							pol_by_pol_file << model_p->av_split_prop_array[9] << ",";
+							pol_by_pol_file << model_p->av_split_prop_array[10] << ",";
+							pol_by_pol_file << model_p->av_split_prop_array[11] << ",";
+							pol_by_pol_file << model_p->gmab_ratchet_valn << ",";
+							pol_by_pol_file << model_p->gmab_rollup_valn << ",";
+							pol_by_pol_file << model_p->gmdb_ratchet_valn << ",";
+							pol_by_pol_file << model_p->gmdb_rollup_valn << ",";
+							pol_by_pol_file << model_p->gmwb_ratchet_valn << ",";
+							pol_by_pol_file << model_p->gmwb_rollup_valn  << ",";
+							pol_by_pol_file << model_p->gmxb_deferral_period << ",";
+							pol_by_pol_file << model_p->gmwb_ratchet_period << ",";
+							pol_by_pol_file << model_p->gmxb_m_c << ",";
+							pol_by_pol_file << model_p->gmxb_a_c << ",";
+							pol_by_pol_file << model_p->axa_roll_r << ",";
+							pol_by_pol_file << model_p->gmwb_wdl_rate << ",";
+							pol_by_pol_file << model_p->db_indicator << ",";
+							pol_by_pol_file << model_p->joint_life_ind << ",";
+							pol_by_pol_file << model_p->age_valn_2 << ",";
+							pol_by_pol_file << model_p->sex_2 << ",";
+							pol_by_pol_file << model_p->tax_wrapper << ",";
+							pol_by_pol_file << endl;
+						}
+					  }
+					pol_by_pol_file.close();
+
+					}
+				}
+			}
+		}
+		//Paid up
+		if (v_p_c.size() > 0)
+		{
+			for(unsigned int pC = 0; pC < v_p_c.size(); pC++)
+			{
+				Product_configuration p = v_p_c[pC];
+				vector<Scenario_configuration> v_scen_conf = p.get_scenario_list();
+				for(unsigned int sc_n = 0; sc_n < v_scen_conf.size(); sc_n++)
+				{
+					Scenario_configuration s = v_scen_conf[sc_n];
+					vector<GMXB_Assumption_Table *> v_paidup = s.get_paidup_mult();
+					int scen_pass_n = s.get_scenario_pass_number();
+					for (unsigned int l = 0 ; l < v_paidup.size(); l++)
+					
+					{
+					GMXB_Assumption_Table *tab = v_paidup[l];
+
+					string sheet_name = tab->get_sheet_name();
+					
+					char pol_by_pol_file_name[MAX_LENGTH_FILE_NAME];
+					
+					sprintf(pol_by_pol_file_name, "%s%s_%d_%s.csv", this->summary_configuration->get_policy_by_policy_file_directory().c_str(), 
+						this->summary_configuration->get_policy_by_policy_file_name().c_str(), scen_pass_n, tab->get_sheet_name().c_str());
+
+					ofstream pol_by_pol_file(pol_by_pol_file_name);
+					pol_by_pol_file  << "Version,Country,Product,Group,prod_type,POL_ID,1,1,GMXB_G_C,GMXB_H_C,agg_real_charges,agg_claims,agg_dep_fee,PV_GMAB,PV_GMDB,PV_GMIB,PV_GMWB,PV_GMSB,AGE_VALN,DURATION,GMXB_TYPE2,AX_GENDER,PREM_PAID,SPLIT_IDX0,SPLIT_IDX1,SPLIT_IDX2,SPLIT_IDX3,SPLIT_IDX4,SPLIT_IDX5,SPLIT_IDX6,SPLIT_IDX7,SPLIT_IDX8,SPLIT_IDX9,SPLIT_IDX10,SPLIT_IDX11,GMAB1_VALN,GMAB2_VALN,GMDB1_VALN,GMDB2_VALN,GMWB1_VALN,GMWB2_VALN,GMWB_DEF_P,GMWB_RAT_P,GMXB_M_C,GMXB_A_C,AXA_ROLL_R,GMWB_WDL_RATE,";
+					pol_by_pol_file << "DB_IND,JOINT_LIFE_IND,AGE_2,SEX_2,TAX_WRAPPER" << endl;
+
+					for(map<string, vector<Model_Point*>>::const_iterator iter_mp = mps.begin();
+						iter_mp != mps.end(); ++iter_mp)
+					{
+						string pCK = iter_mp->first;
+						vector<Model_Point*> model_points = iter_mp->second;
+
+						vector<vector<double>> pvs;
+
+						for(map<string, map<int,map<string, vector<vector<double>>>>>::const_iterator iter_pvs = results_paidup.begin();
+							iter_pvs != results_paidup.end(); ++iter_pvs)
+						{
+							string prod_code_k = iter_pvs->first;
+							if (prod_code_k == pCK)
+							{
+								map<int,map<string, vector<vector<double>>>> map_scen_pass_num = iter_pvs->second;
+								for(map<int,map<string, vector<vector<double>>>>::const_iterator iter_scen_pass_num = map_scen_pass_num.begin();
+									iter_scen_pass_num != map_scen_pass_num.end(); ++iter_scen_pass_num)
+									{
+										if (iter_scen_pass_num->first == scen_pass_n)
+										{
+											map<string, vector<vector<double>>> map_paidup = iter_scen_pass_num->second;
+
+											for (map<string, vector<vector<double>>>::const_iterator iter_paidup = map_paidup.begin();
+												iter_paidup != map_paidup.end(); ++iter_paidup)
+											{
+												string s_name = iter_paidup->first;
+												if (sheet_name == s_name)
+												{
+													pvs = iter_paidup->second;
+												}
+											}
+										}
+									}
+							}
+						}
+						int number_of_mps = model_points.size();
+						for(int i = 0; i < number_of_mps ; i++)
+						{
+							double agg_real_charges = 0.;
+							double agg_claims = 0.;
+							double agg_dep_fee = 0.;
+							Model_Point_AGD_UK_WB *model_p = dynamic_cast<Model_Point_AGD_UK_WB*>(model_points[i]);
+							vector<double> pv = pvs[i];
+							pol_by_pol_file << "V1.0" << ",";
+							string country_code = pCK.substr(0,pCK.find("_"));
+							pol_by_pol_file << country_code.c_str() << ",";
+							pol_by_pol_file << model_p->product.c_str() << ",";
+							pol_by_pol_file << model_p->group.c_str() << ",";
+							pol_by_pol_file << pCK.c_str() << ",";
+							pol_by_pol_file << model_p->policy_id.c_str() << ",";
+							pol_by_pol_file << "1" << ",";
+							pol_by_pol_file << "1" << ",";
+							pol_by_pol_file << model_p->gmxb_g_c << ",";
+							pol_by_pol_file << model_p->gmxb_ehc_charge << ",";
+							agg_real_charges = pv[PV_GMXB_REAL_CHG];
+							agg_claims = pv[PV_GMAB]+ pv[PV_GMDB]+ pv[PV_GMIB] + pv[PV_GMWB] + pv[PV_GMSB];
+							agg_dep_fee = pv[PV_DEP_FEE];
+							pol_by_pol_file << setprecision(15) << agg_real_charges << ",";		
+							pol_by_pol_file << setprecision(15) << agg_claims << ",";				
+							pol_by_pol_file << setprecision(15) << agg_dep_fee << ",";
+							pol_by_pol_file << setprecision(15) << pv[PV_GMAB] << ",";
+							pol_by_pol_file << setprecision(15) << pv[PV_GMDB] << ",";
+							pol_by_pol_file << setprecision(15) << pv[PV_GMIB] << ",";
+							pol_by_pol_file << setprecision(15) << pv[PV_GMWB] << ",";
+							pol_by_pol_file << setprecision(15) << pv[PV_GMSB] << ",";
+							pol_by_pol_file << model_p->age_valn << ",";
+							pol_by_pol_file << model_p->duration << ",";
+							pol_by_pol_file << model_p->gmxb_type2 << ",";
+							pol_by_pol_file << model_p->sex << ",";
+							pol_by_pol_file << model_p->prem_paid << ",";
+							pol_by_pol_file << model_p->av_split_prop_array[0] << ",";
+							pol_by_pol_file << model_p->av_split_prop_array[1] << ",";
+							pol_by_pol_file << model_p->av_split_prop_array[2] << ",";
+							pol_by_pol_file << model_p->av_split_prop_array[3] << ",";
+							pol_by_pol_file << model_p->av_split_prop_array[4] << ",";
+							pol_by_pol_file << model_p->av_split_prop_array[5] << ",";
+							pol_by_pol_file << model_p->av_split_prop_array[6] << ",";
+							pol_by_pol_file << model_p->av_split_prop_array[7] << ",";
+							pol_by_pol_file << model_p->av_split_prop_array[8] << ",";
+							pol_by_pol_file << model_p->av_split_prop_array[9] << ",";
+							pol_by_pol_file << model_p->av_split_prop_array[10] << ",";
+							pol_by_pol_file << model_p->av_split_prop_array[11] << ",";
+							pol_by_pol_file << model_p->gmab_ratchet_valn << ",";
+							pol_by_pol_file << model_p->gmab_rollup_valn << ",";
+							pol_by_pol_file << model_p->gmdb_ratchet_valn << ",";
+							pol_by_pol_file << model_p->gmdb_rollup_valn << ",";
+							pol_by_pol_file << model_p->gmwb_ratchet_valn << ",";
+							pol_by_pol_file << model_p->gmwb_rollup_valn  << ",";
+							pol_by_pol_file << model_p->gmxb_deferral_period << ",";
+							pol_by_pol_file << model_p->gmwb_ratchet_period << ",";
+							pol_by_pol_file << model_p->gmxb_m_c << ",";
+							pol_by_pol_file << model_p->gmxb_a_c << ",";
+							pol_by_pol_file << model_p->axa_roll_r << ",";
+							pol_by_pol_file << model_p->gmwb_wdl_rate << ",";
+							pol_by_pol_file << model_p->db_indicator << ",";
+							pol_by_pol_file << model_p->joint_life_ind << ",";
+							pol_by_pol_file << model_p->age_valn_2 << ",";
+							pol_by_pol_file << model_p->sex_2 << ",";
+							pol_by_pol_file << model_p->tax_wrapper << ",";
+							pol_by_pol_file << endl;
+						}
+					  }
+					pol_by_pol_file.close();
+
+					}
+				}
+			}
+		}
+
+		// Longevity part
+		if (v_p_c.size() > 0)
+		{
+			for(unsigned int pC = 0; pC < v_p_c.size(); pC++)
+			{
+				Product_configuration p = v_p_c[pC];
+				vector<Scenario_configuration> v_scen_conf = p.get_scenario_list();
+				for(unsigned int sc_n = 0; sc_n < v_scen_conf.size(); sc_n++)
+				{
+					Scenario_configuration s = v_scen_conf[sc_n];
+
+					if (s.get_load_longevity_table())
+					{
+
+					int scen_pass_n = s.get_scenario_pass_number();
+					
+					char pol_by_pol_file_name[MAX_LENGTH_FILE_NAME];
+					
+					sprintf(pol_by_pol_file_name, "%s%s_%d_longevity.csv", this->summary_configuration->get_policy_by_policy_file_directory().c_str(), 
+						this->summary_configuration->get_policy_by_policy_file_name().c_str(), scen_pass_n);
+
+					ofstream pol_by_pol_file(pol_by_pol_file_name);
+					pol_by_pol_file  << "Version,Country,Product,Group,prod_type,POL_ID,1,1,GMXB_G_C,GMXB_H_C,agg_real_charges,agg_claims,agg_dep_fee,PV_GMAB,PV_GMDB,PV_GMIB,PV_GMWB,PV_GMSB,AGE_VALN,DURATION,GMXB_TYPE2,AX_GENDER,PREM_PAID,SPLIT_IDX0,SPLIT_IDX1,SPLIT_IDX2,SPLIT_IDX3,SPLIT_IDX4,SPLIT_IDX5,SPLIT_IDX6,SPLIT_IDX7,SPLIT_IDX8,SPLIT_IDX9,SPLIT_IDX10,SPLIT_IDX11,GMAB1_VALN,GMAB2_VALN,GMDB1_VALN,GMDB2_VALN,GMWB1_VALN,GMWB2_VALN,GMWB_DEF_P,GMWB_RAT_P,GMXB_M_C,GMXB_A_C,AXA_ROLL_R,GMWB_WDL_RATE,";
+					pol_by_pol_file << "DB_IND,JOINT_LIFE_IND,AGE_2,SEX_2,TAX_WRAPPER" << endl;
+
+					for(map<string, vector<Model_Point*>>::const_iterator iter_mp = mps.begin();iter_mp != mps.end(); ++iter_mp)
+					{
+						string pCK = iter_mp->first;
+						vector<Model_Point*> model_points = iter_mp->second;
+
+						vector<vector<double>> pvs;
+
+						for(map<string, map<int, vector<vector<double>>>>::const_iterator iter_pvs = results_longevity.begin();
+							iter_pvs != results_longevity.end(); ++iter_pvs)
+						{
+							string prod_code_k = iter_pvs->first;
+							if (prod_code_k == pCK)
+							{
+								map<int, vector<vector<double>>> map_scen_pass_num = iter_pvs->second;
+								for(map<int, vector<vector<double>>>::const_iterator iter_scen_pass_num = map_scen_pass_num.begin();
+									iter_scen_pass_num != map_scen_pass_num.end(); ++iter_scen_pass_num)
+									{
+										if (iter_scen_pass_num->first == scen_pass_n)
+										{
+											pvs = iter_scen_pass_num->second;
+										}
+									}
+							}
+						}
+						int number_of_mps = model_points.size();
+						for(int i = 0; i < number_of_mps ; i++)
+						{
+							double agg_real_charges = 0.;
+							double agg_claims = 0.;
+							double agg_dep_fee = 0.;
+							Model_Point_AGD_UK_WB *model_p = dynamic_cast<Model_Point_AGD_UK_WB*>(model_points[i]);
+
+							vector<double> pv = pvs[i];
+							pol_by_pol_file << "V1.0" << ",";
+							string country_code = pCK.substr(0,pCK.find("_"));
+							pol_by_pol_file << country_code.c_str() << ",";
+							pol_by_pol_file << model_p->product.c_str() << ",";
+							pol_by_pol_file << model_p->group.c_str() << ",";
+							pol_by_pol_file << pCK.c_str() << ",";
+							pol_by_pol_file << model_p->policy_id.c_str() << ",";
+							pol_by_pol_file << "1" << ",";
+							pol_by_pol_file << "1" << ",";
+							pol_by_pol_file << model_p->gmxb_g_c << ",";
+							pol_by_pol_file << model_p->gmxb_ehc_charge << ",";
+							agg_real_charges = pv[PV_GMXB_REAL_CHG];
+							agg_claims = pv[PV_GMAB]+ pv[PV_GMDB]+ pv[PV_GMIB] + pv[PV_GMWB] + pv[PV_GMSB];
+							agg_dep_fee = pv[PV_DEP_FEE];
+							pol_by_pol_file << setprecision(15) << agg_real_charges << ",";		
+							pol_by_pol_file << setprecision(15) << agg_claims << ",";				
+							pol_by_pol_file << setprecision(15) << agg_dep_fee << ",";
+							pol_by_pol_file << setprecision(15) << pv[PV_GMAB] << ",";
+							pol_by_pol_file << setprecision(15) << pv[PV_GMDB] << ",";
+							pol_by_pol_file << setprecision(15) << pv[PV_GMIB] << ",";
+							pol_by_pol_file << setprecision(15) << pv[PV_GMWB] << ",";
+							pol_by_pol_file << setprecision(15) << pv[PV_GMSB] << ",";
+							pol_by_pol_file << model_p->age_valn << ",";
+							pol_by_pol_file << model_p->duration << ",";
+							pol_by_pol_file << model_p->gmxb_type2 << ",";
+							pol_by_pol_file << model_p->sex << ",";
+							pol_by_pol_file << model_p->prem_paid << ",";
+							pol_by_pol_file << model_p->av_split_prop_array[0] << ",";
+							pol_by_pol_file << model_p->av_split_prop_array[1] << ",";
+							pol_by_pol_file << model_p->av_split_prop_array[2] << ",";
+							pol_by_pol_file << model_p->av_split_prop_array[3] << ",";
+							pol_by_pol_file << model_p->av_split_prop_array[4] << ",";
+							pol_by_pol_file << model_p->av_split_prop_array[5] << ",";
+							pol_by_pol_file << model_p->av_split_prop_array[6] << ",";
+							pol_by_pol_file << model_p->av_split_prop_array[7] << ",";
+							pol_by_pol_file << model_p->av_split_prop_array[8] << ",";
+							pol_by_pol_file << model_p->av_split_prop_array[9] << ",";
+							pol_by_pol_file << model_p->av_split_prop_array[10] << ",";
+							pol_by_pol_file << model_p->av_split_prop_array[11] << ",";
+							pol_by_pol_file << model_p->gmab_ratchet_valn << ",";
+							pol_by_pol_file << model_p->gmab_rollup_valn << ",";
+							pol_by_pol_file << model_p->gmdb_ratchet_valn << ",";
+							pol_by_pol_file << model_p->gmdb_rollup_valn << ",";
+							pol_by_pol_file << model_p->gmwb_ratchet_valn << ",";
+							pol_by_pol_file << model_p->gmwb_rollup_valn  << ",";
+							pol_by_pol_file << model_p->gmxb_deferral_period << ",";
+							pol_by_pol_file << model_p->gmwb_ratchet_period << ",";
+							pol_by_pol_file << model_p->gmxb_m_c << ",";
+							pol_by_pol_file << model_p->gmxb_a_c << ",";
+							pol_by_pol_file << model_p->axa_roll_r << ",";
+							pol_by_pol_file << model_p->gmwb_wdl_rate << ",";
+							pol_by_pol_file << model_p->db_indicator << ",";
+							pol_by_pol_file << model_p->joint_life_ind << ",";
+							pol_by_pol_file << model_p->age_valn_2 << ",";
+							pol_by_pol_file << model_p->sex_2 << ",";
+							pol_by_pol_file << model_p->tax_wrapper << ",";
+							pol_by_pol_file << endl;
+						}
+					  }
+					pol_by_pol_file.close();
+				}
+				}
+			}
+		}
+
+	}
+};

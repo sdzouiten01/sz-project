@@ -1,0 +1,717 @@
+#pragma once
+
+#include "Utility classes/Stat_Inforce_Manager.h"
+#include "Model point classes/Country model point classes/Model_Point_DEU.h"
+
+class German_Stat_Inforce_Manager : public Stat_Inforce_Manager
+{
+
+public:
+
+	German_Stat_Inforce_Manager()
+	{
+
+	}
+
+	~German_Stat_Inforce_Manager()
+	{
+	}
+
+	void calculate_total_stat(const vector<Model_Point*>& v_Model_Points, Stat_Inforce_Configuration& stat_inforce_config)
+	{
+		double total_paid_premium = 0.;
+		double total_free_partial_withdrawal = 0.;
+		double total_current_premium = 0.;
+		double total_gmab_bb_for_rollup = 0.;
+		double total_gmab_bb_for_ratchet = 0.;
+		double total_gmdb_bb_for_rollup = 0.;
+		double total_gmdb_bb_for_ratchet = 0.;
+		double total_gmib_bb_for_rollup = 0.;
+		double total_gmib_bb_for_ratchet = 0.;
+		double total_gmwb_bb_for_rollup = 0.;
+		double total_gmwb_bb_for_ratchet = 0.;
+
+		double total_account_value_by_index[MAXIMUM_NUMBER_OF_INDEXES] = {0.0};
+
+		double total_account_value = 0.;
+		int total_number_of_policies = 0; 
+		double total_benefit_payment = 0.;
+		double total_year_payment = 0.;
+		double total_realized_rrc = 0.;
+		double total_realized_ehc = 0.;
+		double male_percentage = 0.;
+		double female_percentage = 0.;
+		double average_prem_curr=0.;
+		double male_n = 0.;
+		double female_n = 0.;
+		double account_value_weighted_duration = 0.;
+		double account_value_weighted_age = 0.;
+		double account_value_weighted_fund_mgmt_fees = 0.;
+		double account_value_weighted_administration_fees = 0.;
+		double weighted_rrc = 0.; 
+		double weighted_ehc = 0.;
+		double total_rrc = 0.;
+		double total_ehc = 0.;
+		double account_value_per_mp = 0.;
+		double prem_paid_per_mp = 0.;
+		double prem_curr_per_mp = 0.;
+		double diff_av = 0.;
+		double diff_premium = 0.;
+
+		double total_av_recalc = 0.;
+		double total_premium_recalc = 0.;
+		double total_av_old = 0.;
+		double total_premium_old = 0.;
+		double av_prem_curr = 0.;
+		double total_marge=0.;
+		double min_marge = 0.;
+		double marge= 0.;
+		double max_marge=0.;
+		double realized_rrc = 0.;
+		double realized_ehc = 0.;
+		double total_lapse_amount=0.;
+		double total_reappeared_amount=0.;
+		double guaranted_payment_total=0.;
+		double realized_rrc_total = 0.;
+		double realized_ehc_total = 0.;
+		double admin_realized = 0.;
+		double upfront_g_c_value = 0.;
+		double fees_and_others = 0.;
+
+		// Create the output file
+		char file_name[MAX_LENGTH_FILE_NAME];
+		sprintf(file_name, "%s%s%s", stat_inforce_config.get_output_directory().c_str(), stat_inforce_config.get_stat_inforce_file_name().c_str(),".csv");
+		ofstream stat_inforce_file(file_name);
+
+		stat_inforce_file << "Total Paid premiums,Total Free Partial Withdrawal,Total Current premium," ;
+		stat_inforce_file << " AB Ratchet,AB rollup,DB Ratchet,DB rollup,IB Ratchet,IB rollup,WB Ratchet,WB rollup,";
+		stat_inforce_file << " AV Total ,RRC_average,EHC_average,Administrative fees,Management fees,";
+		stat_inforce_file << " Av Sub0,Av Sub1,Av Sub2,Av Sub3,Av Sub4,Av Sub5,Av Sub6,Av Sub7,Av Sub8,Av Sub9,Av Sub10,Av Sub11,";
+		stat_inforce_file << " Weighted Age,Weighted Duration,Nb policies,male,female,Benefit payment,";
+		stat_inforce_file << " Benefit year payment,AV_prem_curr,Moyenne_marge,Max_marge,Min_marge,Montant_lapse,Reappeared_policy,Guaranteed_payement,";
+		stat_inforce_file << " Realized RRC,Realized EHC,Admin_realized,Upfront_g_c,Fees_and_others,";
+		stat_inforce_file << " Diff_AV , Diff_Premium"; 
+		stat_inforce_file << endl;
+
+		/*
+		* check if nb MP = 0. If is 0 then create an empty file, display a message and continue
+		*/
+		int number_of_model_points = v_Model_Points.size();
+		if (number_of_model_points == 0)
+		{
+			char message[MAX_LENGTH_MESSAGE_EXCEPTION];
+			sprintf(message, "The number of model points is zero for one (or many) product(s) of the stat inforce %s", stat_inforce_config.get_stat_inforce_name().c_str());
+			for (int empty_file =0; empty_file < NB_HEADER_FIELDS; empty_file ++)
+				stat_inforce_file << 0 << "," ;
+			stat_inforce_file << 0; 
+			stat_inforce_file.close();
+			return;
+		}
+
+		if (stat_inforce_config.get_do_compare_files())	
+			compare_inforce_files(stat_inforce_config,total_lapse_amount,total_reappeared_amount,guaranted_payment_total,fees_and_others);
+
+		int current_mp_nb=0;
+		for(int mp_nb = 0; mp_nb < number_of_model_points; mp_nb++)
+		{
+			current_mp_nb=current_mp_nb+1;
+			account_value_per_mp = 0.0;
+			prem_paid_per_mp = 0.0;
+			prem_curr_per_mp = 0.;
+			marge=0.0;
+
+			Model_Point_DEU* m_p = dynamic_cast<Model_Point_DEU*>(v_Model_Points[mp_nb]);		
+
+			total_paid_premium += m_p->prem_paid;    
+			total_current_premium += m_p->prem_period_ini;
+			prem_paid_per_mp = m_p->prem_paid;
+			prem_curr_per_mp = m_p->prem_period_ini;
+
+			total_free_partial_withdrawal += m_p->fpw_accum_total;
+			total_gmab_bb_for_ratchet += 0.;
+			total_gmab_bb_for_rollup += m_p->gmab_valn;
+			total_gmdb_bb_for_ratchet += m_p->gmdb_av_valn;
+			total_gmdb_bb_for_rollup += m_p->gmdb_prem_valn;
+			total_gmib_bb_for_rollup += m_p->gmib_rollup_valn;
+			total_gmib_bb_for_ratchet += m_p->gmib_ratchet_valn;
+			total_gmwb_bb_for_rollup += 0.;
+			total_gmwb_bb_for_ratchet += 0.;
+
+			for (int i = 0; i < MAXIMUM_NUMBER_OF_INDEXES; i++)
+			{
+				total_account_value_by_index[i] += m_p->av_if_array[i];
+				total_account_value += m_p->av_if_array[i];
+				account_value_per_mp += m_p->av_if_array[i];
+			}
+
+			//realized_rrc_total += m_p->realized_RRC; 
+			//realized_ehc_total += (m_p->realized_RRC * m_p->gmxb_ehc_charge/m_p->gmxb_chg_perc); 
+			admin_realized += m_p->admin_charges;
+			upfront_g_c_value += m_p->up_front_g_c * m_p->prem_paid;
+			
+			av_prem_curr += m_p->prem_period_ini;
+			// Calculate the marges-------------------
+			total_realized_rrc += m_p->gmxb_chg_perc;
+			total_realized_ehc += m_p->gmxb_ehc_charge;
+			realized_rrc = m_p->gmxb_chg_perc;
+			realized_ehc = m_p->gmxb_ehc_charge;
+			if (current_mp_nb == 1) 
+			{
+				min_marge=realized_rrc - realized_ehc;
+				max_marge=realized_rrc - realized_ehc;
+			}
+			marge=realized_rrc - realized_ehc;
+			if (marge < min_marge) 
+				min_marge=marge;
+			else if (marge > max_marge)  
+				max_marge= marge;
+			//------------------------------------------
+			if (m_p->sex == "M")
+				male_n++;
+			else
+				female_n++;
+
+			account_value_weighted_duration += (m_p->duration_valn * account_value_per_mp);
+			account_value_weighted_age += (m_p->age_at_valn * account_value_per_mp);
+			account_value_weighted_fund_mgmt_fees += (m_p->management_fee_perc * account_value_per_mp);
+			account_value_weighted_administration_fees += (m_p->m_and_e_fee_perc * account_value_per_mp);
+
+			if (stat_inforce_config.get_ehc_rrc_weighted_criteria() == "PREM_CURR")
+			{			
+				total_rrc += (m_p->gmxb_chg_perc * prem_curr_per_mp);
+				total_ehc += (m_p->gmxb_ehc_charge * prem_curr_per_mp);
+			}
+			else if(stat_inforce_config.get_ehc_rrc_weighted_criteria() == "PREM_PAID")
+			{
+				total_rrc += (m_p->gmxb_chg_perc * prem_paid_per_mp);
+				total_ehc += (m_p->gmxb_ehc_charge * prem_paid_per_mp);
+			}
+			else if (stat_inforce_config.get_ehc_rrc_weighted_criteria() == "AV")
+			{
+				total_rrc += (m_p->gmxb_chg_perc * account_value_per_mp);
+				total_ehc += (m_p->gmxb_ehc_charge * account_value_per_mp);
+			}
+			else
+			{
+				char message[MAX_LENGTH_MESSAGE_EXCEPTION];
+				sprintf(message, "Allowed values for 'realized_rrc_ehc_prem' parameter are : PREM_PAID, PREM_CURR, AV ");
+				throw new GMXBException(message);	
+			}
+		}
+
+		total_marge = (total_realized_rrc - total_realized_ehc)/number_of_model_points ;
+		
+		if (total_account_value != 0.)
+		{
+			account_value_weighted_administration_fees = account_value_weighted_administration_fees / total_account_value;
+			account_value_weighted_fund_mgmt_fees = account_value_weighted_fund_mgmt_fees / total_account_value;
+			account_value_weighted_duration = account_value_weighted_duration / total_account_value;
+			account_value_weighted_age = account_value_weighted_age / total_account_value ;
+		}
+
+		if (stat_inforce_config.get_ehc_rrc_weighted_criteria() == "PREM_CURR")
+		{
+			if (total_current_premium != 0.)
+			{
+				total_rrc = total_rrc/total_current_premium;
+				total_ehc = total_ehc/total_current_premium;
+			}
+		}
+		else if (stat_inforce_config.get_ehc_rrc_weighted_criteria() == "PREM_PAID")
+		{
+			if (total_paid_premium != 0.)
+			{
+				total_rrc = total_rrc/total_paid_premium;
+				total_ehc = total_ehc/total_paid_premium;
+			}
+		}
+		else if (stat_inforce_config.get_ehc_rrc_weighted_criteria() == "AV")
+		{
+			if (total_account_value != 0.)
+			{
+				total_rrc = total_rrc/total_account_value;
+				total_ehc = total_ehc/total_account_value;
+			}
+		}
+		else
+		{
+			char message[MAX_LENGTH_MESSAGE_EXCEPTION];
+			sprintf(message, "Allowed values for 'realized_rrc_ehc_prem' parameter are : PREM_PAID, PREM_CURR, AV ");
+			throw new GMXBException(message);	
+		}
+
+		male_percentage = male_n /number_of_model_points ;
+		female_percentage = female_n / number_of_model_points;
+		total_number_of_policies = number_of_model_points;
+		av_prem_curr = av_prem_curr /  number_of_model_points;
+
+		stat_inforce_file << setprecision(15) << total_paid_premium << ","; 
+		stat_inforce_file << setprecision(15) << total_free_partial_withdrawal << ",";
+		stat_inforce_file << setprecision(15) << total_current_premium << ",";
+		stat_inforce_file << setprecision(15) << total_gmab_bb_for_ratchet << ",";//0 for DEU 
+		stat_inforce_file << setprecision(15) << total_gmab_bb_for_rollup << ","; 
+		stat_inforce_file << setprecision(15) << total_gmdb_bb_for_ratchet << ",";
+		stat_inforce_file << setprecision(15) << total_gmdb_bb_for_rollup << ",";
+		stat_inforce_file << setprecision(15) << total_gmib_bb_for_ratchet << ",";
+		stat_inforce_file << setprecision(15) << total_gmib_bb_for_rollup << ",";
+		stat_inforce_file << setprecision(15) << total_gmwb_bb_for_ratchet << ","; //0		
+		stat_inforce_file << setprecision(15) << total_gmwb_bb_for_rollup << ","; //0
+		stat_inforce_file << setprecision(15) << total_account_value << ",";
+		stat_inforce_file << setprecision(15) << total_rrc << ",";
+		stat_inforce_file << setprecision(15) << total_ehc << ",";
+		stat_inforce_file << setprecision(15) << account_value_weighted_administration_fees << ",";
+		stat_inforce_file << setprecision(15) << account_value_weighted_fund_mgmt_fees << ",";
+
+		for (int i = 0; i < MAXIMUM_NUMBER_OF_INDEXES; i++)
+			stat_inforce_file << setprecision(15) << total_account_value_by_index[i] << ",";
+
+		stat_inforce_file << setprecision(15) << account_value_weighted_age << ",";
+		stat_inforce_file << setprecision(15) << account_value_weighted_duration << ",";
+		stat_inforce_file << setprecision(15) << total_number_of_policies << ",";
+		stat_inforce_file << setprecision(15) << male_percentage << ",";
+		stat_inforce_file << setprecision(15) << female_percentage << ",";
+		stat_inforce_file << setprecision(15) << total_benefit_payment << ","; //0 for DEU
+		stat_inforce_file << setprecision(15) << total_year_payment << ",";// 0 for DEU
+		stat_inforce_file << setprecision(15) << av_prem_curr << ",";
+		stat_inforce_file << setprecision(15) << total_marge << ",";
+		stat_inforce_file << setprecision(15) << max_marge << ",";
+		stat_inforce_file << setprecision(15) << min_marge << ",";
+		stat_inforce_file << setprecision(15) << total_lapse_amount << ",";
+		stat_inforce_file << setprecision(15) << total_reappeared_amount << ",";
+		stat_inforce_file << setprecision(15) << 0 << ","; //guaranted_payment_total
+		stat_inforce_file << setprecision(15) << 0 << ",";// 0 for DEU
+		stat_inforce_file << setprecision(15) << 0 << ",";//0 for DEU
+		stat_inforce_file << setprecision(15) << admin_realized << ",";
+		stat_inforce_file << setprecision(15) << upfront_g_c_value << ",";
+		stat_inforce_file << setprecision(15) << fees_and_others << ",";
+		stat_inforce_file << setprecision(15) << diff_av << ","; 
+		stat_inforce_file << setprecision(15) << diff_premium; 
+		stat_inforce_file << endl;
+		stat_inforce_file.close();
+
+	}
+	void calculate_total_stat_NB(const vector<Model_Point*>& v_Model_Points, Stat_Inforce_Configuration& stat_inforce_config, string& name)
+	{
+		double total_paid_premium = 0.;
+		double total_free_partial_withdrawal = 0.;
+		double total_current_premium = 0.;
+		double total_gmab_bb_for_rollup = 0.;
+		double total_gmab_bb_for_ratchet = 0.;
+		double total_gmdb_bb_for_rollup = 0.;
+		double total_gmdb_bb_for_ratchet = 0.;
+		double total_gmib_bb_for_rollup = 0.;
+		double total_gmib_bb_for_ratchet = 0.;
+		double total_gmwb_bb_for_rollup = 0.;
+		double total_gmwb_bb_for_ratchet = 0.;
+
+		double total_account_value_by_index[MAXIMUM_NUMBER_OF_INDEXES] = {0.0};
+
+		double total_account_value = 0.;
+		int total_number_of_policies = 0; 
+		double total_benefit_payment = 0.;
+		double total_year_payment = 0.;
+		double total_realized_rrc = 0.;
+		double total_realized_ehc = 0.;
+		double male_percentage = 0.;
+		double female_percentage = 0.;
+		double male_n = 0.;
+		double female_n = 0.;
+		double account_value_weighted_duration = 0.;
+		double account_value_weighted_age = 0.;
+		double account_value_weighted_fund_mgmt_fees = 0.;
+		double account_value_weighted_administration_fees = 0.;
+		double realized_rrc = 0.; 
+		double realized_ehc = 0.;
+		double marge = 0.;
+		double total_rrc = 0.;
+		double total_ehc = 0.;
+		double account_value_per_mp = 0.;
+		double prem_paid_per_mp = 0.;
+		double prem_curr_per_mp = 0.;
+		double av_prem_curr = 0;
+		double diff_av = 0.;
+		double diff_premium = 0.;
+
+		double total_av_recalc = 0.;
+		double total_premium_recalc = 0.;
+		double total_av_old = 0.;
+		double total_premium_old = 0.;
+
+		double total_marge = 0.;
+		double max_marge = 0.;
+		double min_marge = 0.;
+		double total_lapse_amount = 0.;
+		double total_reappeared_amount = 0.;
+		double guaranted_payment_total = 0.;
+		double realized_rrc_total = 0.;
+		double realized_ehc_total = 0.;
+		double admin_realized = 0.;
+		double upfront_g_c_value = 0.;
+		double fees_and_others = 0.;
+
+		//Create the output file 
+		char file_name[MAX_LENGTH_FILE_NAME];
+		sprintf(file_name, "%s%s%s", stat_inforce_config.get_output_directory().c_str(), stat_inforce_config.get_stat_inforce_file_name().c_str(), name.c_str());
+		ofstream stat_inforce_file(file_name);
+
+		stat_inforce_file << "Total Paid premiums,Total Free Partial Withdrawal,Total Current premium," ;
+		stat_inforce_file << " AB Ratchet,AB rollup,DB Ratchet,DB rollup,IB Ratchet,IB rollup,WB Ratchet,WB rollup,";
+		stat_inforce_file << " AV Total ,RRC_average,EHC_average,Administrative fees,Management fees,";
+		stat_inforce_file << " Av Sub0,Av Sub1,Av Sub2,Av Sub3,Av Sub4,Av Sub5,Av Sub6,Av Sub7,Av Sub8,Av Sub9,Av Sub10,Av Sub11,";
+		stat_inforce_file << " Weighted Age,Weighted Duration,Nb policies,male,female,Benefit payment,";
+		stat_inforce_file << " Benefit year payment,AV_prem_curr,Moyenne_marge,Max_marge,Min_marge,Montant_lapse,Reappeared_policy,Guaranteed_payement,";
+		stat_inforce_file << " Realized RRC,Realized EHC,Admin_realized,Upfront_g_c,Fees_and_others,";
+		stat_inforce_file << " Diff_AV , Diff_Premium"; 
+		stat_inforce_file << endl;
+
+		/*
+		* check if nb MP = 0. If is 0 then create an empty file, display a message and continue
+		*/
+		int number_of_model_points = v_Model_Points.size();
+		if (number_of_model_points == 0)
+		{
+			char message[MAX_LENGTH_MESSAGE_EXCEPTION];
+			sprintf(message, "The number of model points is zero for one (or many) product(s) of the stat inforce %s", stat_inforce_config.get_stat_inforce_name().c_str());
+			for (int empty_file =0; empty_file < NB_HEADER_FIELDS; empty_file ++)
+				stat_inforce_file << 0 << "," ;
+			stat_inforce_file << 0; 
+			stat_inforce_file.close();
+			return;
+		}
+
+		for (unsigned int i = 0; i < this->v_of_recalc_policies.size(); i ++)
+		{
+			Model_Point_DEU* m_p = dynamic_cast<Model_Point_DEU*>(v_of_recalc_policies[i]);		
+
+			for (int j = 0; j <MAXIMUM_NUMBER_OF_INDEXES; j++)
+				total_av_recalc += m_p->av_if_array[j];
+			total_premium_recalc += m_p->prem_curr;
+		}
+
+		for (unsigned int i = 0; i < this->v_of_old_policies.size(); i ++)
+		{
+			Model_Point_DEU* m_p = dynamic_cast<Model_Point_DEU*>(v_of_old_policies[i]);		
+
+			for (int j = 0; j <MAXIMUM_NUMBER_OF_INDEXES; j++)
+				total_av_old += m_p->av_if_array[j];
+
+			total_premium_old += m_p->prem_curr;
+		}
+		diff_av = total_av_recalc - total_av_old;
+		diff_premium = total_premium_recalc - total_premium_old;
+
+		int current_mp_nb=0;
+		for(int mp_nb = 0; mp_nb < number_of_model_points; mp_nb++)
+		{
+			current_mp_nb = current_mp_nb + 1;
+			account_value_per_mp = 0.0;
+			prem_paid_per_mp = 0.0;
+			prem_curr_per_mp = 0.;
+			marge = 0.0;
+
+			Model_Point_DEU* m_p = dynamic_cast<Model_Point_DEU*>(v_Model_Points[mp_nb]);		
+
+			total_paid_premium += m_p->prem_paid; 
+			total_current_premium += m_p->prem_period_ini;
+			prem_paid_per_mp = m_p->prem_paid; 
+			prem_curr_per_mp = m_p->prem_period_ini;
+			total_free_partial_withdrawal += m_p->fpw_accum_total;
+
+			total_gmab_bb_for_ratchet += m_p->gmab_valn;
+			total_gmdb_bb_for_ratchet += m_p->gmdb_av_valn;
+			total_gmdb_bb_for_rollup += m_p->gmdb_prem_valn;
+			total_gmib_bb_for_ratchet += m_p->gmib_ratchet_valn;
+			total_gmib_bb_for_rollup += m_p->gmib_rollup_valn;
+			total_gmwb_bb_for_ratchet += m_p->gmwb_ratchet_valn;
+			total_gmwb_bb_for_rollup += m_p->gmwb_rollup_valn;
+
+			//realized_rrc_total += m_p->realized_RRC; 
+			//realized_ehc_total += (m_p->realized_RRC * m_p->gmxb_ehc_charge/m_p->gmxb_chg_perc); 
+			admin_realized += m_p->admin_charges;
+			upfront_g_c_value += (m_p->up_front_g_c * m_p->prem_paid);
+
+			for (int i = 0; i < MAXIMUM_NUMBER_OF_INDEXES; i++)
+			{
+				total_account_value_by_index[i] += m_p->av_if_array[i];
+				total_account_value += m_p->av_if_array[i];
+				account_value_per_mp += m_p->av_if_array[i];
+			}
+
+			av_prem_curr += m_p->prem_period_ini;
+
+			if (m_p->sex == "M")
+				male_n++;
+			else
+				female_n++;
+
+			if (total_account_value != 0.)
+			{
+				account_value_weighted_duration += (m_p->duration_valn * account_value_per_mp);
+				account_value_weighted_age += (m_p->age_at_valn * account_value_per_mp);
+				account_value_weighted_fund_mgmt_fees += (m_p->management_fee_perc * account_value_per_mp) ;
+				account_value_weighted_administration_fees += (m_p->m_and_e_fee_perc * account_value_per_mp);
+			}
+
+			if (stat_inforce_config.get_ehc_rrc_weighted_criteria() == "PREM_CURR")
+			{			
+				total_rrc += (m_p->gmxb_chg_perc * prem_curr_per_mp);
+				total_ehc += (m_p->gmxb_ehc_charge * prem_curr_per_mp);
+			}
+			else if(stat_inforce_config.get_ehc_rrc_weighted_criteria() == "PREM_PAID")
+			{
+				total_rrc += (m_p->gmxb_chg_perc * prem_paid_per_mp);
+				total_ehc += (m_p->gmxb_ehc_charge * prem_paid_per_mp);
+			}
+			else if (stat_inforce_config.get_ehc_rrc_weighted_criteria() == "AV")
+			{
+				total_rrc += (m_p->gmxb_chg_perc * account_value_per_mp);
+				total_ehc += (m_p->gmxb_ehc_charge * account_value_per_mp);
+			}
+			else
+			{
+				char message[MAX_LENGTH_MESSAGE_EXCEPTION];
+				sprintf(message, "Allowed values for 'realized_rrc_ehc_prem' parameter are : PREM_PAID, PREM_CURR, AV ");
+				throw new GMXBException(message);	
+			}
+			//Calculate the marges -----------------------
+			total_realized_rrc += m_p->gmxb_chg_perc;
+			total_realized_ehc += m_p->gmxb_ehc_charge;
+			realized_rrc = m_p->gmxb_chg_perc;
+			realized_ehc = m_p->gmxb_ehc_charge;
+			if (current_mp_nb == 1) 
+			{
+				min_marge=realized_rrc - realized_ehc;
+				max_marge=realized_rrc - realized_ehc;
+			}
+			marge=realized_rrc - realized_ehc;
+			if (marge < min_marge) 
+				min_marge=marge;
+			else if (marge > max_marge)  
+				max_marge= marge;
+			//-----------------------------------------------
+
+		}
+		total_marge = (total_realized_rrc - total_realized_ehc)/number_of_model_points ;
+		account_value_weighted_administration_fees = account_value_weighted_administration_fees / total_account_value;
+		account_value_weighted_fund_mgmt_fees = account_value_weighted_fund_mgmt_fees / total_account_value;
+		account_value_weighted_duration = account_value_weighted_duration / total_account_value;
+		account_value_weighted_age = account_value_weighted_age / total_account_value ;
+
+		if (stat_inforce_config.get_ehc_rrc_weighted_criteria() == "PREM_CURR")
+		{
+			if (total_current_premium != 0.)
+			{
+				total_rrc = total_rrc/total_current_premium;
+				total_ehc = total_ehc/total_current_premium;
+			}
+		}
+		else if (stat_inforce_config.get_ehc_rrc_weighted_criteria() == "PREM_PAID")
+		{
+			if (total_paid_premium != 0.)
+			{
+				total_rrc = total_rrc/total_paid_premium;
+				total_ehc = total_ehc/total_paid_premium;
+			}
+		}
+		else if (stat_inforce_config.get_ehc_rrc_weighted_criteria() == "AV")
+		{
+			if (total_account_value != 0.)
+			{
+				total_rrc = total_rrc/total_account_value;
+				total_ehc = total_ehc/total_account_value;
+			}
+		}
+		else
+		{
+			char message[MAX_LENGTH_MESSAGE_EXCEPTION];
+			sprintf(message, "Allowed values for 'realized_rrc_ehc_prem' parameter are : PREM_PAID, PREM_CURR, AV ");
+			throw new GMXBException(message);	
+		}
+
+		male_percentage = male_n /number_of_model_points ;
+		female_percentage = female_n / number_of_model_points;
+		total_number_of_policies = number_of_model_points;
+		av_prem_curr = av_prem_curr / number_of_model_points;
+
+
+		// Write the output result
+		stat_inforce_file << setprecision(15) << total_paid_premium << ","; 
+		stat_inforce_file << setprecision(15) << total_free_partial_withdrawal << ",";
+		stat_inforce_file << setprecision(15) << total_current_premium << ",";
+		stat_inforce_file << setprecision(15) << total_gmab_bb_for_ratchet << ",";
+		stat_inforce_file << setprecision(15) << 0 << ",";
+		stat_inforce_file << setprecision(15) << total_gmdb_bb_for_ratchet << ",";
+		stat_inforce_file << setprecision(15) << total_gmdb_bb_for_rollup << ",";
+		stat_inforce_file << setprecision(15) << total_gmib_bb_for_ratchet << ",";
+		stat_inforce_file << setprecision(15) << total_gmib_bb_for_rollup << ",";
+		stat_inforce_file << setprecision(15) << 0 << ",";		
+		stat_inforce_file << setprecision(15) << 0 << ",";
+		stat_inforce_file << setprecision(15) << total_account_value << ",";
+		stat_inforce_file << setprecision(15) << total_rrc << ",";
+		stat_inforce_file << setprecision(15) << total_ehc << ",";
+		stat_inforce_file << setprecision(15) << account_value_weighted_administration_fees << ",";
+		stat_inforce_file << setprecision(15) << account_value_weighted_fund_mgmt_fees << ",";
+
+		for (int i = 0; i < MAXIMUM_NUMBER_OF_INDEXES; i++)
+			stat_inforce_file << setprecision(15) << total_account_value_by_index[i] << ",";
+
+		stat_inforce_file << setprecision(15) << account_value_weighted_age << ",";
+		stat_inforce_file << setprecision(15) << account_value_weighted_duration << ",";
+		stat_inforce_file << setprecision(15) << total_number_of_policies << ",";
+		stat_inforce_file << setprecision(15) << male_percentage << ",";
+		stat_inforce_file << setprecision(15) << female_percentage << ",";
+		stat_inforce_file << setprecision(15) << total_benefit_payment << ","; //0 for DEU
+		stat_inforce_file << setprecision(15) << total_year_payment << ",";// 0 for DEU
+		stat_inforce_file << setprecision(15) << av_prem_curr << ",";
+		stat_inforce_file << setprecision(15) << total_marge << ",";
+		stat_inforce_file << setprecision(15) << max_marge << ",";
+		stat_inforce_file << setprecision(15) << min_marge << ",";
+		stat_inforce_file << setprecision(15) << total_lapse_amount << ",";
+		stat_inforce_file << setprecision(15) << total_reappeared_amount << ",";
+		stat_inforce_file << setprecision(15) << guaranted_payment_total << ",";
+		/*added by Andrei -> new columns*/
+		stat_inforce_file << setprecision(15) << 0 << ",";// 0 for DEU
+		stat_inforce_file << setprecision(15) << 0 << ",";//0 for DEU
+		stat_inforce_file << setprecision(15) << admin_realized << ",";
+		stat_inforce_file << setprecision(15) << upfront_g_c_value << ",";
+		stat_inforce_file << setprecision(15) << fees_and_others << ",";
+		stat_inforce_file << setprecision(15) << diff_av << ","; 
+		stat_inforce_file << setprecision(15) << diff_premium; 
+		stat_inforce_file << endl;
+		stat_inforce_file.close();
+
+	}
+	virtual void compare_inforce_files(Stat_Inforce_Configuration& stat_inforce_config,double &total_lapse_amount, double &total_reappeared_amount,double &guaranted_payment_total, double &fees_and_others)
+	{
+		double mp_lapse_amount = 0.;
+		double mp_reappeared_amount=0.;
+
+
+		Inforce_Manager inforce_mgr;
+
+		vector<string> v_prodKey = stat_inforce_config.get_v_product_codes_key();
+
+		for (unsigned int prod=0; prod<v_prodKey.size();prod++) 
+		{
+			double guaranted_payment_new=0.;
+			double guaranted_payment_old=0.;
+			double guaranted_payment_prod=0.;
+			double fees_and_others_mp;
+			double av_new_inforce;
+			double av_ref_inforce;
+
+			string product_code = v_prodKey[prod];
+
+			vector<Model_Point*> v_of_old_policies_d;
+			vector<Model_Point*> v_of_new_policies_d;
+
+			Product_configuration product_config(product_code, stat_inforce_config.get_inforce_file_name());
+			Product_configuration product_config_old(product_code, stat_inforce_config.get_reference_file());
+			Scenario_configuration scenario_config;
+
+			inforce_mgr.get_list_of_model_points_per_product(product_code, v_of_new_policies_d, product_config, scenario_config);
+			inforce_mgr.get_list_of_model_points_per_product(product_code, v_of_old_policies_d, product_config_old, scenario_config);			
+			
+			vector<Model_Point_DEU*> v_of_old_policies_c;
+			vector<Model_Point_DEU*> v_of_new_policies_c;
+
+			for (int j=0; j< v_of_old_policies_d.size(); j++)
+			{
+				v_of_old_policies_c.push_back(dynamic_cast<Model_Point_DEU*>(v_of_old_policies_d[j]));
+			}
+			for (int j=0; j< v_of_new_policies_d.size(); j++)
+			{
+				v_of_new_policies_c.push_back(dynamic_cast<Model_Point_DEU*>(v_of_new_policies_d[j]));
+			}
+
+			//Montant Lapse
+			for (int j=0; j< v_of_old_policies_c.size(); j++)
+			{
+				bool check = false;
+				for( int i=0; i < v_of_new_policies_c.size() ; i++ )
+				{
+					if (v_of_old_policies_c[j]->policy_id == v_of_new_policies_c[i]->policy_id)
+					{
+						check = true;
+						break;
+					}
+				}
+				if (check == false) 					 
+				{
+					mp_lapse_amount = 0;
+					for (int k = 0; k < MAXIMUM_NUMBER_OF_INDEXES; k++)
+					{
+						mp_lapse_amount += v_of_old_policies_c[j]->av_if_array[k]; //sum=sum(col N to col W) 
+					}
+					total_lapse_amount+=mp_lapse_amount;
+				}
+			}
+
+			//Reappeared Policy
+			for( int i=0; i < v_of_new_policies_c.size() ; i++ )
+			{
+				bool check = false;
+				for (int j=0; j< v_of_old_policies_c.size(); j++)
+				{
+					if (v_of_new_policies_c[i]->policy_id == v_of_old_policies_c[j]->policy_id)
+					{
+						check = true;
+						break;
+					}
+				}	
+
+				if (check == false) 					 
+				{
+					mp_reappeared_amount = 0;
+					for (int k = 0; k < MAXIMUM_NUMBER_OF_INDEXES; k++)
+					{
+						mp_reappeared_amount += v_of_new_policies_c[i]->av_if_array[k];
+					}
+					total_reappeared_amount+=mp_reappeared_amount;
+				}
+			}
+			//Fees and others
+			for( int i=0; i < v_of_new_policies_c.size() ; i++ )
+			{
+				for (int j=0; j< v_of_old_policies_c.size(); j++)
+				{
+					if (v_of_new_policies_c[i]->policy_id == v_of_old_policies_c[j]->policy_id)
+					{
+						av_new_inforce = 0.; 
+						av_ref_inforce = 0.;
+						fees_and_others_mp = 0.;
+
+						for (int k = 0; k < MAXIMUM_NUMBER_OF_INDEXES; k++)
+						{
+							av_new_inforce += v_of_new_policies_c[i]->av_if_array[k];
+							av_ref_inforce += v_of_old_policies_c[j]->av_if_array[k];
+						}
+						fees_and_others_mp = av_new_inforce - av_ref_inforce;
+						fees_and_others += fees_and_others_mp;
+					}
+				}
+			}
+
+			////Guaranted Payement - This column doesn't exist in MP_DEU
+			/*for( int i=0; i < v_of_new_policies_c.size() ; i++ )
+			{
+				guaranted_payment_new += v_of_new_policies_c[i]->gmwb_wdl_cum_dyn_lapse;
+			}
+			for (int j=0; j< v_of_old_policies_c.size(); j++)
+			{
+				guaranted_payment_old += v_of_old_policies_c[j]->gmwb_wdl_cum_dyn_lapse;
+			}
+
+			guaranted_payment_prod = guaranted_payment_new-guaranted_payment_old;
+			guaranted_payment_total+=guaranted_payment_prod;*/
+
+			for (int j=0; j < v_of_old_policies_c.size(); j++)
+				delete v_of_old_policies_c[j];
+
+			for (int i=0;i< v_of_new_policies_c.size() ; i++ )
+				delete v_of_new_policies_c[i];
+		}
+
+	}
+
+};

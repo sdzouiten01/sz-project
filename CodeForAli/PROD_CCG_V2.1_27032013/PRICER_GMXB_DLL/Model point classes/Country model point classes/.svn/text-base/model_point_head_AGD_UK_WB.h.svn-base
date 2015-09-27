@@ -1,0 +1,11 @@
+#pragma once
+
+//for joint life - jonathan
+#define WB_WDL_RATE 54
+#define GMDB_IND 84
+#define SEX_2 108
+#define AGE_VALN_2 109
+#define PRODUCT_CD1 59
+#define PRODUCT_CD2 60
+#define ADDITIONAL_ADMIN_FEES 100
+#define GMXB_BIRTHDAY_DATE_2 124

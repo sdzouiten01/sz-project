@@ -1,0 +1,47 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2012
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "PRICER_DLL_EXECUTABLE", "PRICER_DLL_EXECUTABLE\PRICER_DLL_EXECUTABLE.vcxproj", "{96F60B15-A321-40C6-89EE-FB492CF5465A}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "AHS_PARSER", "AHS_PARSER\AHS_PARSER.vcxproj", "{DC7EE7CE-C01A-46E0-839A-1FEAFE4F4033}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "PRICER_GMXB_DLL", "PRICER_GMXB_DLL\PRICER_GMXB_DLL.vcxproj", "{4BAA6115-A2DF-4EC3-9177-CAC2C1916CC6}"
+	ProjectSection(ProjectDependencies) = postProject
+		{233AD211-1193-4800-8186-FBCBB4C2A759} = {233AD211-1193-4800-8186-FBCBB4C2A759}
+	EndProjectSection
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ESG_V0", "ESG_V0\ESG_V0.vcxproj", "{233AD211-1193-4800-8186-FBCBB4C2A759}"
+	ProjectSection(ProjectDependencies) = postProject
+		{DC7EE7CE-C01A-46E0-839A-1FEAFE4F4033} = {DC7EE7CE-C01A-46E0-839A-1FEAFE4F4033}
+	EndProjectSection
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Win32 = Debug|Win32
+		Release|Win32 = Release|Win32
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{96F60B15-A321-40C6-89EE-FB492CF5465A}.Debug|Win32.ActiveCfg = Debug|Win32
+		{96F60B15-A321-40C6-89EE-FB492CF5465A}.Debug|Win32.Build.0 = Debug|Win32
+		{96F60B15-A321-40C6-89EE-FB492CF5465A}.Release|Win32.ActiveCfg = Release|Win32
+		{96F60B15-A321-40C6-89EE-FB492CF5465A}.Release|Win32.Build.0 = Release|Win32
+		{DC7EE7CE-C01A-46E0-839A-1FEAFE4F4033}.Debug|Win32.ActiveCfg = Debug|Win32
+		{DC7EE7CE-C01A-46E0-839A-1FEAFE4F4033}.Debug|Win32.Build.0 = Debug|Win32
+		{DC7EE7CE-C01A-46E0-839A-1FEAFE4F4033}.Release|Win32.ActiveCfg = Release|Win32
+		{DC7EE7CE-C01A-46E0-839A-1FEAFE4F4033}.Release|Win32.Build.0 = Release|Win32
+		{4BAA6115-A2DF-4EC3-9177-CAC2C1916CC6}.Debug|Win32.ActiveCfg = Debug|Win32
+		{4BAA6115-A2DF-4EC3-9177-CAC2C1916CC6}.Debug|Win32.Build.0 = Debug|Win32
+		{4BAA6115-A2DF-4EC3-9177-CAC2C1916CC6}.Release|Win32.ActiveCfg = Release|Win32
+		{4BAA6115-A2DF-4EC3-9177-CAC2C1916CC6}.Release|Win32.Build.0 = Release|Win32
+		{233AD211-1193-4800-8186-FBCBB4C2A759}.Debug|Win32.ActiveCfg = Debug|Win32
+		{233AD211-1193-4800-8186-FBCBB4C2A759}.Debug|Win32.Build.0 = Debug|Win32
+		{233AD211-1193-4800-8186-FBCBB4C2A759}.Release|Win32.ActiveCfg = Release|Win32
+		{233AD211-1193-4800-8186-FBCBB4C2A759}.Release|Win32.Build.0 = Release|Win32
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		VisualSVNWorkingCopyRoot = 
+	EndGlobalSection
+EndGlobal

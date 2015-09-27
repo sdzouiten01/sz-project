@@ -1,0 +1,43 @@
+#pragma once
+
+#include "Model point classes/Model_Point.h"
+#include "Model point classes/Country model point classes/model_point_head_AGD_UK_AB.h"
+
+using namespace std;
+
+class Model_Point_AGD_UK_AB : public Model_Point
+{
+	public :
+
+			char * retPtr;
+			int add_fees_period;
+			double add_fees;
+			string tax_wrapper;
+
+			Model_Point_AGD_UK_AB(vector<string>& row, int rank, Product_configuration& product_config, Scenario_configuration& scenario_config) :  
+				Model_Point(row, rank, product_config, scenario_config)
+			{
+				this->tax_wrapper = row[TAX_LAYER];
+
+				//lecture des additional fees
+				char *retPtr(new char[row[ADDITIONAL_ADMIN_FEES].length() + 1]);
+				copy(row[ADDITIONAL_ADMIN_FEES].begin(), row[ADDITIONAL_ADMIN_FEES].end(), retPtr);
+				retPtr[row[ADDITIONAL_ADMIN_FEES].length()] = '\0';
+				
+				vector<string> tax;
+				char* tokenizer = strtok(retPtr,"*");
+				int i=0;
+				while (tokenizer != NULL) 
+				{
+					i=i+1;
+					tax.push_back(tokenizer);
+					tokenizer = strtok (NULL, "*");
+						
+				}
+				
+				this->add_fees_period = atoi(tax[0].c_str());
+				this->add_fees = atof(tax[1].c_str()) ;
+				
+			}
+
+};

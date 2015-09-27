@@ -1,0 +1,408 @@
+#pragma once
+#include "stdafx.h"
+#include "Projection classes/Guarantee projection classes/Projection.h"
+#include "Projection classes/Guarantee projection classes/Projection_WB_DB.h"
+#include "Projection classes/Guarantee projection classes/Projection_WB.h"
+#include "Model point classes/Country model point classes/Model_Point_AGD_WB.h"
+
+/*
+* Macros for lapse_dyn_medregion table : SLOPE, THRESHOLD1 and THRESHOLD2
+* Macros for lapse_rate table : IRRATIONAL and RATIONAL
+* Macros for lapse_dyn_profile_split table : ACC, DIST and MORT_CONST
+*/
+
+#define SLOPE 1
+#define THRESHOLD1 2
+#define THRESHOLD2 3
+#define IRRATIONAL 1
+#define RATIONAL 2
+#define ACC 1
+#define DIST 2
+#define MORT_CONST 1900
+
+class Projection_AGD_WB_DB : public Projection_WB_DB
+{
+public:
+    int pol_initial_issue_date;
+	bool charge_benefit_base;
+	double rational_index[SUBACCT_MAX_PERIOD + 1];
+	double irrational_index[SUBACCT_MAX_PERIOD + 1];
+	GMXB_Assumption_Table * lapse_dyn_medregion;
+	GMXB_Assumption_Table * lapse_dyn_profile_split;
+	GMXB_Assumption_Table * gmwb_max_annual_wdl_pct_table;
+    GMXB_Assumption_Table * surr_chg_perc;
+	GMXB_Assumption_Table * mort_table_2;
+	
+	double tax_deferral;
+	double mort_mult_2;
+	double mort_adj_2;
+	double surv_12;
+	double surv_1;
+	double surv_2;
+	double lapse_function;
+	int index_column;
+	string joint_life_ind;
+	double age_valn_2;
+	string sex_2;
+	double age_exact_issue_2;
+	string gmwb_wdl_rate_source;
+	int birthday2;
+	int year2;
+
+
+	Projection_AGD_WB_DB(const vector<vector <int>>& i_s_a,const vector<vector <int>>& f_s_a,
+							const char* tables, bool generate_debug_files, 
+						   const string& debug_file_path, const int t_shorter, bool l_longevity_tables, int time_step):
+	Projection(i_s_a, f_s_a, tables,   generate_debug_files, debug_file_path, t_shorter, l_longevity_tables, time_step),
+	Projection_WB_DB(i_s_a, f_s_a, tables,  generate_debug_files, debug_file_path, t_shorter, l_longevity_tables, time_step)
+	{
+        this->surr_chg_perc = new GMXB_Assumption_Table(tables , "surr_chg_perc");
+		lapse_dyn_medregion = new GMXB_Assumption_Table (tables, "lapse_dyn_medregion");
+		lapse_dyn_profile_split = new GMXB_Assumption_Table (tables, "lapse_dyn_profile_split");
+		gmwb_max_annual_wdl_pct_table = new GMXB_Assumption_Table(tables, "gmwb_max_annual_wdl_pct_table");
+
+		tax_deferral = atof(this->assump->search("tax_deferral").c_str());
+		gmwb_wdl_rate_source = this->assump_WB->search("gmwb_wdl_rate_source");
+	}
+
+
+   ~Projection_AGD_WB_DB()
+	{	
+		delete this->surr_chg_perc;
+		delete this->gmwb_max_annual_wdl_pct_table;
+		delete this->lapse_dyn_medregion;
+		delete this->lapse_dyn_profile_split;
+		//delete this->mort_table_2;
+	}
+
+
+	void set_current_model_point(Model_Point *mp)
+	{
+		Model_Point_AGD_WB *agd_wb_mp = dynamic_cast<Model_Point_AGD_WB *> (mp);
+		
+		this->joint_life_ind = agd_wb_mp->joint_life_ind;
+		this->sex_2 = agd_wb_mp->sex_2;
+		this->age_valn_2 = agd_wb_mp->age_valn_2;
+		this->age_exact_issue_2 = agd_wb_mp->age_exact_issue_2;
+		
+		Projection_WB::set_current_model_point(mp);
+		std::string s_toFind("BASE");
+		this->charge_benefit_base = find_string(mp->gmxb_type2, s_toFind);
+		this->birthday2= agd_wb_mp->birthday2;
+		this->year2 = agd_wb_mp->year2;
+	}
+
+
+	void load_tables()
+	{
+		Projection::load_tables();
+		if(this->joint_life_ind == "LS")
+		{
+			if(this->sex_2 == "F")
+			{
+				this->mort_table_2 = this->mort_table_f;
+				this->mort_mult_2 = this->mort_mult_f;
+				this->mort_adj_2 = this->mort_adj_f;
+			}
+			else if(this->sex_2 == "M")
+			{
+				this->mort_table_2 = this->mort_table_m;
+				this->mort_mult_2 = this->mort_mult_m;
+				this->mort_adj_2 = this->mort_adj_m;
+			}
+			else 
+			{
+				char message[MAX_LENGTH_MESSAGE_EXCEPTION];
+				sprintf_s(message, "Only F or M are allowed for model_point->sex_2 variable");
+				throw new GMXBException(message);		
+			}
+		}
+	}
+
+
+	double mortality_rate_calculation(int t) 
+	{
+		double table_age = (int)(timing_items[t][AGE_LAST]) + this->mort_age_adj;
+		double table_age_2 = 0.0;
+
+		if (this->joint_life_ind == "LS")
+		{
+			table_age_2 = (int)(this->age_exact_issue_2) + this->timing_items[t][POL_YEAR] - 1.0 + this->mort_age_adj;
+			double q1 = min(1.0, this->mort_table->search(int(table_age), this->model_point->year - MORT_CONST)* this->mort_mult);	
+			double q2 = min(1.0, this->mort_table_2->search(int(table_age_2), this->year2  - MORT_CONST)* this->mort_mult_2);	
+
+			if (t == 1)
+			{
+				surv_12 = 10000.;
+				surv_1 = 0.;
+				surv_2 = 0.;
+			}
+			else
+			{
+				double q1_last_year = min(1.0, this->mort_table->search(int(table_age) - 1, this->model_point->year  - MORT_CONST)* this->mort_mult);	
+				double q2_last_year = min(1.0, this->mort_table_2->search(int(table_age_2) - 1, this->year2 - MORT_CONST)* this->mort_mult_2);
+
+				surv_1 = surv_12 * (1 - q1_last_year) * q2_last_year + surv_1 * (1 - q1_last_year);
+				surv_2 = surv_12 * (1 - q2_last_year) * q1_last_year + surv_2 * (1 - q2_last_year);
+				surv_12 = surv_12 * (1 - q1_last_year) * (1 - q2_last_year);
+			}
+			double surv = surv_12 + surv_1 + surv_2;
+			
+			if(surv < SMALL_DOUBLE)
+				return 0.0;
+			else	
+				return min(1.0, (surv_12 * q1 * q2 + surv_1 * q1 + surv_2 * q2) / surv );
+	
+		}
+		else 
+			return min(1.0, this->mort_table->search(int(table_age), this->model_point->year - MORT_CONST)* this->mort_mult);
+	}
+
+
+	/* 
+	* Calculation of effective lapse rate
+	* Calculation of rationnal and irationnal percentage rate calculation
+	* Calculation of irrational rate calculation
+	* Calculation of dynamic rationnal rate calculation
+	*/
+
+	double dynamic_lapse_rate_axa(int t) 
+	{
+		int pol_yr = (int)this->timing_items[t][POL_YEAR] ; 
+		double itm;
+		 
+		double tenyr = this->afmr[this->model_point->elapsed_mths_in_valn_yr + 1][t][MAXIMUM_NUMBER_OF_INDEXES]/100.0;
+		double agd_wdl_rate;
+		
+		if (gmwb_wdl_rate_source == "DATA_FILE")
+		{
+			agd_wdl_rate = model_point->gmwb_wdl_rate;
+		}
+		else if (gmwb_wdl_rate_source == "UDI")
+		{
+			if (joint_life_ind == "LS")
+				agd_wdl_rate = this->gmwb_max_annual_wdl_pct_table->search((int)min(this->model_point->age_election_ddf_calculated, this->age_exact_issue_2 + this->model_point->gmxb_deferral_period), 1);
+			else
+				agd_wdl_rate = this->gmwb_max_annual_wdl_pct_table->search((int)this->model_point->age_election_ddf_calculated, 1);
+		}
+		else
+		{
+			char message[MAX_LENGTH_MESSAGE_EXCEPTION];
+			sprintf_s(message, "The field gmwb_wdl_rate_source must be setted to UDI or DATA_FILE");
+			throw new GMXBException(message);	
+		}
+
+		main_proj_array[t][BOND_RATE_FOR_LAPSES] = tenyr; 
+
+		double agd_irr_lapse_rate;
+		double agd_dynamic_rate;
+//		double local_wdl_perc;  
+
+		if (t == 1)
+		  main_proj_array[t][GMWB_IF]  = max(this->model_point->gmwb_rollup_valn, this->model_point->gmwb_ratchet_valn);
+		else
+			main_proj_array[t][GMWB_IF] = main_proj_array[t-1][GMWB_IF]; 
+
+	    double av_e_bef_surr_chg = main_proj_array[t][AV_E_BEF]*(1.- surr_chg_perc->search(int(this->timing_items[t][POL_YEAR]), 1) /100.);
+
+		if(main_proj_array[t][AV_E_BEF] > SMALL_DOUBLE)
+				itm = tenyr - agd_wdl_rate/100. * max(av_e_bef_surr_chg, main_proj_array[t][GMWB_IF])/av_e_bef_surr_chg ;
+		else
+				itm = 0.0;	
+
+		double itm_threshold_inf = this->lapse_dyn_medregion->quick_search(THRESHOLD1, 1)/100;
+		double itm_threshold_sup = this->lapse_dyn_medregion->quick_search(THRESHOLD2, 1)/100;
+		double slope = lapse_dyn_medregion->quick_search(SLOPE, 1);
+			       
+		if	(pol_yr <= tax_deferral)
+			 agd_dynamic_rate = 0.0;
+		else
+		{
+			if (itm > itm_threshold_sup)
+				agd_dynamic_rate = this->lapse_max_pa_perc / 100.0;
+			else if (itm < itm_threshold_inf)	
+				agd_dynamic_rate = this->lapse_min_pa_perc / 100.0;
+			else		
+				agd_dynamic_rate = min(this->lapse_max_pa_perc/ 100.0 , max(slope * (itm - itm_threshold_inf), 0.0)) ;
+		}	
+
+		if (pol_yr <= this->model_point->gmxb_deferral_period)
+			 agd_irr_lapse_rate = this->lapse_rates->search(pol_yr, ACC)/100; 
+		else
+			agd_irr_lapse_rate = this->lapse_rates->search(pol_yr, DIST)/100; 
+	        
+		if (t==1)
+		{
+			rational_index[0] = this->lapse_dyn_profile_split->quick_search(RATIONAL, 1);
+			irrational_index[0] =  this->lapse_dyn_profile_split->quick_search(IRRATIONAL, 1);
+
+			for (int i = 2; i != SUBACCT_MAX_PERIOD+1; i++)
+			{
+				rational_index[i] = 0.0;
+				irrational_index[i] = 0.0;
+			}
+		}
+			
+		 double denom = rational_index[t-1] * (1 - agd_dynamic_rate) + irrational_index[t-1] * (1- agd_irr_lapse_rate); 
+		 	
+		 if (denom > SMALL_DOUBLE)
+		 {
+			rational_index[t] = rational_index[t-1] * (1 - agd_dynamic_rate) / denom;
+			irrational_index[t] = irrational_index[t-1] * (1 - agd_irr_lapse_rate) / denom;
+		 }   
+		 else
+		 {
+			rational_index[t] = 0.0;
+			irrational_index[t] = 0.0;
+		 }
+        return (rational_index[t-1] * agd_dynamic_rate + irrational_index[t-1]* agd_irr_lapse_rate);
+	} 
+
+
+	/*
+	* To find the field "BASE" in gmxb_type_2 to determine 
+	* If we take the charges on the account value or on the base
+	*/
+
+	bool find_string(std::string& s, std::string& s_toBeFind)
+	{
+		std::string::size_type loc = s.find( s_toBeFind, 0 );
+		if( loc != std::string::npos ) 
+			return true;
+		else 
+			return false;    
+	}
+
+
+    void gmxbCharge(int t)
+	{
+		if (!this->charge_benefit_base)
+			Projection::gmxbCharge(t);
+		else
+		{
+			if (this->timing_items[t][POL_YEAR] <= this->product_charging_duration)
+			{
+				if (t==1)
+					main_proj_array[t][GMXB_CHARGE] = min(this->timing_items[t][PRORATA]* (model_point->gmxb_g_c / 100.0)* max(model_point->gmwb_rollup_valn,model_point->gmwb_ratchet_valn),
+				                                 main_proj_array[t][AV_B_BEF_BIS]- main_proj_array[t][ADMIN_FEE] - main_proj_array[t][M_AND_E_FEE]);
+				else
+					main_proj_array[t][GMXB_CHARGE] = min(this->timing_items[t][PRORATA]* (model_point->gmxb_g_c / 100.0)* main_proj_array[t-1][GMWB_IF],
+                                                         main_proj_array[t][AV_B_BEF_BIS] - main_proj_array[t][ADMIN_FEE] - main_proj_array[t][M_AND_E_FEE]);		
+			}
+			else
+				main_proj_array[t][GMXB_CHARGE] = 0.0;
+		}
+	}
+
+
+	/*
+	* Variable gmwb_wdl_rate_source added in the constructor of Projection_AGD_WB_DB
+	* Withdrawal rate is choosed between the Inforce file and the Assumptions tables
+	*/
+
+	void project_gmwb_payments_claims_beg(int t)
+	{
+		double agd_wdl_rate;
+
+		if (gmwb_wdl_rate_source == "DATA_FILE")
+		{
+			agd_wdl_rate = model_point->gmwb_wdl_rate;
+		}
+		else if (gmwb_wdl_rate_source == "UDI")
+		{
+			if (joint_life_ind == "LS")
+				agd_wdl_rate=this->gmwb_max_annual_wdl_pct_table->search((int)min(this->model_point->age_election_ddf_calculated, this->age_exact_issue_2 + this->model_point->gmxb_deferral_period), 1);
+			else
+				agd_wdl_rate=this->gmwb_max_annual_wdl_pct_table->search((int)this->model_point->age_election_ddf_calculated, 1);
+		}
+		else
+		{
+			char message[MAX_LENGTH_MESSAGE_EXCEPTION];
+			sprintf_s(message, "The field gmwb_wdl_rate_source must be setted to UDI or DATA_FILE");
+			throw new GMXBException(message);	
+		}
+		
+		if (this->gmwb_timing == "BEG")
+		{
+			if (t == 1) 
+			{
+				main_proj_array[t][GMWB_ROLLUP_PREV] = model_point->gmwb_rollup_valn;     
+				main_proj_array[t][GMWB_RATCHET_PREV] = model_point->gmwb_ratchet_valn;
+				main_proj_array[t][GMWB_IF] = max(model_point->gmwb_rollup_valn, model_point->gmwb_ratchet_valn);
+			}
+			else
+			{      
+				main_proj_array[t][GMWB_RATCHET_PREV] = main_proj_array[t-1][GMWB_AV_IF];
+
+				if (this->gmwb_ratchet_type == "RATCHET")
+					main_proj_array[t][GMWB_ROLLUP_PREV] = main_proj_array[t-1][GMWB_PREM_IF];
+				else
+				{
+					main_proj_array[t][GMWB_ROLLUP_PREV]  = main_proj_array[t-1][GMWB_IF] ; 	
+				}
+			}	
+
+			if ((this->timing_items[t][POL_YEAR]> model_point->gmxb_deferral_period)
+				&&(this->timing_items[t][POL_YEAR] <= model_point->gmxb_deferral_period + this->gmwb_withdrawal_period))
+			{
+              if (t==1)
+				main_proj_array[t][GMWB_PAYMENT] = 
+										max(agd_wdl_rate/ 100. 
+									   * main_proj_array[t][GMWB_IF] - model_point->gmwb_payt_yr, 0.0) ;
+
+			  else
+				  main_proj_array[t][GMWB_PAYMENT] = (agd_wdl_rate/ 100.) * main_proj_array[t-1][GMWB_IF];
+
+
+				main_proj_array[t][GMWB_CLAIMS] = 
+							max(0.0, main_proj_array[t][GMWB_PAYMENT]  - main_proj_array[t][AV_B_BEF]);
+			}
+			else
+			{
+				main_proj_array[t][GMWB_PAYMENT] =  0.0;
+				main_proj_array[t][GMWB_CLAIMS] = 0.0;
+			}
+		}
+	}
+	
+
+	/*
+	* Variable gmwb_wdl_rate_source added in the constructor of Projection_AGD_WB_DB
+	* Withdrawal rate is choosed between the Inforce file and the Assumptions tables
+	*/
+
+	void gmwb_specific_end_claims_calculation(int t)
+	{
+		double agd_wdl_rate;
+		
+		if (gmwb_wdl_rate_source == "DATA_FILE")
+		{
+			agd_wdl_rate = model_point->gmwb_wdl_rate;
+		}
+		else if (gmwb_wdl_rate_source == "UDI")
+		{
+			if (joint_life_ind == "LS")
+				agd_wdl_rate=this->gmwb_max_annual_wdl_pct_table->search((int)min(this->model_point->age_election_ddf_calculated, this->age_exact_issue_2 + this->model_point->gmxb_deferral_period), 1);
+			else
+				agd_wdl_rate=this->gmwb_max_annual_wdl_pct_table->search((int)this->model_point->age_election_ddf_calculated, 1);
+		}
+		else
+		{
+			char message[MAX_LENGTH_MESSAGE_EXCEPTION];
+			sprintf_s(message, "The field gmwb_wdl_rate_source must be setted to UDI or DATA_FILE");
+			throw new GMXBException(message);	
+		}
+
+		this->main_proj_array[t][GMWB_PAYMENT] = agd_wdl_rate/ 100. 
+																* this->main_proj_array[t][GMWB_IF];
+		this->main_proj_array[t][GMWB_CLAIMS] = max(0.0, this->main_proj_array[t][GMWB_PAYMENT] - 
+																	this->main_proj_array[t][AV_E_BEF_CLAIMS]);		
+	}
+
+     //risk appetite
+	 void Load_config_by_product(int t,int n_MP, string** inforce,double perc, int mode)
+	{
+       if(this->joint_life_ind == "LS")
+	   {inforce[n_MP][AGE_VALN_2]=nb_to_string(this->age_valn_2+t);}
+	}
+};

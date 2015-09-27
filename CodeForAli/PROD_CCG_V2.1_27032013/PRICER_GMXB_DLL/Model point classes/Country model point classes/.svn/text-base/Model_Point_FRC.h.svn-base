@@ -1,0 +1,40 @@
+#pragma once
+#include "Model point classes/Model_point.h"
+#include "model_point_head_FRC.h"
+
+class Model_Point_FRC : public Model_Point
+{
+
+public:
+	int policy_initial_issue_date;
+	double frc_coupon;
+	double age_exact_issue_old_date;
+
+	Model_Point_FRC (vector<string>& row, int rank, Product_configuration& product_config, Scenario_configuration& scenario_config) : 
+	Model_Point (row, rank, product_config, scenario_config)
+	{
+		policy_initial_issue_date = atoi(row[OLD_DATE].c_str());
+		this->frc_coupon = atof(row[FRC_COUPON].c_str());
+	}
+	
+	// HE
+	Model_Point_FRC(Model_Point * mp, int index_shock_size_in, int fund_shock_size_in)
+	:Model_Point(mp, index_shock_size_in, fund_shock_size_in)
+	{
+		Model_Point_FRC* mp_frc = dynamic_cast<Model_Point_FRC *> (mp);
+		this->policy_initial_issue_date = mp_frc->policy_initial_issue_date;
+		this->frc_coupon = mp_frc->frc_coupon;
+		this->age_exact_issue_old_date = mp_frc->age_valn - mp_frc->policy_initial_issue_date;
+	}
+
+
+	Model_Point_FRC(Model_Point* mp) : Model_Point(*mp)
+	{
+		Model_Point_FRC* mp_frc = dynamic_cast<Model_Point_FRC *> (mp);
+		this->policy_initial_issue_date = mp_frc->policy_initial_issue_date;
+		this->frc_coupon = mp_frc->frc_coupon;
+		this->age_exact_issue_old_date = mp_frc->age_valn - mp_frc->policy_initial_issue_date;
+	}
+	
+
+};
