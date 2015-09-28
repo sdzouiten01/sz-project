@@ -1,0 +1,56 @@
+﻿Build started 28.09.2015 11:08:42.
+     1>Project "C:\Users\b029735\NoBackupData\25_PROJECT_2015\MERGE_NEW_ESG_CODE\PROD_CCG_V2.1_27032013\HE_Asset\HE_Asset.vcxproj" on node 3 (Build target(s)).
+     1>ClCompile:
+         C:\Program Files\Microsoft Visual Studio 11.0\VC\bin\CL.exe /c /Zi /nologo /W3 /WX- /Od /Oy- /D WIN32 /D _DEBUG /D _LIB /D _UNICODE /D UNICODE /Gm /EHsc /RTC1 /MTd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Fo"Debug\\" /Fd"Debug\vc110.pdb" /Gd /TP /analyze- /errorReport:prompt ..\HEDGEFF_COMPUTE\Swap.cpp ..\HEDGEFF_COMPUTE\Future.cpp ..\HEDGEFF_COMPUTE\OptionPut.cpp ..\HEDGEFF_COMPUTE\SwapRate.cpp ..\HEDGEFF_COMPUTE\BandMatrix.cpp ..\HEDGEFF_COMPUTE\MathTools.cpp ..\HEDGEFF_COMPUTE\Portfolio.cpp ..\HEDGEFF_COMPUTE\Assumptions.cpp ..\HEDGEFF_COMPUTE\main.cpp
+         main.cpp
+         Assumptions.cpp
+         Portfolio.cpp
+     1>..\HEDGEFF_COMPUTE\Portfolio.cpp(309): warning C4996: 'itoa': The POSIX name for this item is deprecated. Instead, use the ISO C++ conformant name: _itoa. See online help for details.
+                 C:\Program Files\Microsoft Visual Studio 11.0\VC\include\stdlib.h(909) : see declaration of 'itoa'
+     1>..\HEDGEFF_COMPUTE\Portfolio.cpp(312): warning C4996: 'itoa': The POSIX name for this item is deprecated. Instead, use the ISO C++ conformant name: _itoa. See online help for details.
+                 C:\Program Files\Microsoft Visual Studio 11.0\VC\include\stdlib.h(909) : see declaration of 'itoa'
+     1>..\HEDGEFF_COMPUTE\Portfolio.cpp(405): warning C4018: '<' : signed/unsigned mismatch
+     1>..\HEDGEFF_COMPUTE\Portfolio.cpp(559): warning C4018: '<' : signed/unsigned mismatch
+     1>..\HEDGEFF_COMPUTE\Portfolio.cpp(622): warning C4018: '<' : signed/unsigned mismatch
+     1>..\HEDGEFF_COMPUTE\Portfolio.cpp(629): warning C4018: '<' : signed/unsigned mismatch
+     1>..\HEDGEFF_COMPUTE\Portfolio.cpp(897): warning C4018: '<' : signed/unsigned mismatch
+     1>..\HEDGEFF_COMPUTE\Portfolio.cpp(910): warning C4018: '<' : signed/unsigned mismatch
+     1>..\HEDGEFF_COMPUTE\Portfolio.cpp(931): warning C4018: '<' : signed/unsigned mismatch
+         MathTools.cpp
+         BandMatrix.cpp
+     1>..\HEDGEFF_COMPUTE\BandMatrix.cpp(35): warning C4018: '<' : signed/unsigned mismatch
+         SwapRate.cpp
+         OptionPut.cpp
+     1>..\HEDGEFF_COMPUTE\OptionPut.cpp(238): warning C4018: '<' : signed/unsigned mismatch
+     1>..\HEDGEFF_COMPUTE\OptionPut.cpp(285): warning C4018: '<' : signed/unsigned mismatch
+     1>..\HEDGEFF_COMPUTE\OptionPut.cpp(290): warning C4018: '<' : signed/unsigned mismatch
+     1>..\HEDGEFF_COMPUTE\OptionPut.cpp(299): warning C4018: '<' : signed/unsigned mismatch
+     1>..\HEDGEFF_COMPUTE\OptionPut.cpp(416): warning C4018: '<' : signed/unsigned mismatch
+     1>..\HEDGEFF_COMPUTE\OptionPut.cpp(431): warning C4018: '<' : signed/unsigned mismatch
+     1>..\HEDGEFF_COMPUTE\OptionPut.cpp(538): warning C4018: '<' : signed/unsigned mismatch
+         Future.cpp
+     1>..\HEDGEFF_COMPUTE\Future.cpp(177): warning C4018: '<' : signed/unsigned mismatch
+     1>..\HEDGEFF_COMPUTE\Future.cpp(206): warning C4018: '<' : signed/unsigned mismatch
+     1>..\HEDGEFF_COMPUTE\Future.cpp(211): warning C4018: '<' : signed/unsigned mismatch
+     1>..\HEDGEFF_COMPUTE\Future.cpp(220): warning C4018: '<' : signed/unsigned mismatch
+     1>..\HEDGEFF_COMPUTE\Future.cpp(329): warning C4018: '<' : signed/unsigned mismatch
+     1>..\HEDGEFF_COMPUTE\Future.cpp(427): warning C4018: '<' : signed/unsigned mismatch
+         Swap.cpp
+     1>..\HEDGEFF_COMPUTE\Swap.cpp(657): warning C4018: '<' : signed/unsigned mismatch
+         Generating Code...
+       Lib:
+         C:\Program Files\Microsoft Visual Studio 11.0\VC\bin\Lib.exe /OUT:"C:\Users\b029735\NoBackupData\25_PROJECT_2015\MERGE_NEW_ESG_CODE\PROD_CCG_V2.1_27032013\Debug\HE_Asset.lib" /NOLOGO Debug\Swap.obj
+         Debug\Future.obj
+         Debug\OptionPut.obj
+         Debug\SwapRate.obj
+         Debug\BandMatrix.obj
+         Debug\MathTools.obj
+         Debug\Portfolio.obj
+         Debug\Assumptions.obj
+         Debug\main.obj
+         HE_Asset.vcxproj -> C:\Users\b029735\NoBackupData\25_PROJECT_2015\MERGE_NEW_ESG_CODE\PROD_CCG_V2.1_27032013\Debug\HE_Asset.lib
+     1>Done Building Project "C:\Users\b029735\NoBackupData\25_PROJECT_2015\MERGE_NEW_ESG_CODE\PROD_CCG_V2.1_27032013\HE_Asset\HE_Asset.vcxproj" (Build target(s)).
+
+Build succeeded.
+
+Time Elapsed 00:00:23.44

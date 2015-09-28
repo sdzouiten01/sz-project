@@ -1,0 +1,66 @@
+﻿Build started 28.09.2015 11:34:47.
+     1>Project "C:\Users\b029735\NoBackupData\25_PROJECT_2015\MERGE_NEW_ESG_CODE\PROD_CCG_V3(test)\PRICER_GMXB_DLL\PRICER_GMXB_DLL.vcxproj" on node 2 (Build target(s)).
+     1>ClCompile:
+         C:\Program Files\Microsoft Visual Studio 11.0\VC\bin\CL.exe /c /I"C:\Users\b029735\NoBackupData\25_PROJECT_2015\MERGE_NEW_ESG_CODE\PROD_CCG_V3(test)\AHS_PARSER" /I"C:\Users\b029735\NoBackupData\25_PROJECT_2015\MERGE_NEW_ESG_CODE\PROD_CCG_V3(test)\ScenarioGenerator(v2)" /I"C:\Users\b029735\NoBackupData\25_PROJECT_2015\MERGE_NEW_ESG_CODE\PROD_CCG_V3(test)\Calibration" /I"C:\Users\b029735\NoBackupData\25_PROJECT_2015\MERGE_NEW_ESG_CODE\PROD_CCG_V3(test)\ESG_V0" /I"C:\Users\b029735\NoBackupData\25_PROJECT_2015\MERGE_NEW_ESG_CODE\PROD_CCG_V3(test)\PRICER_GMXB_DLL\Utility classes" /I"C:\Users\b029735\NoBackupData\25_PROJECT_2015\MERGE_NEW_ESG_CODE\PROD_CCG_V3(test)\PRICER_GMXB_DLL\Model point classes" /I"C:\Users\b029735\NoBackupData\25_PROJECT_2015\MERGE_NEW_ESG_CODE\PROD_CCG_V3(test)\PRICER_GMXB_DLL" /Zi /nologo /W4 /WX- /Od /Oi /Oy- /GL /D WIN32 /D _DEBUG /D _WINDOWS /D _USRDLL /D PRICER_GMXB_DLL_EXPORTS /D _WINDLL /Gm- /EHsc /MTd /GS /Gy /fp:precise /Zc:wchar_t /Zc:forScope /Fo"Debug\\" /Fd"Debug\vc110.pdb" /Gd /TP /analyze- /errorReport:prompt back_ground_final.cpp Interface_dll.cpp "Model point classes\Country model point classes\model_point_BL_LUX_01.cpp" "Model point classes\Country model point classes\model_point_BL_RST_CH_LIE_01.cpp" "Model point classes\Country model point classes\model_point_BL_RST_DEIT_LIE_01.cpp" "Model point classes\Country model point classes\model_point_BL_RST_SWISS_01.cpp" "Model point classes\Country model point classes\model_point_BL_RS_CH_LIE_01.cpp" "Model point classes\Country model point classes\model_point_BL_RS_DE_LIE_01.cpp" "Model point classes\Model_Point.cpp" "Projection classes\Country projection classes\Projection_BL_CH_WB_01.cpp" "Projection classes\Country projection classes\Projection_BL_LIE_CH_WBL_01.cpp" "Projection classes\Country projection classes\Projection_BL_LIE_CH_WB_01.cpp" "Projection classes\Country projection classes\Projection_BL_LIE_DEIT_WBD_01.cpp" "Projection classes\Country projection classes\Projection_BL_LIE_DE_WBDL_01.cpp" "Projection classes\Country projection classes\Projection_BL_LUX_WBD_01.cpp" "Projection classes\Country projection classes\Projection_BL_LUX_WBLD_01.cpp" "Projection classes\Projection.cpp" "Utility classes\Dispatch_Manager.cpp" "Utility classes\Inforce_Manager.cpp" "Utility classes\Product_configuration.cpp" "Utility classes\Scenario_configuration.cpp" "Utility classes\Scenario_manager.cpp" "Utility classes\stdafx.cpp"
+         back_ground_final.cpp
+         Interface_dll.cpp
+         model_point_BL_LUX_01.cpp
+         model_point_BL_RST_CH_LIE_01.cpp
+         model_point_BL_RST_DEIT_LIE_01.cpp
+         model_point_BL_RST_SWISS_01.cpp
+         model_point_BL_RS_CH_LIE_01.cpp
+         model_point_BL_RS_DE_LIE_01.cpp
+         Model_Point.cpp
+         Projection_BL_CH_WB_01.cpp
+         Projection_BL_LIE_CH_WBL_01.cpp
+         Projection_BL_LIE_CH_WB_01.cpp
+         Projection_BL_LIE_DEIT_WBD_01.cpp
+         Projection_BL_LIE_DE_WBDL_01.cpp
+         Projection_BL_LUX_WBD_01.cpp
+         Projection_BL_LUX_WBLD_01.cpp
+         Projection.cpp
+         Dispatch_Manager.cpp
+         Inforce_Manager.cpp
+         Product_configuration.cpp
+         Compiling...
+         Scenario_configuration.cpp
+         Scenario_manager.cpp
+         stdafx.cpp
+       Link:
+         C:\Program Files\Microsoft Visual Studio 11.0\VC\bin\link.exe /ERRORREPORT:PROMPT /OUT:"C:\Users\b029735\NoBackupData\25_PROJECT_2015\MERGE_NEW_ESG_CODE\PROD_CCG_V3(test)\Debug\PRICER_GMXB_DLL.dll" /INCREMENTAL /NOLOGO /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /manifestinput:"C:\Program Files\Microsoft Visual Studio 11.0\VC\Include\Manifest\dpiaware.manifest" /DEBUG /PDB:"C:\Users\b029735\NoBackupData\25_PROJECT_2015\MERGE_NEW_ESG_CODE\PROD_CCG_V3(test)\Debug\PRICER_GMXB_DLL.pdb" /ASSEMBLYDEBUG /SUBSYSTEM:WINDOWS /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"C:\Users\b029735\NoBackupData\25_PROJECT_2015\MERGE_NEW_ESG_CODE\PROD_CCG_V3(test)\Debug\PRICER_GMXB_DLL.lib" /MACHINE:X86 /SAFESEH /DLL Debug\back_ground_final.obj
+         Debug\Interface_dll.obj
+         Debug\model_point_BL_LUX_01.obj
+         Debug\model_point_BL_RST_CH_LIE_01.obj
+         Debug\model_point_BL_RST_DEIT_LIE_01.obj
+         Debug\model_point_BL_RST_SWISS_01.obj
+         Debug\model_point_BL_RS_CH_LIE_01.obj
+         Debug\model_point_BL_RS_DE_LIE_01.obj
+         Debug\Model_Point.obj
+         Debug\Projection_BL_CH_WB_01.obj
+         Debug\Projection_BL_LIE_CH_WBL_01.obj
+         Debug\Projection_BL_LIE_CH_WB_01.obj
+         Debug\Projection_BL_LIE_DEIT_WBD_01.obj
+         Debug\Projection_BL_LIE_DE_WBDL_01.obj
+         Debug\Projection_BL_LUX_WBD_01.obj
+         Debug\Projection_BL_LUX_WBLD_01.obj
+         Debug\Projection.obj
+         Debug\Dispatch_Manager.obj
+         Debug\Inforce_Manager.obj
+         Debug\Product_configuration.obj
+         Debug\Scenario_configuration.obj
+         Debug\Scenario_manager.obj
+         Debug\stdafx.obj
+         "C:\Users\b029735\NoBackupData\25_PROJECT_2015\MERGE_NEW_ESG_CODE\PROD_CCG_V3(test)\Debug\AHS_PARSER.lib"
+         "C:\Users\b029735\NoBackupData\25_PROJECT_2015\MERGE_NEW_ESG_CODE\PROD_CCG_V3(test)\Debug\ESG_V0.lib"
+         back_ground_final.obj : MSIL .netmodule or module compiled with /GL found; restarting link with /LTCG; add /LTCG to the link command line to improve linker performance
+     1>LINK : warning LNK4075: ignoring '/INCREMENTAL' due to '/LTCG' specification
+            Creating library C:\Users\b029735\NoBackupData\25_PROJECT_2015\MERGE_NEW_ESG_CODE\PROD_CCG_V3(test)\Debug\PRICER_GMXB_DLL.lib and object C:\Users\b029735\NoBackupData\25_PROJECT_2015\MERGE_NEW_ESG_CODE\PROD_CCG_V3(test)\Debug\PRICER_GMXB_DLL.exp
+         Generating code
+     1>c:\users\b029735\nobackupdata\25_project_2015\merge_new_esg_code\prod_ccg_v3(test)\ahs_parser\gmxb_assumption_table.h(335): warning C4706: assignment within conditional expression
+         Finished generating code
+         PRICER_GMXB_DLL.vcxproj -> C:\Users\b029735\NoBackupData\25_PROJECT_2015\MERGE_NEW_ESG_CODE\PROD_CCG_V3(test)\Debug\PRICER_GMXB_DLL.dll
+     1>Done Building Project "C:\Users\b029735\NoBackupData\25_PROJECT_2015\MERGE_NEW_ESG_CODE\PROD_CCG_V3(test)\PRICER_GMXB_DLL\PRICER_GMXB_DLL.vcxproj" (Build target(s)).
+
+Build succeeded.
+
+Time Elapsed 00:01:29.13
