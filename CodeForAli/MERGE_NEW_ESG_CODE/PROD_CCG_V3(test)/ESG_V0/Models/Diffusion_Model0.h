@@ -61,6 +61,14 @@ public:
 		UNREFERENCED_PARAMETER(input_inverse_ZCB);
 		UNREFERENCED_PARAMETER(input_inverse_ZCB_Drift);
 	}
+	virtual	void Calculate_Equity_Return_With_Drift_without_IR_Model(int &index,double** &input_gaussian,double** &output_equity_return_tab,  double* &input_inverse_ZCB_Drift)
+	{
+		UNREFERENCED_PARAMETER(index);
+		UNREFERENCED_PARAMETER(input_gaussian);
+		UNREFERENCED_PARAMETER(output_equity_return_tab);
+		UNREFERENCED_PARAMETER(input_inverse_ZCB_Drift);	
+	}
+
 	DIF_MODEL0(){}
 	virtual ~DIF_MODEL0(){}
 };

@@ -51,6 +51,9 @@ public:
 	void set_Local_Parameters_to_zero();
 	void mySet_Debug_File_Header();
 	void set_current_model_point(Model_Point *mp);
+	void init_Count_scen_to_zero();
+	int Count_scen();
+	void Increase_Count_scen();
 	///////////////////////////////////////////////////////////////////////////////////
 	//////////////////////////////////////////////////////////////////////////////////
 	void initialise_mp_calculation();

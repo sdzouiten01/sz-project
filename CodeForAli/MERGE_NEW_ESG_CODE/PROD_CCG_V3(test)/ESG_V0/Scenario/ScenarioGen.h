@@ -25,6 +25,7 @@ public:
 	int Nb_dates_drift_table;
 	double **Eq_Drift_Matrix;
 	string Use_Equity_Drift_table;
+	string Equity_Drift_With_IR_Model;
 
 	string Model_diffusion_Name; 
 	string Model_random_Name; 
@@ -61,6 +62,7 @@ public:
 	void Write_Scenario();
 
 	ScenarioGen(InterfaceESG0 * &interface_Esg,HW1FSwaptionPricer* &model , YC* &mYieldCurve,string Model_rand,string Model_guassian,string Model_diff, int scn_path_number);
+	ScenarioGen(InterfaceESG0 * &interface_Esg,HW1FSwaptionPricer* &model , YC* &mYieldCurve,string Model_rand,string Model_guassian,string Model_diff, int scn_path_number, int number_scn_gen_stepbystep);
 
 	void write_seed(ofstream &file1,unsigned long * seed);
 

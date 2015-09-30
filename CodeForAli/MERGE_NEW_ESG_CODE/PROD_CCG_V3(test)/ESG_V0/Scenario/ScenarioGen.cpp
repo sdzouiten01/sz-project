@@ -33,6 +33,107 @@ ScenarioGen::~ScenarioGen()
 
 }
 
+ScenarioGen::ScenarioGen(InterfaceESG0 * &interface_Esg,HW1FSwaptionPricer* &model , YC* &mYieldCurve,string Model_rand,string Model_guassian,string Model_diff, int scn_path_number, int number_scn_gen_stepbystep)
+{
+	Model_diffusion_Name=Model_diff; 
+	Model_random_Name=Model_rand; 
+	Model_guassian_Name=Model_guassian; 	
+	
+	this->Test= new VarianceReduction(interface_Esg);
+	this->Test->Init_Calib_parrameters(model->getMRV(),model->getsigma());
+	this->Gaus_Model_Param=new GaussianGenModelParameters(interface_Esg,model);
+
+	this->Gaus_Model_Param->Number_Scen=number_scn_gen_stepbystep;
+	this->Gaus_Model_Param->Number_Scen_Antithetic=this->Gaus_Model_Param->Number_Scen/this->Gaus_Model_Param->Antithetic;;
+
+	this->Gaussian=new GaussianGen(Gaus_Model_Param);
+
+	Yield_curve_vector=new YC(*mYieldCurve);
+
+
+	if(Model_diffusion_Name=="BS_HW1F")
+		this->Diffusion_Model= new BS_HW1F(interface_Esg);
+
+	this->Diffusion_Model->Initialize_Calib_parameters(model->getMRV(),model->getsigma());
+		
+	this->Num_Index=4+Gaus_Model_Param->NB_equity+Gaus_Model_Param->Nb_bond+Gaus_Model_Param->Nb_rate;	
+	Scenario_vector= new double** [Num_Index];			
+	for(int i=0; i<Num_Index; i++){				
+		Scenario_vector[i]= new double* [Gaus_Model_Param->Nb_Step+1];			
+		for(int j=0;j<Gaus_Model_Param->Nb_Step+1;j++) Scenario_vector[i][j]=new double [Gaus_Model_Param->Number_Scen];			
+	}			
+	//Initialize			
+	for(int j=0;j<Gaus_Model_Param->Number_Scen;j++){				
+		for(int i=0;i<Gaus_Model_Param->Nb_Step+1;i++){				
+			Scenario_vector[0][i][j]=j+1;				
+			Scenario_vector[1][i][j]=i;			
+		}			
+		Scenario_vector[2][0][j]=0;			
+		Scenario_vector[3+Gaus_Model_Param->Nb_rate][0][j]=1;				
+		for(int i=0;i<Gaus_Model_Param->NB_equity;i++){				
+			Scenario_vector[4+Gaus_Model_Param->Nb_rate+i][0][j]=1;			
+		}		
+	}
+
+	If_Generate_Scenario=interface_Esg->If_Generate_Scenario; //From InterfaceESG Class
+	Generate_All_Scenarios_In_One_Step=interface_Esg->Generate_All_Scenarios_In_One_Step; //From InterfaceESG Class
+	If_Write_scenario=interface_Esg->Write_scenario; //From InterfaceESG Class
+	If_Write_gaussian=interface_Esg->Write_gaussian; //From InterfaceESG Class
+	Precision=interface_Esg->Precision; //From InterfaceESG Class
+	File_scenario_address=interface_Esg->File_scenario_address; //From InterfaceESG Class
+	If_use_rate_table=interface_Esg->If_use_rate_table; //From InterfaceESG Class
+	If_use_bond_table=interface_Esg->If_use_bond_table; //From InterfaceESG Class
+	if(If_use_rate_table==1){
+		Rate_Mat_tab=new double [Gaus_Model_Param->Nb_rate];
+		Rate_type_tab=new int [Gaus_Model_Param->Nb_rate];
+		Rate_Period_tab=new double [Gaus_Model_Param->Nb_rate];	
+		for(int i=0;i<Gaus_Model_Param->Nb_rate;i++){
+			Rate_Mat_tab[i]=interface_Esg->Rate_Mat_tab[i];
+			Rate_type_tab[i]= interface_Esg->Rate_type_tab[i];
+			Rate_Period_tab[i]=interface_Esg->Rate_Period_tab[i];
+		}
+	}
+	else{
+		Rate_Mat_tab=new double [Gaus_Model_Param->Nb_rate+1];
+		Rate_type_tab=new int [Gaus_Model_Param->Nb_rate+1];
+		Rate_Period_tab=new double [Gaus_Model_Param->Nb_rate+1];	
+	}
+
+	if(If_use_bond_table==1){
+		Bond_Mat_tab=new double [Gaus_Model_Param->Nb_bond];
+		Bond_coupon_tab=new double [Gaus_Model_Param->Nb_bond];
+		Bond_Freq_tab=new double [Gaus_Model_Param->Nb_bond];	
+		for(int i=0;i<Gaus_Model_Param->Nb_rate;i++){
+			Bond_Mat_tab[i]=interface_Esg->Bond_Mat_tab[i];
+			Bond_coupon_tab[i]= interface_Esg->Bond_coupon_tab[i];
+			Bond_Freq_tab[i]=interface_Esg->Bond_Freq_tab[i];
+		}
+	}
+	else{
+		Bond_Mat_tab=new double [Gaus_Model_Param->Nb_bond+1];
+		Bond_coupon_tab=new double [Gaus_Model_Param->Nb_bond+1];
+		Bond_Freq_tab=new double [Gaus_Model_Param->Nb_bond+1];	
+	}
+
+	Equity_name_tab=new string [Gaus_Model_Param->NB_equity];
+	for(int i=0;i<Gaus_Model_Param->NB_equity;i++)
+			Equity_name_tab[i]=interface_Esg->Equity_name_tab[i];
+	
+	Scenario_path_number=scn_path_number;
+	Scenario_shock_number=0;
+
+	Nb_dates_drift_table=interface_Esg->Nb_dates_drift_table;
+	Use_Equity_Drift_table=interface_Esg->Use_Equity_Drift_table;
+	Equity_Drift_With_IR_Model=interface_Esg->Use_Equity_Drift_table;
+	
+	Eq_Drift_Matrix=new double *[Gaus_Model_Param->NB_equity+1];
+	for(int i=0;i<Gaus_Model_Param->NB_equity+1;i++){
+		Eq_Drift_Matrix[i]=new double [Nb_dates_drift_table];
+		for(int j=0;j<Nb_dates_drift_table;j++) Eq_Drift_Matrix[i][j]=interface_Esg->Eq_Drift_Matrix[i][j];
+	}
+
+
+}
 ScenarioGen::ScenarioGen(InterfaceESG0 * &interface_Esg,HW1FSwaptionPricer* &model , YC* &mYieldCurve,string Model_rand,string Model_guassian,string Model_diff, int scn_path_number)
 {
 	Model_diffusion_Name=Model_diff; 
@@ -194,8 +295,12 @@ void ScenarioGen::Generate_Scenario()
 				Yield_curve_Drift_temp=new YC(*Yield_curve_vector);
 				string shock="Drift_shock_index_"+to_string(i);
 				Yield_curve_Drift_temp->ShockSwap_Drift(Eq_Drift_Matrix[0],Eq_Drift_Matrix[i+1],Nb_dates_drift_table,shock);
-				Diffusion_Model->Calculate_Equity_Return_With_Drift(i,this->Gaussian->Gaussian_vector[2+i],Scenario_vector[3+Gaus_Model_Param->Nb_rate],
-					Scenario_vector[4+Gaus_Model_Param->Nb_rate+i],Yield_curve_vector->INV_ZCB_Yield,Yield_curve_Drift_temp->INV_ZCB_Yield);
+				if(Equity_Drift_With_IR_Model=="Y")
+					Diffusion_Model->Calculate_Equity_Return_With_Drift(i,this->Gaussian->Gaussian_vector[2+i],Scenario_vector[3+Gaus_Model_Param->Nb_rate],
+							Scenario_vector[4+Gaus_Model_Param->Nb_rate+i],Yield_curve_vector->INV_ZCB_Yield,Yield_curve_Drift_temp->INV_ZCB_Yield);
+				else
+					Diffusion_Model->Calculate_Equity_Return_With_Drift_without_IR_Model(i,this->Gaussian->Gaussian_vector[2+i],Scenario_vector[4+Gaus_Model_Param->Nb_rate+i],
+												Yield_curve_Drift_temp->INV_ZCB_Yield);
 				delete Yield_curve_Drift_temp;
 			}
 			else

@@ -106,6 +106,9 @@ void Projection_BL_LUX_GMWBD_01::set_current_model_point(Model_Point *mp)
 		myCalc_Prorata=this->ModelPoint->Calc_Prorata;
 		this->InitProjection();
 	}
+	void Projection_BL_LUX_GMWBD_01::init_Count_scen_to_zero(){this->ModelPoint->Calc_Count_Scen=0;}
+		int Projection_BL_LUX_GMWBD_01::Count_scen(){return this->ModelPoint->Calc_Count_Scen;}
+void Projection_BL_LUX_GMWBD_01::Increase_Count_scen(){this->ModelPoint->Calc_Count_Scen +=1;}
 	///////////////////////////////////////////////////////////////////////////////////
 	//////////////////////////////////////////////////////////////////////////////////
 void Projection_BL_LUX_GMWBD_01::initialise_mp_calculation()

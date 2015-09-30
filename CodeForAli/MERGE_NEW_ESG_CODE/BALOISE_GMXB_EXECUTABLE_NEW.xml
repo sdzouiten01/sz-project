@@ -17,11 +17,29 @@
   <AllowPNG/>
  </OfficeDocumentSettings>
  <ExcelWorkbook xmlns="urn:schemas-microsoft-com:office:excel">
+  <SupBook>
+   <Path>\Program Files\blp\API\Office Tools\BloombergUI.xla</Path>
+   <SheetName>Sheet1</SheetName>
+   <SheetName>Sheet2</SheetName>
+   <SheetName>Sheet3</SheetName>
+   <Xct>
+    <Count>0</Count>
+    <SheetIndex>0</SheetIndex>
+   </Xct>
+   <Xct>
+    <Count>0</Count>
+    <SheetIndex>1</SheetIndex>
+   </Xct>
+   <Xct>
+    <Count>0</Count>
+    <SheetIndex>2</SheetIndex>
+   </Xct>
+  </SupBook>
   <WindowHeight>12120</WindowHeight>
   <WindowWidth>15195</WindowWidth>
   <WindowTopX>120</WindowTopX>
   <WindowTopY>120</WindowTopY>
-  <ActiveSheet>1</ActiveSheet>
+  <ActiveSheet>2</ActiveSheet>
   <ProtectStructure>False</ProtectStructure>
   <ProtectWindows>False</ProtectWindows>
  </ExcelWorkbook>
@@ -223,7 +241,6 @@
     <HorizontalResolution>600</HorizontalResolution>
     <VerticalResolution>600</VerticalResolution>
    </Print>
-   <Selected/>
    <Panes>
     <Pane>
      <Number>3</Number>
@@ -250,7 +267,7 @@
    <Row>
     <Cell ss:StyleID="s64"><Data ss:Type="String">DATA</Data></Cell>
     <Cell ss:StyleID="s64"><Data ss:Type="String">Mode</Data></Cell>
-    <Cell ss:StyleID="s63"><Data ss:Type="Number">2</Data></Cell>
+    <Cell ss:StyleID="s63"><Data ss:Type="Number">1</Data></Cell>
     <Cell ss:Index="6" ss:StyleID="s62"><Data ss:Type="String">Mode</Data></Cell>
     <Cell ss:StyleID="s62"><Data ss:Type="String">Informations</Data></Cell>
    </Row>
@@ -346,6 +363,7 @@
     <HorizontalResolution>600</HorizontalResolution>
     <VerticalResolution>600</VerticalResolution>
    </Print>
+   <Selected/>
    <Panes>
     <Pane>
      <Number>3</Number>

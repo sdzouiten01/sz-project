@@ -37,6 +37,7 @@ public:
 	void Initialize_Class_Parameters(double** &input_Gaussian1_ShortRate_tab,double** &input_Gaussian2_ShortRate_tab);
 	void Calculate_Equity_Return_With_Drift(int &index,double** &input_gaussian, double** &input_beta,double** &output_equity_return_tab, 
 												 double* &input_inverse_ZCB, double* &input_inverse_ZCB_Drift);
+	void BS_HW1F::Calculate_Equity_Return_With_Drift_without_IR_Model(int &index,double** &input_gaussian,double** &output_equity_return_tab,  double* &input_inverse_ZCB_Drift);
 	BS_HW1F(InterfaceESG0 * &interface_Esg);
 	void Initialize_Calib_parameters(double hW_Alpha,double hW_Sigma);
 	~BS_HW1F();

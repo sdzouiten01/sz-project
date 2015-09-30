@@ -140,6 +140,11 @@ public	:
 		scenario_manager(double ***va_scen, int number_of_scen, vector<int> scen_fund_col_vector, int yield_column_for_pvs_index, 
 			int lapse_dyn_treas_col_index, int rates_indic_index, int index_num, int t_high_shorter, int time_step);
 	
+		void init_scen_vector(double ***va_scen);
+		
+		
+		
+		
 		/*
 		* Calculate the annual rates from a given scenario file name
  		*/

@@ -96,7 +96,9 @@
       </ExcludedFromBuild>
     </ClInclude>
     <ClInclude Include="Instruments\YieldCurve.h" />
+    <ClInclude Include="Models\BS_CIR.h" />
     <ClInclude Include="Models\BS_HW1F.h" />
+    <ClInclude Include="Models\BS_WITHOUT_CIR.h" />
     <ClInclude Include="Models\Diffusion_Model0.h" />
     <ClInclude Include="Scenario\ScenarioGen.h" />
     <ClInclude Include="UniformGen\Mersenne_Twister.h" />
@@ -112,7 +114,9 @@
     <ClCompile Include="Instruments\Interpolation.cpp" />
     <ClCompile Include="Instruments\Matrice.cpp" />
     <ClCompile Include="Instruments\YieldCurve.cpp" />
+    <ClCompile Include="Models\BS_CIR.cpp" />
     <ClCompile Include="Models\BS_HW1F.cpp" />
+    <ClCompile Include="Models\BS_WITHOUT_CIR.cpp" />
     <ClCompile Include="Scenario\ScenarioGen.cpp" />
     <ClCompile Include="UniformGen\Mersenne_Twister.cpp" />
     <ClCompile Include="UniformGen\UniformGen.cpp" />

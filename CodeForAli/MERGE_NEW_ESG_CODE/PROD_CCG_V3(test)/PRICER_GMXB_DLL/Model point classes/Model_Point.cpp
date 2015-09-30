@@ -94,6 +94,7 @@ void Model_Point::set_Calc_information_to_Zero0()
 		Calc_Deferal_Duration_Months=0;
 		Calc_Coupon_by_Freq=0.;
 		Calc_Mod_Def_Duration_Months=0;	
+		Calc_Count_Scen=0;
 	}
 void Model_Point::initialise_mp0(vector<string>& row)
 	{

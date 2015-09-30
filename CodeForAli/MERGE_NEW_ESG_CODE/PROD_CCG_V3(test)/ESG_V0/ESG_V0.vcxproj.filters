@@ -99,6 +99,12 @@
     <ClInclude Include="GaussianGen\GaussianGenModelParameters.h">
       <Filter>Header Files\GaussianGen</Filter>
     </ClInclude>
+    <ClInclude Include="Models\BS_CIR.h">
+      <Filter>Header Files\Models</Filter>
+    </ClInclude>
+    <ClInclude Include="Models\BS_WITHOUT_CIR.h">
+      <Filter>Header Files\Models</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="UniformGen\Mersenne_Twister.cpp">
@@ -139,6 +145,12 @@
     </ClCompile>
     <ClCompile Include="GaussianGen\GaussianGenModelParameters.cpp">
       <Filter>Source Files\GaussianGen</Filter>
+    </ClCompile>
+    <ClCompile Include="Models\BS_CIR.cpp">
+      <Filter>Source Files\Models</Filter>
+    </ClCompile>
+    <ClCompile Include="Models\BS_WITHOUT_CIR.cpp">
+      <Filter>Source Files\Models</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

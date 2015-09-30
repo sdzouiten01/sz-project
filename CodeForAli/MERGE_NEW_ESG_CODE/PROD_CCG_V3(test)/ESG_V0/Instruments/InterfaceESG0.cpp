@@ -303,6 +303,7 @@ InterfaceESG0::InterfaceESG0(const string& config)
 
 
 	Use_Equity_Drift_table=Assumptions_local->search("Use_Equity_Drift_table").c_str();
+	Equity_Drift_With_IR_Model=Assumptions_local->search("Equity_Drift_With_IR_Model").c_str();
 	GMXB_Assumption_Table * equity_drift_table_local = new GMXB_Assumption_Table(config.c_str(), "equity_drift_table");
 	Nb_dates_drift_table=(int)equity_drift_table_local->get_row_high_index(); 
 	Eq_Drift_Matrix=new double *[Nb_equity+1];

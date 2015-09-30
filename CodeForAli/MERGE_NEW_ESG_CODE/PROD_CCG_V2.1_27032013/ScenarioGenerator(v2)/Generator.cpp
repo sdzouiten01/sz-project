@@ -91,6 +91,7 @@ int Generator::Indice_Generator(int position_index, Scenario *s,Variance_Reducti
 			}
 			if(position_index>=1){ // Equity diffusion
 				double vol=interpole(BI.nb_vol(),i,BI.vol_t(),BI.vol_eq(position_index-1));
+				//cout << "vol : " << vol;
 				// vol represents the volatility for time step i
 				// 1/BI.delta_t() represents the time period in years (BI.delta_t() = 12 if monthly)
 				combination(position_index,i,BI,s);

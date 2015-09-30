@@ -236,9 +236,14 @@ void Projection::myWrite_Debug_File()
 	}
 	this->debug_file.close();
 }
+void Projection::init_Count_scen_to_zero(){this->myModel_Point->Calc_Count_Scen=0;}
+int Projection::Count_scen(){return this->myModel_Point->Calc_Count_Scen;}
+void Projection::Increase_Count_scen(){this->myModel_Point->Calc_Count_Scen +=1;}
 void Projection::project()
 {
-	Projection::compt_sen +=1;		
+	Increase_Count_scen();
+	//this->myModel_Point->Calc_Count_Scen +=1;
+	//Projection::compt_sen +=1;		
 	// Loop over the indexes shocks
 	set_MainProjArrayVector_to_zero();
 	init_market_data();
@@ -250,8 +255,9 @@ void Projection::project()
 
 		if(myGenerateDebugFiles)
 			this->myWrite_Debug_File();
-
-		if(Projection::compt_sen==this->total_number_scn)
+		
+		//if(Projection::compt_sen==this->total_number_scn)
+		if(Count_scen()==this->total_number_scn)
 			this->PresentValueCalculation(this->myShockNumber,true);
 	}
 		

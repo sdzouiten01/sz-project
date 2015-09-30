@@ -198,7 +198,7 @@ void scenario_manager::init_ann_from_monthly_table(const string& file_name, int 
 					for (int col = 1; col <= DECALAGE_MAX - ((period-1) % 12) ; col++)
 					{	
 						this->ann_from_monthly_rates[iteration][col][tt][fund_num] =  
-								this->ann_from_monthly_rates[iteration][col][tt][fund_num] * (1.0 + returns_table[index_col]/100.0);
+								this->ann_from_monthly_rates[iteration][col][tt][fund_num] * (1.0 + returns_table[index_col]/*/100.0*/);
 
 						if (discount_factor_inv < SMALL_DOUBLE)
 							this->ann_from_monthly_rates[iteration][DECALAGE_MAX - (period-1)%12][tt][MAXIMUM_NUMBER_OF_INDEXES + 1]=0.0; 
@@ -217,7 +217,7 @@ void scenario_manager::init_ann_from_monthly_table(const string& file_name, int 
 						if (tt < this->subacct_max_period)
 						{
 								this->ann_from_monthly_rates[iteration][col][tt + 1][fund_num] =  
-								this->ann_from_monthly_rates[iteration][col][tt + 1][fund_num] * (1.0 + returns_table[index_col]/100.0);
+								this->ann_from_monthly_rates[iteration][col][tt + 1][fund_num] * (1.0 + returns_table[index_col]/*/100.0*/);
 						}
 					}
 				}
@@ -321,7 +321,7 @@ void scenario_manager::init_monthly_rates_table(const string& file_name, int res
 				{
 					// fund returns
 					index_col = this->scen_fund_col[fund_num] - 1;
-					this->monthly_rates[iteration][period][fund_num] = returns_table[index_col]/100.0;
+					this->monthly_rates[iteration][period][fund_num] = returns_table[index_col]/*/100.0*/;
 				}
 			}
 		}
@@ -399,6 +399,7 @@ scenario_manager::scenario_manager(double ***va_scen,int number_of_scen,vector<i
 	set_columns(scen_fund_col_vector, yield_column_for_pvs_index, lapse_dyn_treas_col_index, rates_indic_index);
 	//this->nb_rate=0;
 }
+void scenario_manager::init_scen_vector(double ***va_scen){this->va_scenario = va_scen;}
 /*
 * Set the column number for all the equities, bonds, discount_factor ...
 * Convert rates from monthly to annualy
@@ -460,7 +461,7 @@ void scenario_manager::init_ann_from_monthly_table(int reset_value)
 				{
 					int scen_time = min(mth_range + 1, this->period - 1);
 					double inv_perc_mthly = this->va_scenario[scen_num][scen_time][index_col];
-					inv_montant_ann_cumul =  inv_montant_ann_cumul *(1.0 + inv_perc_mthly/100.0);
+					inv_montant_ann_cumul =  inv_montant_ann_cumul *(1.0 + inv_perc_mthly/*/100.0*/);
 
 				}//end for mth range
 			this->ann_from_monthly_rates[scen_num][col][1][fund_num] = 
@@ -492,7 +493,7 @@ void scenario_manager::init_ann_from_monthly_table(int reset_value)
 						int scen_time = min((tt-1)*12 + mth_range + 2 - col,this->period - 1) ;
 						double inv_perc_mthly = 0.0;
 						inv_perc_mthly = this->va_scenario[scen_num][scen_time][index_col];
-						inv_montant_ann_cumul =  inv_montant_ann_cumul *(1.0 + inv_perc_mthly/100.0);
+						inv_montant_ann_cumul =  inv_montant_ann_cumul *(1.0 + inv_perc_mthly/*/100.0*/);
 					}
 					this->ann_from_monthly_rates[scen_num][col][tt][fund_num] 
 						= pow(inv_montant_ann_cumul, 1.0 / this->rates_indic) - 1.0;
@@ -531,7 +532,7 @@ void scenario_manager::init_monthly_rates_table_ESG(int reset_value, bool if_he_
 			for (unsigned int fund_num = 0; fund_num < index_table_size ; fund_num++)
 			{	
 				index_col = this->scen_fund_col[fund_num] - 1;
-				this->monthly_rates[scen_num][tt][fund_num] = this->va_scenario[index_col+2][tt][scen_num]/100.0;
+				this->monthly_rates[scen_num][tt][fund_num] = this->va_scenario[index_col+2][tt][scen_num]/*/100.0*/;
 			}//end fundnum	
 
 			double discount_factor_inv = this->va_scenario[this->yield_column_for_pvs - 1 + 2][tt][scen_num];
@@ -571,7 +572,7 @@ void scenario_manager::init_ann_from_monthly_table_ESG(int reset_value, bool if_
 				{
 					int scen_time = min(mth_range + 1, this->period - 1);
 					double inv_perc_mthly = this->va_scenario[index_col+2][scen_time][scen_num];
-					inv_montant_ann_cumul =  inv_montant_ann_cumul *(1.0 + inv_perc_mthly/100.0);	
+					inv_montant_ann_cumul =  inv_montant_ann_cumul *(1.0 + inv_perc_mthly/*/100.0*/);	
 				}//end for mth range
 			this->ann_from_monthly_rates[scen_num][col][1][fund_num] = 
 									pow (inv_montant_ann_cumul , 1.0 /this->rates_indic)  - 1.0; 
@@ -606,7 +607,7 @@ void scenario_manager::init_ann_from_monthly_table_ESG(int reset_value, bool if_
 				
 						inv_perc_mthly = this->va_scenario[index_col+2][scen_time][scen_num];
 
-						inv_montant_ann_cumul =  inv_montant_ann_cumul *(1.0 + inv_perc_mthly/100.0);
+						inv_montant_ann_cumul =  inv_montant_ann_cumul *(1.0 + inv_perc_mthly/*/100.0*/);
 					}
 
 					this->ann_from_monthly_rates[scen_num][col][tt][fund_num] 
@@ -651,7 +652,7 @@ void scenario_manager::init_monthly_rates_table(int reset_value)
 					double inv_perc_mthly = 0.0;
 					inv_perc_mthly = this->va_scenario[index_col+2][tt][scen_num];
 
-					inv_montant_ann_cumul =  inv_montant_ann_cumul *(1.0 + inv_perc_mthly/100.0);
+					inv_montant_ann_cumul =  inv_montant_ann_cumul *(1.0 + inv_perc_mthly/*/100.0*/);
 				}
 				this->monthly_rates[scen_num][tt][fund_num] = pow(inv_montant_ann_cumul, 1.0 / this->rates_indic) - 1.0;
 			}//end for fundmap...
@@ -732,7 +733,7 @@ void scenario_manager::init_ann_from_monthly_table_he(const string& file_name, i
 					for (int col = 1; col <= DECALAGE_MAX - ((period-1) % 12) ; col++)
 					{	
 						this->ann_from_monthly_rates[iteration][col][tt][fund_num] =  
-							this->ann_from_monthly_rates[iteration][col][tt][fund_num] * (1.0 + returns_table[index_col]/100.0);
+							this->ann_from_monthly_rates[iteration][col][tt][fund_num] * (1.0 + returns_table[index_col]/*/100.0*/);
 
 						if (discount_factor_inv < SMALL_DOUBLE)
 							this->ann_from_monthly_rates[iteration][DECALAGE_MAX - (period-1)%12][tt][MAXIMUM_NUMBER_OF_INDEXES + 1]=0.0; 
@@ -751,7 +752,7 @@ void scenario_manager::init_ann_from_monthly_table_he(const string& file_name, i
 						if (tt < SUBACCT_MAX_PERIOD)
 						{
 							this->ann_from_monthly_rates[iteration][col][tt + 1][fund_num] =  
-								this->ann_from_monthly_rates[iteration][col][tt + 1][fund_num] * (1.0 + returns_table[index_col]/100.0);
+								this->ann_from_monthly_rates[iteration][col][tt + 1][fund_num] * (1.0 + returns_table[index_col]/*/100.0*/);
 						}
 					}
 				}
@@ -888,7 +889,7 @@ void scenario_manager::init_monthly_rates_table_he(const string& file_name, int 
 				{
 					// fund returns
 					index_col = this->scen_fund_col[fund_num] - 1;
-					this->monthly_rates[iteration][period][fund_num] = returns_table[index_col]/100.0;
+					this->monthly_rates[iteration][period][fund_num] = returns_table[index_col]/*/100.0*/;
 				}
 
 				//for (int i=0; i<nb_rate; i++)

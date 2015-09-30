@@ -328,6 +328,25 @@ void BS_HW1F::Calculate_Equity_Return(int &index,double** &input_gaussian, doubl
 		}
 	}
 }
+void BS_HW1F::Calculate_Equity_Return_With_Drift_without_IR_Model(int &index,double** &input_gaussian,double** &output_equity_return_tab,  double* &input_inverse_ZCB_Drift){
+	double temp1=0.;
+	double temp2=0.;
+	double conste=0.;
+	double Adjustment_drift=0.;
+	
+	for(int j=0;j<NB_Scen;j++)	output_equity_return_tab[0][j]=0.;
+	for(int i=1;i<NB_Time_Step+1;i++)
+	{
+		temp1=exp(-Integrale_Var_t[index][i-1]/2.);
+		conste=Integrale_Vol_t[index][i-1];
+		Adjustment_drift=input_inverse_ZCB_Drift[i-1]*input_inverse_ZCB_Drift[i];
+		for(int j=0;j<NB_Scen_Antithetic;j++){		
+			temp2=exp(conste*input_gaussian[i-1][j]);			
+			output_equity_return_tab[i][j]=(Adjustment_drift*temp1*temp2-1.);
+			if(Antithetic==2)  output_equity_return_tab[i][j +NB_Scen_Antithetic]=(Adjustment_drift*temp1/temp2-1.);
+		}
+	}
+}
 void BS_HW1F::Calculate_Equity_Return_With_Drift(int &index,double** &input_gaussian, double** &input_beta,double** &output_equity_return_tab, 
 												 double* &input_inverse_ZCB, double* &input_inverse_ZCB_Drift){
 	double beta_previous=0.;

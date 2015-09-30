@@ -800,7 +800,7 @@
    </Row>
    <Row ss:AutoFitHeight="0" ss:StyleID="s84">
     <Cell ss:StyleID="s87"><Data ss:Type="String">number_of_scenarios</Data></Cell>
-    <Cell ss:StyleID="s91"><Data ss:Type="Number">12000</Data></Cell>
+    <Cell ss:StyleID="s91"><Data ss:Type="Number">200000</Data></Cell>
    </Row>
    <Row ss:AutoFitHeight="0" ss:StyleID="s84">
     <Cell ss:StyleID="s87"><Data ss:Type="String">yield_col_for_pv_index</Data></Cell>
@@ -914,7 +914,7 @@
    <Column ss:StyleID="s64" ss:AutoFitWidth="0" ss:Width="30" ss:Span="11"/>
    <Row>
     <Cell ss:StyleID="s95"><Data ss:Type="String">scenario_file_path</Data></Cell>
-    <Cell ss:StyleID="s96"><Data ss:Type="String">&lt;*esg_output*&gt;Scenario_2_1.csv</Data></Cell>
+    <Cell ss:StyleID="s96"><Data ss:Type="String">&lt;*esg_output*&gt;Output\Scenario_3_1.csv</Data></Cell>
    </Row>
    <Row>
     <Cell ss:StyleID="s95"><Data ss:Type="String">scenario_pass_number</Data></Cell>
@@ -1224,8 +1224,8 @@
    <Panes>
     <Pane>
      <Number>3</Number>
-     <ActiveRow>6</ActiveRow>
-     <ActiveCol>2</ActiveCol>
+     <ActiveRow>1</ActiveRow>
+     <ActiveCol>1</ActiveCol>
     </Pane>
    </Panes>
    <ProtectObjects>False</ProtectObjects>

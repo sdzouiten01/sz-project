@@ -165,7 +165,7 @@ public:
 	int Nb_dates_drift_table;
 	double **Eq_Drift_Matrix;
 	string Use_Equity_Drift_table;
-
+	string Equity_Drift_With_IR_Model;
 	//Constructor
 	InterfaceESG0(const string& config);
 	//Destructor

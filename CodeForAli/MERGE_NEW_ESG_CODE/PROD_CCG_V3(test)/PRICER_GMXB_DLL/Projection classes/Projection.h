@@ -126,8 +126,10 @@ public:
 	void project();
 	void InitProjection();
 	void set_total_number_scn( int scn_numb);
-	Projection(const vector<vector <int>>& i_s_a, const char * tables, bool generate_dbg_files, const string& debug_file_path);	
-
+	Projection(const vector<vector <int>>& i_s_a, const char * tables, bool generate_dbg_files, const string& debug_file_path);
+	virtual void init_Count_scen_to_zero();
+	virtual	int Count_scen();
+	virtual void Increase_Count_scen();
 };
 
 //int Projection::compt_sen=0;
