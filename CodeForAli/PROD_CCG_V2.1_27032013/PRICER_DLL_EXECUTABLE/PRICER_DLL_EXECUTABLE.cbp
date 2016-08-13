@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<CodeBlocks_project_file>
+	<FileVersion major="1" minor="6" />
+	<Project>
+		<Option title="PRICER_DLL_EXECUTABLE" />
+		<Option pch_mode="2" />
+		<Option compiler="gcc" />
+		<Build>
+			<Target title="Debug Win32">
+				<Option output="PRICER_DLL_EXECUTABLE" prefix_auto="1" extension_auto="1" />
+				<Option type="0" />
+				<Option compiler="gcc" />
+				<Compiler>
+					<Add option="-DWIN32" />
+					<Add option="-D_DEBUG" />
+					<Add option="-D_CONSOLE" />
+					<Add directory="$(SolutionDir)AHS_PARSER/" />
+					<Add directory="$(SolutionDir)Calibration/" />
+					<Add directory="$(SolutionDir)ScenarioGenerator(v2)/" />
+					<Add directory="$(SolutionDir)PRICER_GMXB_DLL/" />
+				</Compiler>
+				<Linker>
+					<Add library="$(SolutionDir)Debug\AHS_PARSER.lib" />
+					<Add library="$(SolutionDir)Debug\Calibration(dll).lib" />
+					<Add library="$(SolutionDir)Debug\PRICER_GMXB_DLL.lib" />
+				</Linker>
+			</Target>
+			<Target title="Release Win32">
+				<Option output="PRICER_DLL_EXECUTABLE" prefix_auto="1" extension_auto="1" />
+				<Option type="0" />
+				<Option compiler="gcc" />
+				<Compiler>
+					<Add option="-DWIN32" />
+					<Add option="-DNDEBUG" />
+					<Add option="-D_CONSOLE" />
+					<Add directory="$(SolutionDir)AHS_PARSER/" />
+					<Add directory="$(SolutionDir)Calibration/" />
+					<Add directory="$(SolutionDir)ScenarioGenerator(v2)/" />
+					<Add directory="$(SolutionDir)PRICER_GMXB_DLL/" />
+				</Compiler>
+				<Linker>
+					<Add library="$(SolutionDir)Release\AHS_PARSER.lib" />
+					<Add library="$(SolutionDir)Release\Calibration(dll).lib" />
+					<Add library="$(SolutionDir)Release\PRICER_GMXB_DLL.lib" />
+				</Linker>
+			</Target>
+		</Build>
+		<Unit filename="GMXBException.h" />
+		<Unit filename="Pricer_DLL_executable.cpp" />
+		<Extensions>
+			<code_completion />
+			<envvars />
+			<debugger />
+		</Extensions>
+	</Project>
+</CodeBlocks_project_file>

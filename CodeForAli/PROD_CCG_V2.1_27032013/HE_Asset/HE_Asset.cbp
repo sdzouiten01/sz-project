@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<CodeBlocks_project_file>
+	<FileVersion major="1" minor="6" />
+	<Project>
+		<Option title="HE_Asset" />
+		<Option pch_mode="2" />
+		<Option compiler="gcc" />
+		<Build>
+			<Target title="Debug Win32">
+				<Option output="HE_Asset" prefix_auto="1" extension_auto="1" />
+				<Option type="0" />
+				<Option compiler="gcc" />
+				<Compiler>
+					<Add option="-DWIN32" />
+					<Add option="-D_DEBUG" />
+					<Add option="-D_LIB" />
+				</Compiler>
+			</Target>
+			<Target title="Release Win32">
+				<Option output="HE_Asset" prefix_auto="1" extension_auto="1" />
+				<Option type="0" />
+				<Option compiler="gcc" />
+				<Compiler>
+					<Add option="-DWIN32" />
+					<Add option="-DNDEBUG" />
+					<Add option="-D_LIB" />
+				</Compiler>
+			</Target>
+		</Build>
+		<Unit filename="../HEDGEFF_COMPUTE/Assumptions.cpp" />
+		<Unit filename="../HEDGEFF_COMPUTE/Assumptions.h" />
+		<Unit filename="../HEDGEFF_COMPUTE/BandMatrix.cpp" />
+		<Unit filename="../HEDGEFF_COMPUTE/BandMatrix.h" />
+		<Unit filename="../HEDGEFF_COMPUTE/Future.cpp" />
+		<Unit filename="../HEDGEFF_COMPUTE/Future.h" />
+		<Unit filename="../HEDGEFF_COMPUTE/MathTools.cpp" />
+		<Unit filename="../HEDGEFF_COMPUTE/MathTools.h" />
+		<Unit filename="../HEDGEFF_COMPUTE/OptionPut.cpp" />
+		<Unit filename="../HEDGEFF_COMPUTE/OptionPut.h" />
+		<Unit filename="../HEDGEFF_COMPUTE/Portfolio.cpp" />
+		<Unit filename="../HEDGEFF_COMPUTE/Portfolio.h" />
+		<Unit filename="../HEDGEFF_COMPUTE/Swap.cpp" />
+		<Unit filename="../HEDGEFF_COMPUTE/Swap.h" />
+		<Unit filename="../HEDGEFF_COMPUTE/SwapRate.cpp" />
+		<Unit filename="../HEDGEFF_COMPUTE/SwapRate.h" />
+		<Unit filename="../HEDGEFF_COMPUTE/TradeInfo.h" />
+		<Unit filename="../HEDGEFF_COMPUTE/main.cpp" />
+		<Extensions>
+			<code_completion />
+			<envvars />
+			<debugger />
+			<lib_finder disable_auto="1" />
+		</Extensions>
+	</Project>
+</CodeBlocks_project_file>

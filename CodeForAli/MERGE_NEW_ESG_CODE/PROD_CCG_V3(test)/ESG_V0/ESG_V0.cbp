@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<CodeBlocks_project_file>
+	<FileVersion major="1" minor="6" />
+	<Project>
+		<Option title="ESG_V0" />
+		<Option pch_mode="2" />
+		<Option compiler="gcc" />
+		<Build>
+			<Target title="Debug Win32">
+				<Option output="ESG_V0" prefix_auto="1" extension_auto="1" />
+				<Option working_dir="" />
+				<Option type="2" />
+				<Option compiler="gcc" />
+				<Option createDefFile="1" />
+				<Compiler>
+					<Add option="-DWIN32" />
+					<Add option="-DNDEBUG" />
+					<Add option="-D_WINDOWS" />
+					<Add option="-D_USRDLL" />
+					<Add option="-DAHS_ESG_EXPORTS" />
+					<Add directory="../" />
+					<Add directory="$(SolutionDir)AHS_PARSER" />
+					<Add directory="$(SolutionDir)ESG_V0" />
+				</Compiler>
+			</Target>
+			<Target title="Release Win32">
+				<Option output="ESG_V0" prefix_auto="1" extension_auto="1" />
+				<Option working_dir="" />
+				<Option type="2" />
+				<Option compiler="gcc" />
+				<Option createDefFile="1" />
+				<Compiler>
+					<Add directory="$(SolutionDir)AHS_PARSER/" />
+					<Add directory="$(SolutionDir)ESG_V0/" />
+				</Compiler>
+			</Target>
+		</Build>
+		<Unit filename="Calibration/HW1FCalibrator.cpp" />
+		<Unit filename="Calibration/HW1FCalibrator.h" />
+		<Unit filename="GaussianGen/GaussianGen.cpp" />
+		<Unit filename="GaussianGen/GaussianGen.h" />
+		<Unit filename="GaussianGen/GaussianGenModelParameters.cpp" />
+		<Unit filename="GaussianGen/GaussianGenModelParameters.h" />
+		<Unit filename="GaussianGen/VarianceReduction.cpp" />
+		<Unit filename="GaussianGen/VarianceReduction.h" />
+		<Unit filename="Instruments/1DRootFinder.h" />
+		<Unit filename="Instruments/Analytics.cpp" />
+		<Unit filename="Instruments/Analytics.h" />
+		<Unit filename="Instruments/InterfaceESG0.cpp" />
+		<Unit filename="Instruments/InterfaceESG0.h" />
+		<Unit filename="Instruments/Interpolation.cpp" />
+		<Unit filename="Instruments/Interpolation.h" />
+		<Unit filename="Instruments/Matrice.cpp" />
+		<Unit filename="Instruments/Matrice.h" />
+		<Unit filename="Instruments/Minimisation.h" />
+		<Unit filename="Instruments/YieldCurve.cpp" />
+		<Unit filename="Instruments/YieldCurve.h" />
+		<Unit filename="Models/BS_CIR.cpp" />
+		<Unit filename="Models/BS_CIR.h" />
+		<Unit filename="Models/BS_HW1F.cpp" />
+		<Unit filename="Models/BS_HW1F.h" />
+		<Unit filename="Models/BS_WITHOUT_CIR.cpp" />
+		<Unit filename="Models/BS_WITHOUT_CIR.h" />
+		<Unit filename="Models/Diffusion_Model0.h" />
+		<Unit filename="Scenario/ScenarioGen.cpp" />
+		<Unit filename="Scenario/ScenarioGen.h" />
+		<Unit filename="UniformGen/Mersenne_Twister.cpp" />
+		<Unit filename="UniformGen/Mersenne_Twister.h" />
+		<Unit filename="UniformGen/UniformGen.cpp" />
+		<Unit filename="UniformGen/UniformGen.h" />
+		<Extensions>
+			<code_completion />
+			<envvars />
+			<debugger />
+		</Extensions>
+	</Project>
+</CodeBlocks_project_file>

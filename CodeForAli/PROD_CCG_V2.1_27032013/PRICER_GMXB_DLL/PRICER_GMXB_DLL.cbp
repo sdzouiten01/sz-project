@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<CodeBlocks_project_file>
+	<FileVersion major="1" minor="6" />
+	<Project>
+		<Option title="PRICER_GMXB_DLL" />
+		<Option pch_mode="2" />
+		<Option compiler="gcc" />
+		<Build>
+			<Target title="Debug Win32">
+				<Option output="PRICER_GMXB_DLL" prefix_auto="1" extension_auto="1" />
+				<Option type="0" />
+				<Option compiler="gcc" />
+				<Compiler>
+					<Add option="-DWIN32" />
+					<Add option="-D_DEBUG" />
+					<Add option="-D_WINDOWS" />
+					<Add option="-D_USRDLL" />
+					<Add option="-DPRICER_GMXB_DLL_EXPORTS" />
+					<Add directory="$(SolutionDir)AHS_PARSER" />
+					<Add directory="$(SolutionDir)ScenarioGenerator(v2)" />
+					<Add directory="$(SolutionDir)Calibration" />
+				</Compiler>
+			</Target>
+			<Target title="Release Win32">
+				<Option output="PRICER_GMXB_DLL" prefix_auto="1" extension_auto="1" />
+				<Option type="0" />
+				<Option compiler="gcc" />
+				<Compiler>
+					<Add option="-DWIN32" />
+					<Add option="-DNDEBUG" />
+					<Add option="-D_WINDOWS" />
+					<Add option="-D_USRDLL" />
+					<Add option="-DPRICER_GMXB_DLL_EXPORTS" />
+					<Add directory="$(SolutionDir)AHS_PARSER" />
+					<Add directory="$(SolutionDir)ScenarioGenerator(v2)" />
+					<Add directory="$(SolutionDir)Calibration" />
+				</Compiler>
+			</Target>
+		</Build>
+		<Unit filename="Axagen/InterfaceAxaGen.h" />
+		<Unit filename="Interface_dll.cpp" />
+		<Unit filename="Interface_dll.h" />
+		<Unit filename="LSM/ITM_for_LS_Boundary.h" />
+		<Unit filename="LSM/Longstaff_Boundary.h" />
+		<Unit filename="LSM/Regression.h" />
+		<Unit filename="Model point classes/Country model point classes/model_point_BL_LUX_01.h" />
+		<Unit filename="Model point classes/Country model point classes/model_point_BL_RST_CH_LIE_01.h" />
+		<Unit filename="Model point classes/Country model point classes/model_point_BL_RST_DEIT_LIE_01.h" />
+		<Unit filename="Model point classes/Country model point classes/model_point_BL_RST_SWISS_01.h" />
+		<Unit filename="Model point classes/Country model point classes/model_point_BL_RS_CH_LIE_01.h" />
+		<Unit filename="Model point classes/Country model point classes/model_point_BL_RS_DE_LIE_01.h" />
+		<Unit filename="Model point classes/Country model point classes/model_point_head_BL_LUX_01.h" />
+		<Unit filename="Model point classes/Country model point classes/model_point_head_BL_RST_CH_LIE_01.h" />
+		<Unit filename="Model point classes/Country model point classes/model_point_head_BL_RST_DEIT_LIE_01.h" />
+		<Unit filename="Model point classes/Country model point classes/model_point_head_BL_RST_SWISS_01.h" />
+		<Unit filename="Model point classes/Country model point classes/model_point_head_BL_RS_CH_LIE_01.h" />
+		<Unit filename="Model point classes/Country model point classes/model_point_head_BL_RS_DE_LIE_01.h" />
+		<Unit filename="Model point classes/Model_Point.h" />
+		<Unit filename="Model point classes/model_point_head.h" />
+		<Unit filename="Percentile.h" />
+		<Unit filename="Projection classes/Country projection classes/Projection_BL_CH_WB_01.h" />
+		<Unit filename="Projection classes/Country projection classes/Projection_BL_LIE_CH_WBL_01.h" />
+		<Unit filename="Projection classes/Country projection classes/Projection_BL_LIE_CH_WB_01.h" />
+		<Unit filename="Projection classes/Country projection classes/Projection_BL_LIE_DEIT_WBD_01.h" />
+		<Unit filename="Projection classes/Country projection classes/Projection_BL_LIE_DE_WBDL_01.h" />
+		<Unit filename="Projection classes/Country projection classes/Projection_BL_LUX_WBD_01.h" />
+		<Unit filename="Projection classes/Country projection classes/Projection_BL_LUX_WBLD_01.h" />
+		<Unit filename="Projection classes/Country projection classes/head_BL.h" />
+		<Unit filename="Projection classes/Country projection classes/head_BL_CH.h" />
+		<Unit filename="Projection classes/Country projection classes/head_BL_LIE.h" />
+		<Unit filename="Projection classes/Country projection classes/head_BL_LIE_RST_DEIT.h" />
+		<Unit filename="Projection classes/Country projection classes/head_BL_LIE_RS_CHF.h" />
+		<Unit filename="Projection classes/Country projection classes/head_BL_LIE_RS_DE.h" />
+		<Unit filename="Projection classes/Country projection classes/head_BL_LUX.h" />
+		<Unit filename="Projection classes/Guarantee projection classes/Projection.h" />
+		<Unit filename="Projection classes/Guarantee projection classes/Projection_AB.h" />
+		<Unit filename="Projection classes/Guarantee projection classes/Projection_AB_DB.h" />
+		<Unit filename="Projection classes/Guarantee projection classes/Projection_AB_DB_SB.h" />
+		<Unit filename="Projection classes/Guarantee projection classes/Projection_DB.h" />
+		<Unit filename="Projection classes/Guarantee projection classes/Projection_IB.h" />
+		<Unit filename="Projection classes/Guarantee projection classes/Projection_SB.h" />
+		<Unit filename="Projection classes/Guarantee projection classes/Projection_WB.h" />
+		<Unit filename="Projection classes/Guarantee projection classes/Projection_WB_DB.h" />
+		<Unit filename="Projection classes/Guarantee projection classes/Projection_WB_IB.h" />
+		<Unit filename="Summary classes/Summary_File_Writer.h" />
+		<Unit filename="Utility classes/Aging_Policies_configuration.h" />
+		<Unit filename="Utility classes/Builder.h" />
+		<Unit filename="Utility classes/Dispatch_Manager.h" />
+		<Unit filename="Utility classes/File_Manager.h" />
+		<Unit filename="Utility classes/Fra_Stat_Inforce_Manager.h" />
+		<Unit filename="Utility classes/Fund.h" />
+		<Unit filename="Utility classes/Fund_Manager.cpp" />
+		<Unit filename="Utility classes/Fund_Manager.h" />
+		<Unit filename="Utility classes/GMXBException.h" />
+		<Unit filename="Utility classes/GMXBLogger.h" />
+		<Unit filename="Utility classes/German_IADB05_Stat_Inforce_Manager.h" />
+		<Unit filename="Utility classes/German_Stat_Inforce_Manager.h" />
+		<Unit filename="Utility classes/HE_Summary_File_Writer.h" />
+		<Unit filename="Utility classes/HE_Writter.h" />
+		<Unit filename="Utility classes/Inforce_Manager.h" />
+		<Unit filename="Utility classes/Interpolation.h" />
+		<Unit filename="Utility classes/Launcher.h" />
+		<Unit filename="Utility classes/MP_AP_BOM.h" />
+		<Unit filename="Utility classes/MP_AP_BOM_no_LD.h" />
+		<Unit filename="Utility classes/MP_AP_EOM.h" />
+		<Unit filename="Utility classes/MP_AP_EOM_no_NB.h" />
+		<Unit filename="Utility classes/Normal.h" />
+		<Unit filename="Utility classes/Product_configuration.h" />
+		<Unit filename="Utility classes/Scenario_configuration.h" />
+		<Unit filename="Utility classes/Scenario_list.h" />
+		<Unit filename="Utility classes/Scenario_manager.h" />
+		<Unit filename="Utility classes/Stat_Inforce_Builder.h" />
+		<Unit filename="Utility classes/Stat_Inforce_Configuration.h" />
+		<Unit filename="Utility classes/Stat_Inforce_Manager.h" />
+		<Unit filename="Utility classes/Stat_Inforce_Manager_AUS.h" />
+		<Unit filename="Utility classes/Summary_Builder.h" />
+		<Unit filename="Utility classes/Summary_configuration.h" />
+		<Unit filename="Utility classes/Wildcards_manager.h" />
+		<Unit filename="Utility classes/back_ground_final.h" />
+		<Unit filename="Utility classes/bucket_list.h" />
+		<Unit filename="Utility classes/fund_for_aging_policies.h" />
+		<Unit filename="Utility classes/head.h" />
+		<Unit filename="Utility classes/head_summary_MSO.h" />
+		<Unit filename="Utility classes/inforces_AP.h" />
+		<Unit filename="Utility classes/usefule_function.h" />
+		<Unit filename="VTune/PRICER_GMXB_DLL.vpj" />
+		<Unit filename="stdafx.cpp" />
+		<Unit filename="stdafx.h" />
+		<Unit filename="targetver.h" />
+		<Extensions>
+			<code_completion />
+			<envvars />
+			<debugger />
+			<lib_finder disable_auto="1" />
+		</Extensions>
+	</Project>
+</CodeBlocks_project_file>

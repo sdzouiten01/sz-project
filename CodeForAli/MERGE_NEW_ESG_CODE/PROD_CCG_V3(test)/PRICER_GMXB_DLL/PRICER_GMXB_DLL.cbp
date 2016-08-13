@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<CodeBlocks_project_file>
+	<FileVersion major="1" minor="6" />
+	<Project>
+		<Option title="PRICER_GMXB_DLL" />
+		<Option pch_mode="2" />
+		<Option compiler="gcc" />
+		<Build>
+			<Target title="Debug Win32">
+				<Option output="PRICER_GMXB_DLL" prefix_auto="1" extension_auto="1" />
+				<Option type="0" />
+				<Option compiler="gcc" />
+				<Compiler>
+					<Add option="-DWIN32" />
+					<Add option="-D_DEBUG" />
+					<Add option="-D_WINDOWS" />
+					<Add option="-D_USRDLL" />
+					<Add option="-DPRICER_GMXB_DLL_EXPORTS" />
+					<Add directory="$(SolutionDir)AHS_PARSER" />
+					<Add directory="$(SolutionDir)ScenarioGenerator(v2)" />
+					<Add directory="$(SolutionDir)Calibration" />
+					<Add directory="$(SolutionDir)ESG_V0" />
+					<Add directory="$(SolutionDir)PRICER_GMXB_DLL/Utility classes" />
+					<Add directory="$(SolutionDir)PRICER_GMXB_DLL/Model point classes" />
+					<Add directory="$(SolutionDir)PRICER_GMXB_DLL" />
+				</Compiler>
+			</Target>
+			<Target title="Release Win32">
+				<Option output="PRICER_GMXB_DLL" prefix_auto="1" extension_auto="1" />
+				<Option type="0" />
+				<Option compiler="gcc" />
+				<Compiler>
+					<Add option="-DWIN32" />
+					<Add option="-DNDEBUG" />
+					<Add option="-D_WINDOWS" />
+					<Add option="-D_USRDLL" />
+					<Add option="-DPRICER_GMXB_DLL_EXPORTS" />
+					<Add directory="$(SolutionDir)AHS_PARSER/" />
+					<Add directory="$(SolutionDir)ESG_V0/" />
+				</Compiler>
+			</Target>
+		</Build>
+		<Unit filename="Interface_dll.cpp" />
+		<Unit filename="Interface_dll.h" />
+		<Unit filename="Model point classes/Country model point classes/model_point_BL_LUX_01.cpp" />
+		<Unit filename="Model point classes/Country model point classes/model_point_BL_LUX_01.h" />
+		<Unit filename="Model point classes/Country model point classes/model_point_BL_RST_CH_LIE_01.cpp" />
+		<Unit filename="Model point classes/Country model point classes/model_point_BL_RST_CH_LIE_01.h" />
+		<Unit filename="Model point classes/Country model point classes/model_point_BL_RST_DEIT_LIE_01.cpp" />
+		<Unit filename="Model point classes/Country model point classes/model_point_BL_RST_DEIT_LIE_01.h" />
+		<Unit filename="Model point classes/Country model point classes/model_point_BL_RST_SWISS_01.cpp" />
+		<Unit filename="Model point classes/Country model point classes/model_point_BL_RST_SWISS_01.h" />
+		<Unit filename="Model point classes/Country model point classes/model_point_BL_RS_CH_LIE_01.cpp" />
+		<Unit filename="Model point classes/Country model point classes/model_point_BL_RS_CH_LIE_01.h" />
+		<Unit filename="Model point classes/Country model point classes/model_point_BL_RS_DE_LIE_01.cpp" />
+		<Unit filename="Model point classes/Country model point classes/model_point_BL_RS_DE_LIE_01.h" />
+		<Unit filename="Model point classes/Country model point classes/model_point_head_BL_LIE.h" />
+		<Unit filename="Model point classes/Country model point classes/model_point_head_BL_LUX.h" />
+		<Unit filename="Model point classes/Country model point classes/model_point_head_BL_SWISS.h" />
+		<Unit filename="Model point classes/Model_Point.cpp" />
+		<Unit filename="Model point classes/Model_Point.h" />
+		<Unit filename="Projection classes/Country projection classes/Projection_BL_CH_WB_01.cpp" />
+		<Unit filename="Projection classes/Country projection classes/Projection_BL_CH_WB_01.h" />
+		<Unit filename="Projection classes/Country projection classes/Projection_BL_LIE_CH_WBL_01.cpp" />
+		<Unit filename="Projection classes/Country projection classes/Projection_BL_LIE_CH_WBL_01.h" />
+		<Unit filename="Projection classes/Country projection classes/Projection_BL_LIE_CH_WB_01.cpp" />
+		<Unit filename="Projection classes/Country projection classes/Projection_BL_LIE_CH_WB_01.h" />
+		<Unit filename="Projection classes/Country projection classes/Projection_BL_LIE_DEIT_WBD_01.cpp" />
+		<Unit filename="Projection classes/Country projection classes/Projection_BL_LIE_DEIT_WBD_01.h" />
+		<Unit filename="Projection classes/Country projection classes/Projection_BL_LIE_DE_WBDL_01.cpp" />
+		<Unit filename="Projection classes/Country projection classes/Projection_BL_LIE_DE_WBDL_01.h" />
+		<Unit filename="Projection classes/Country projection classes/Projection_BL_LUX_WBD_01.cpp" />
+		<Unit filename="Projection classes/Country projection classes/Projection_BL_LUX_WBD_01.h" />
+		<Unit filename="Projection classes/Country projection classes/Projection_BL_LUX_WBLD_01.cpp" />
+		<Unit filename="Projection classes/Country projection classes/Projection_BL_LUX_WBLD_01.h" />
+		<Unit filename="Projection classes/Country projection classes/head_BL_CH.h" />
+		<Unit filename="Projection classes/Country projection classes/head_BL_LIE.h" />
+		<Unit filename="Projection classes/Country projection classes/head_BL_LUX.h" />
+		<Unit filename="Projection classes/Projection.cpp" />
+		<Unit filename="Projection classes/Projection.h" />
+		<Unit filename="Utility classes/Dispatch_Manager.cpp" />
+		<Unit filename="Utility classes/Dispatch_Manager.h" />
+		<Unit filename="Utility classes/Inforce_Manager.cpp" />
+		<Unit filename="Utility classes/Inforce_Manager.h" />
+		<Unit filename="Utility classes/Product_configuration.cpp" />
+		<Unit filename="Utility classes/Product_configuration.h" />
+		<Unit filename="Utility classes/Scenario_configuration.cpp" />
+		<Unit filename="Utility classes/Scenario_configuration.h" />
+		<Unit filename="Utility classes/Scenario_manager.cpp" />
+		<Unit filename="Utility classes/Scenario_manager.h" />
+		<Unit filename="Utility classes/Write_results_manager.h" />
+		<Unit filename="Utility classes/head.h" />
+		<Unit filename="Utility classes/stdafx.cpp" />
+		<Unit filename="Utility classes/stdafx.h" />
+		<Unit filename="Utility classes/targetver.h" />
+		<Unit filename="VTune/PRICER_GMXB_DLL.vpj" />
+		<Unit filename="back_ground_final.cpp" />
+		<Unit filename="back_ground_final.h" />
+		<Extensions>
+			<code_completion />
+			<envvars />
+			<debugger />
+		</Extensions>
+	</Project>
+</CodeBlocks_project_file>

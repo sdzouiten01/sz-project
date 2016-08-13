@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<CodeBlocks_project_file>
+	<FileVersion major="1" minor="6" />
+	<Project>
+		<Option title="ScenarioGeneratorv2" />
+		<Option pch_mode="2" />
+		<Option compiler="gcc" />
+		<Build>
+			<Target title="Debug Win32">
+				<Option output="ScenarioGenerator(v2)" prefix_auto="1" extension_auto="1" />
+				<Option type="0" />
+				<Option compiler="gcc" />
+				<Compiler>
+					<Add option="-DWIN32" />
+					<Add option="-DNDEBUG" />
+					<Add option="-D_WINDOWS" />
+					<Add option="-D_USRDLL" />
+					<Add option="-DAHS_ESG_EXPORTS" />
+					<Add directory="$(SolutionDir)AHS_PARSER" />
+					<Add directory="$(SolutionDir)ScenarioGenerator(v2)" />
+					<Add directory="$(SolutionDir)Calibration" />
+				</Compiler>
+			</Target>
+			<Target title="Release Win32">
+				<Option output="ScenarioGenerator(v2)" prefix_auto="1" extension_auto="1" />
+				<Option type="0" />
+				<Option compiler="gcc" />
+				<Compiler>
+					<Add option="-DWIN32" />
+					<Add option="-DNDEBUG" />
+					<Add option="-D_WINDOWS" />
+					<Add option="-D_USRDLL" />
+					<Add option="-DAHS_ESG_EXPORTS" />
+					<Add directory="$(SolutionDir)AHS_PARSER" />
+					<Add directory="$(SolutionDir)ScenarioGenerator(v2)" />
+					<Add directory="$(SolutionDir)Calibration" />
+				</Compiler>
+			</Target>
+		</Build>
+		<Unit filename="Equity model.cpp" />
+		<Unit filename="Equity model.h" />
+		<Unit filename="Generator.cpp" />
+		<Unit filename="Generator.h" />
+		<Unit filename="InterfaceEsg.cpp" />
+		<Unit filename="InterfaceEsg.h" />
+		<Unit filename="Mersenne_Twister.cpp" />
+		<Unit filename="Mersenne_Twister.h" />
+		<Unit filename="Scenario.cpp" />
+		<Unit filename="Scenario.h" />
+		<Unit filename="Variance Reduction.cpp" />
+		<Unit filename="Variance Reduction.h" />
+		<Unit filename="short rate model.cpp" />
+		<Unit filename="short rate model.h" />
+		<Unit filename="tools.cpp" />
+		<Unit filename="tools.h" />
+		<Extensions>
+			<code_completion />
+			<envvars />
+			<debugger />
+		</Extensions>
+	</Project>
+</CodeBlocks_project_file>

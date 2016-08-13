@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<CodeBlocks_project_file>
+	<FileVersion major="1" minor="6" />
+	<Project>
+		<Option title="Calibration" />
+		<Option pch_mode="2" />
+		<Option compiler="gcc" />
+		<Build>
+			<Target title="Debug Win32">
+				<Option output="Calibration" prefix_auto="1" extension_auto="1" />
+				<Option type="0" />
+				<Option compiler="gcc" />
+				<Compiler>
+					<Add option="-DWIN32" />
+					<Add option="-DNDEBUG" />
+					<Add option="-D_WINDOWS" />
+					<Add option="-D_USRDLL" />
+					<Add option="-DAHS_CALIBRATION_EXPORTS" />
+					<Add directory="$(SolutionDir)AHS_PARSER/" />
+				</Compiler>
+			</Target>
+			<Target title="Release Win32">
+				<Option output="Calibration" prefix_auto="1" extension_auto="1" />
+				<Option type="0" />
+				<Option compiler="gcc" />
+				<Compiler>
+					<Add option="-DWIN32" />
+					<Add option="-DNDEBUG" />
+					<Add option="-D_WINDOWS" />
+					<Add option="-D_USRDLL" />
+					<Add option="-DAHS_CALIBRATION_EXPORTS" />
+					<Add directory="$(SolutionDir)AHS_PARSER/" />
+				</Compiler>
+			</Target>
+		</Build>
+		<Unit filename="CalibSwapMarket.cpp" />
+		<Unit filename="CalibSwapMarket.h" />
+		<Unit filename="Calibration.cpp" />
+		<Unit filename="Calibration.h" />
+		<Unit filename="G1analytics.cpp" />
+		<Unit filename="G1analytics.h" />
+		<Unit filename="InterfaceCalibration.cpp" />
+		<Unit filename="InterfaceCalibration.h" />
+		<Unit filename="Interpolation.cpp" />
+		<Unit filename="Interpolation.h" />
+		<Unit filename="LMnumerics.cpp" />
+		<Unit filename="LMnumerics.h" />
+		<Unit filename="Matrice.cpp" />
+		<Unit filename="Matrice.h" />
+		<Unit filename="ProbaUtilities.cpp" />
+		<Unit filename="ProbaUtilities.h" />
+		<Extensions>
+			<code_completion />
+			<envvars />
+			<debugger />
+		</Extensions>
+	</Project>
+</CodeBlocks_project_file>
